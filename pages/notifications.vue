@@ -1,3 +1,8 @@
+<script setup lang="ts">
+import Header from '~/components/layout/Header2.vue';
+
+</script>
+
 <template>
-    <NuxtLink to="/homepage">Back Homepage</NuxtLink>
+  <Header />
 </template>
