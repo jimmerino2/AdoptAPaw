@@ -1,9 +1,8 @@
 <template >
     <!-- Medium Screen-->
-    <div class="sticky top-0 flex hidden md:flex z-0">
+    <div class="sticky top-0 flex hidden md:flex z-10">
         <div class="flex-1">
-            <div class="profbar flex items-center h-16 px-8 bg-slate-500">
-                <div class="w-20"></div>
+            <div class="profbar flex items-center h-16 px-8 bg-slate-500 px-40">
                 <div class="flex-[8] flex items-center justify-between">
                     <div class="logo">
                         <div class="rounded-full border border-black p-2">Logo</div>
@@ -12,11 +11,9 @@
                         <div class="rounded-full border border-black p-2">Profile</div>
                     </div>
                 </div>
-                <div class="w-20"></div>
             </div>
 
-            <div class="flex items-center navbar bg-slate-200">
-                <div class="w-20"></div>
+            <div class="flex items-center navbar bg-slate-200 px-40">   
                 
                 <div class="flex-[8]">
                     <ul class="flex justify-around"> 
@@ -49,8 +46,7 @@
                         
                     <li class="text-lg py-4">Bookings</li>
                 </ul>
-                </div>
-                <div class="w-20"></div>
+                </div>  
             </div>
         </div>
     </div>

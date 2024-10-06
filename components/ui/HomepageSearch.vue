@@ -1,5 +1,5 @@
 <template>
-    <div class="absolute flex items-center justify-center w-[60rem]">
+    <div class="absolute flex items-center justify-center w-[60rem] z-10">
     <Command class="rounded-lg border shadow-md m-20">
 
         <div class="relative group focus-within:block">
