@@ -2,7 +2,7 @@
     <!-- Medium Screen-->
     <div class="sticky top-0 flex hidden md:flex z-10">
         <div class="flex-1">
-            <div class="profbar flex items-center h-16 px-8 bg-slate-500 px-40">
+            <div class="profbar flex items-center h-16 px-8 bg-slate-500 px-[10rem]">
                 <div class="flex-[8] flex items-center justify-between">
                     <div class="logo">
                         <div class="rounded-full border border-black p-2">Logo</div>
@@ -17,6 +17,7 @@
                 
                 <div class="flex-[8]">
                     <ul class="flex justify-around"> 
+
                     <li class="text-lg py-4">Homepage</li>
 
                     <li class="text-lg py-4 group relative">
@@ -28,6 +29,16 @@
                         </div>
                     </li>
 
+                    <li class="text-lg py-4">Bookings</li>
+
+                    <li class="text-lg py-4 group relative">
+                        Donations
+                        <div class="hidden group-hover:block absolute top-full hover:block bg-slate-200 px-2 shadow-lg rounded-md w-fit z-1">
+                            <p class="py-4 w-48">Make a Donation</p> 
+                            <p class="py-4 w-48">My Donations</p>
+                        </div>
+                    </li>
+                    
                     <li class="text-lg py-4 group relative">
                         Support
                         <div class="hidden group-hover:block absolute top-full hover:block bg-slate-200 px-2 shadow-lg rounded-md w-fit z-1">
@@ -36,15 +47,7 @@
                             <p class="py-4 w-44">Tips on Adopting</p>
                         </div>
                     </li>
-                    <li class="text-lg py-4 group relative">
-                        Donations
-                        <div class="hidden group-hover:block absolute top-full hover:block bg-slate-200 px-2 shadow-lg rounded-md w-fit z-1">
-                            <p class="py-4 w-48">Make a Donation</p> 
-                            <p class="py-4 w-48">My Donations</p>
-                        </div>
-                    </li>
-                        
-                    <li class="text-lg py-4">Bookings</li>
+                    
                 </ul>
                 </div>  
             </div>

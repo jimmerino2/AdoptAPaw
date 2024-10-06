@@ -4,7 +4,7 @@ import Button from '../ui/button/Button.vue';
 
 <template>
     <!-- Navigation -->
-    <div class="flex bg-zinc-400 px-10">
+    <div class="flex bg-zinc-400 px-40">
         <div class="flex-grow p-2">
 
             <!-- Logo -->
