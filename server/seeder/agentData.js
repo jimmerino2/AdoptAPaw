@@ -2,31 +2,27 @@ import mongoose from "mongoose";
 import connectDB from "../database.js";
 import Agent from "../models/Agent.js";
 
-const seedAgent = async () => {
-  try {
-    await connectDB();
+const seedAgent = async() => {
+    try{
+        await connectDB();
+        await Agent.deleteMany({});
 
-    await Agent.deleteMany({}); // findOne, findMany, deleteOne, deleteMany
+        console.log('Agent collection cleared.')
 
-    console.log("agent collection cleared");
+        const agents = [
+            { name: "Alice Smith (test)"},
+            { name: "Bob Johnson (test)"},
+        ]
 
-    // Seed seeder for the database
-    const agents = [
-      { name: "Alice Smith" },
-      { name: "Bob Johnson" },
-      { name: "Charlie Brown" },
-      { name: "Diana Lee" },
-      { name: "Ethan Hunt" },
-    ];
+        await Agent.insertMany(agents);
 
-    await Agent.insertMany(agents);
+        console.log("Agents seeded successfully.")
 
-    console.log("Agents seeded successfully");
-  } catch (error) {
-    console.error("Error seeding agents");
-  } finally {
-    mongoose.disconnect();
-  }
-};
+    } catch (error) {
+        console.log("Error seeding Agent.")
+    } finally {
+        mongoose.disconnect();
+    }
+}
 
 seedAgent();
