@@ -1,7 +1,7 @@
 import mongoose from "mongoose"; 
 
 const petSchema = new mongoose.Schema({
-    agentID: { type: mongoose.Schema.Types.ObjectId, ref: 'Agent', required:true },
+    agentID: { type: mongoose.Schema.Types.ObjectId, ref: 'Agent', required: true },
     name: { type: String, required: true },
     age: { type: Number, required: true },
     type: { type: String, required: true },
