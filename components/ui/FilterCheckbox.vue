@@ -1,4 +1,5 @@
 <script>
+import Checkbox from '~/components/ui/checkbox/Checkbox.vue';
 
 export default{
     props:{

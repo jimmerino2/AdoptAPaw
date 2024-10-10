@@ -1,3 +1,14 @@
+<script setup lang="ts">
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command'
+</script>
+
 <template>
     <div class="absolute flex items-center justify-center w-[60rem] z-10">
     <Command class="rounded-lg border shadow-md m-20">
@@ -23,7 +34,7 @@
                     <CommandItem value="Shelters|browse|visit">
                         <icon class="mr-2 h-4 w-4" />
                         <span>Browse through the featured shelters.</span>
-                    </CommandItem>
+                    </CommandItem>  
                 </NuxtLink>
 
                 <NuxtLink to="/faq">
