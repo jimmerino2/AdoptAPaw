@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import Footer from '~/components/layout/Footer.vue';
 import Header from '~/components/layout/Header.vue';
-import FilterCheckbox from '~/components/ui/FilterCheckbox.vue';
-import FilterSelect from '~/components/ui/FilterSelect.vue';
-import PetPreview from '~/components/ui/PetPreview.vue';
+import FilterCheckbox from '~/composable/FilterCheckbox.vue';
+import FilterSelect from '~/composable/FilterSelect.vue';
+import PetPreview from '~/composable/PetPreview.vue';
 
 </script>
 
