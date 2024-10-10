@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import HoverCard from '~/components/ui/hover-card/HoverCard.vue';
-import HoverCardContent from '~/components/ui/hover-card/HoverCardContent.vue';
-import HoverCardTrigger from '~/components/ui/hover-card/HoverCardTrigger.vue';
+import HoverCard from '@/components/ui/hover-card/HoverCard.vue';
+import HoverCardContent from '@/components/ui/hover-card/HoverCardContent.vue';
+import HoverCardTrigger from '@/components/ui/hover-card/HoverCardTrigger.vue';
 </script>
 
 <template>

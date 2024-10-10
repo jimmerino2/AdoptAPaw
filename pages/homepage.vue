@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Footer from '~/components/layout/Footer.vue';
 import Header from '~/components/layout/Header.vue';
-import HomepageSearch from '~/composable/HomepageSearch.vue';
+import HomepageSearch from '~/components/ui/HomepageSearch.vue';
 
 </script>
 
