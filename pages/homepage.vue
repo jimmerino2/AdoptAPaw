@@ -9,7 +9,7 @@ import HomepageSearch from '~/components/ui/HomepageSearch.vue';
   <Header />
 
   <!-- #region Search Area -->
-  <div class="relative w-auto h-[35rem] border border-black flex flex-col items-center p-4 z-0">
+  <div class="relative w-auto h-[35rem] border border-black flex flex-col items-center px-[10vw] z-0">
     <div class="top-10 text-[3rem] p-5 pt-12">AdoptAPaw</div>
     <div class="top-10 text-[1.5rem] p-5">What would you like to do today?</div>
     <HomepageSearch class="top-[12rem]"/>

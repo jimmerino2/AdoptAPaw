@@ -12,9 +12,11 @@ import PetPreview from '~/components/ui/PetPreview.vue';
   <div class="h-fit px-40 py-4 grid grid-cols-4">
     <div class="mx-2 px-2">
       <FilterSelect category="Type" :selections="['Any', 'Dog', 'Cat']"></FilterSelect>
-      <FilterCheckbox category="Breed" :selections="['British Shorthair', 'Corgi']"></FilterCheckbox>
+      <FilterCheckbox category="Breed" :selections="['Any', 'British Shorthair', 'Corgi']"></FilterCheckbox>
       <FilterSelect category="Age" :selections="['Any', 'Kitten / Puppy', 'Adult']"/>
       <FilterSelect category="Gender" :selections="['Any', 'Male', 'Female']"/>
+      <FilterCheckbox category="Size" :selections="['Any', 'Small', 'Medium', 'Large']"/>
+      <FilterCheckbox category="Coat Length" :selections="['Any', 'Short', 'Medium', 'Long']"/>
     </div>
 
     <div class="grid grid-cols-5 col-span-3 gap-4 px-2">
