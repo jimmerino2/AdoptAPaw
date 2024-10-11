@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import Button from '../ui/button/Button.vue';
+
 </script>
 
 <template>
     <!-- Navigation -->
-    <div class="flex bg-zinc-400 px-40">
+    <div class="flex bg-zinc-400 custom-lg:px-[10vw] custom-md:px-[4vw] custom-sm:px-[4vw]">
         <div class="flex-grow p-2">
-
             <!-- Logo -->
             <div class="flex flex-row text-lg items-center">
                 <img src="" alt ="logo" class="size-16 border border-black mr-4">
@@ -54,7 +54,7 @@ import Button from '../ui/button/Button.vue';
     </div>
 
     <!-- Copyright and Links-->
-    <div class="flex bg-zinc-500 px-40">
+    <div class="flex bg-zinc-500 custom-lg:px-[10vw] custom-md:px-[4vw] custom-sm:px-[4vw]">
         <div class="flex-grow flex justify-between px-2">
             <div class="">Copyright yada yada</div>
             <div class=""><a href="https://github.com/jimmerino2/AdoptAPaw"><div>Github</div></a></div>
