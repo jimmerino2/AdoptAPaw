@@ -6,13 +6,9 @@ import axios from "axios";
 
 onMounted(async () => {
   // Axios syntax fetch pet data
-  const response = await axios.get("http://localhost:5001/getPetData", {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  const response = await axios.get("http://localhost:5001/pets/getPetData");
 
-  console.log(response.data.message)
+  console.log(response.data)
 });
 </script>
 
