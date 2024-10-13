@@ -20,7 +20,7 @@ const { width } = useWindowSize();
     <div class="text-[1.5rem] p-5 text-center">What would you like to do today?</div>
     
     <HomepageSearch class="top-[12rem] z-0" :class="{
-    'w-[75%]': width>=768,
+    'w-[65%]': width>=768,
     'w-[77.5%]': width<768 && width>= 576,
     'w-[80%]': width<576 
     }"/>
@@ -71,9 +71,3 @@ const { width } = useWindowSize();
    
   <Footer />
 </template>
-
-<style>
-  body{
-    margin:0px;
-    }
-</style>
