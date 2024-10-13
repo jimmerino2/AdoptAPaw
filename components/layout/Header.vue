@@ -1,5 +1,5 @@
 <template >
-    <div class="sticky top-0 flex z-10 flex-col">
+    <div class="sticky top-0 flex z-20 flex-col">
         <div class="profbar flex items-center h-16 bg-slate-500 custom-lg:px-[10vw] custom-md:px-[4vw] custom-sm:px-[4vw]">
             <div class="flex-grow flex items-center justify-between">
                 <div class="logo">
