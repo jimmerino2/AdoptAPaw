@@ -1,5 +1,14 @@
 <script setup lang="ts">
 import Button from '../ui/button/Button.vue';
+import { useWindowSize } from '@vueuse/core'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+
+const { width, height } = useWindowSize();
 
 </script>
 
@@ -14,40 +23,71 @@ import Button from '../ui/button/Button.vue';
             </div>
 
             <!-- Content -->
-            <div class="border border-black my-2 grid grid-cols-5 items-center px-4">
-                <div class="col-span-3 flex flex-row">
-                    <div class="flex-grow text-md">
-                    <p class="text-lg">Title</p>
-                    <ul>
-                        <li>Test1</li>
-                        <li>Test1</li>
-                        <li>Test1</li>
-                        <li>Test1</li>
-                    </ul>
+            <div class="border border-black my-2" :class="{'grid grid-cols-7 items-top p-4': width >= 768}">
+                <div :class="{'col-span-3 flex flex-row': width >= 768, 'flex flex-col items-start p-2 w-full':width <768}">
+
+                    <div class="flex-grow text-md" :class="{'hidden': width<768}">
+                        <p class="text-lg">Title</p>
+                        <ul>
+                            <li>Test1</li>
+                            <li>Test1</li>
+                            <li>Test1</li>
+                            <li>Test1</li>
+                        </ul>
+                    </div>
+                    <div :class="{'hidden': width>=768, 'border border-black w-[100%] group relative' : width<768}">
+                        <div class="text-lg">Title</div>
+                        <div class="group-hover:block hidden">
+                            <ul>Item 1</ul>
+                            <ul>Item 2</ul>
+                            <ul>Item 3</ul>
+                        </div>
+                    </div>
+                    
+
+                    <div class="flex-grow text-md" :class="{'hidden': width<768}">
+                        <p class="text-lg">Title</p>
+                        <ul>
+                            <li>Test1</li>
+                            <li>Test1</li>
+                            <li>Test1</li>
+                            <li>Test1</li>
+                        </ul>
+                    </div>
+                    <div :class="{'hidden': width>=768, 'border border-black w-[100%] group relative' : width<768}">
+                        <div class="text-lg">Title</div>
+                        <div class="group-hover:block hidden">
+                            <ul>Item 1</ul>
+                            <ul>Item 2</ul>
+                            <ul>Item 3</ul>
+                        </div>
+                    </div>
+               
+
+                    <div class="flex-grow text-md" :class="{'hidden': width<768}">
+                        <p class="text-lg">Title</p>
+                        <ul>
+                            <li>Test1</li>
+                            <li>Test1</li>
+                            <li>Test1</li>
+                            <li>Test1</li>
+                        </ul>
+                    </div>
+                    <div :class="{'hidden': width>=768, 'border border-black w-[100%] group relative' : width<768}">
+                        <div class="text-lg">Title</div>
+                        <div class="group-hover:block hidden">
+                            <ul>Item 1</ul>
+                            <ul>Item 2</ul>
+                            <ul>Item 3</ul>
+                        </div>
+                    </div>
+                    
+
                 </div>
-                <div class="flex-grow text-md">
-                    <p class="text-lg">Title</p>
-                    <ul>
-                        <li>Test1</li>
-                        <li>Test1</li>
-                        <li>Test1</li>
-                        <li>Test1</li>
-                    </ul>
-                </div>
-                <div class="flex-grow text-md">
-                    <p class="text-lg">Title</p>
-                    <ul>
-                        <li>Test1</li>
-                        <li>Test1</li>
-                        <li>Test1</li>
-                        <li>Test1</li>
-                    </ul>
-                </div>
-                </div>
-                <div class="bg-zinc-200 col-span-2 rounded-lg mx-10 px-5 flex items-center justify-center flex-col">
-                    <div class="text-lg m-2">Make a donation to the website today!</div>
+                <div class="bg-zinc-200 col-span-4 rounded-lg mx-10 px-5 flex items-center justify-center flex-col my-4">
+                    <div class="text-lg m-2 text-center">Make a donation to the website!</div>
                     <div class="text-md text-center">Help our website find their forever homes by donating to our organzation!</div>
-                    <div class="m-5"><Button>To Donate Page</Button></div>
+                    <div class="m-5" ><Button >To Donate Page</Button></div>
                 </div>
             </div>
         </div>

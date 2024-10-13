@@ -1,8 +1,6 @@
 <script setup>
 import Footer from '~/components/layout/Footer.vue';
 import Header from '~/components/layout/Header.vue';
-import FilterCheckbox from '~/components/ui/FilterCheckbox.vue';
-import FilterSelect from '~/components/ui/FilterSelect.vue';
 import PetPreview from '~/components/ui/PetPreview.vue';
 import axios from "axios";
 
@@ -24,17 +22,12 @@ onMounted(async () => {
 
 <template>
   <Header />
-  <div class="h-fit px-40 py-4 grid grid-cols-4">
+  <div class="h-fit px-40 py-4 flex flex-col items-center">
     <div class="mx-2 px-2">
-      <FilterSelect category="Type" :selections="['Any', 'Dog', 'Cat']"></FilterSelect>
-      <FilterCheckbox category="Breed" :selections="['Any', 'British Shorthair', 'Corgi']"></FilterCheckbox>
-      <FilterSelect category="Age" :selections="['Any', 'Kitten / Puppy', 'Adult']"/>
-      <FilterSelect category="Gender" :selections="['Any', 'Male', 'Female']"/>
-      <FilterCheckbox category="Size" :selections="['Any', 'Small', 'Medium', 'Large']"/>
-      <FilterCheckbox category="Coat Length" :selections="['Any', 'Short', 'Medium', 'Long']"/>
+      Hello World
     </div>
 
-    <div class="grid grid-cols-5 col-span-3 gap-4 px-2">
+    <div class="grid grid-cols-5 gap-12 px-2">
         <div v-for="pet in petData" :key="pet._id">
           <PetPreview :pet="pet" />
         </div>
