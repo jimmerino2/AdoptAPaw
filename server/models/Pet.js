@@ -9,6 +9,7 @@ const petSchema = new mongoose.Schema({
     weight: { type: Number, required: true },
     desc: { type: String, required: true },
     gender: { type: String, required: true },
+    location: { type: String, required: true},
     coatLength: { type: String, required: true },
     isAdopted: { type: String, required: true },
     isToiletTrained: { type: String, required: true },
