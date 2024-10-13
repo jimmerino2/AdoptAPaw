@@ -62,7 +62,6 @@ export default {
     computed:{
         menuDiv() {
             if (!this.isMobile) {
-                console.log('isMobile is ' + this.isMobile)
                 return ''; 
             } else if (this.isMenuOpen) {
                 return 'flex absolute flex-col top-full h-[100vh]'; 
@@ -72,7 +71,6 @@ export default {
         },
         menuList() {
             if (!this.isMobile) {
-                console.log('isMobile is ' + this.isMobile)
                 return ''; 
             } else if (this.isMenuOpen) {
                 return 'flex flex-col'; 
@@ -82,7 +80,6 @@ export default {
         },
         menuListItem() {
             if (!this.isMobile) {
-                console.log('isMobile is ' + this.isMobile)
                 return ''; 
             } else if (this.isMenuOpen) {
                 return 'flex w-fit'; 

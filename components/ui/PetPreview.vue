@@ -10,14 +10,15 @@ const props = defineProps({
   pet: Object,
 })
 
-onMounted(() => {
-  console.log(props.pet._id);
-})
+const emit = defineEmits(['selectPet']); // Define the event
+const selectPet = () =>{
+  emit('selectPet', props.pet); // Emit the selected pet object
+}
 </script>
 
 <template>
   <HoverCard>
-    <HoverCardTrigger>
+    <HoverCardTrigger class="hover:cursor-pointer" v-on:click="selectPet()">
       <div class="border border-black rounded-md h-fit pb-4 bg-slate-400" :class="{
         'w-[12rem]': width>=1500,
         'min-w-[10rem]': width<1500 && width >=1000,
