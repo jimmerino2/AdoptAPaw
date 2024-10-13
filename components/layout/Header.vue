@@ -106,7 +106,6 @@ export default {
         },
         toggleMenu() {
            this.isMenuOpen = !this.isMenuOpen;
-           console.log('Menu opened is ' + this.isMenuOpen + ", isMobile is " + this.isMobile);
         }
     },
     mounted() {
