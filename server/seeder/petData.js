@@ -11,7 +11,7 @@ const seedPet = async() => {
 
         const pets = [
           {
-            "agentID": "6707deec53a9b693044b49b6",
+            "agentID": "670c96688142bf17ef246a2a",
             "name": "Bella",
             "age": 2,
             "type": "Dog",
@@ -21,13 +21,13 @@ const seedPet = async() => {
             "gender": "Female",
             "personality": ["playful", "friendly", "energetic"],
             "location": "Kuala Lumpur",
-            "coatLength": 5, // Short coat in cm
+            "coatLength": 5,
             "isAdopted": "No",
             "isToiletTrained": "Yes",
             "listedPrice": 500
           },
           {
-            "agentID": "6707deec53a9b693044b49b6",
+            "agentID": "670c96688142bf17ef246a2b",
             "name": "Max",
             "age": 4,
             "type": "Dog",
@@ -37,13 +37,13 @@ const seedPet = async() => {
             "gender": "Male",
             "personality": ["loyal", "protective", "active"],
             "location": "Petaling Jaya",
-            "coatLength": 8, // Medium coat in cm
+            "coatLength": 8,
             "isAdopted": "No",
             "isToiletTrained": "Yes",
             "listedPrice": 600
           },
           {
-            "agentID": "6707deec53a9b693044b49b7",
+            "agentID": "670c96688142bf17ef246a2a",
             "name": "Luna",
             "age": 1,
             "type": "Cat",
@@ -53,13 +53,13 @@ const seedPet = async() => {
             "gender": "Female",
             "personality": ["calm", "affectionate", "quiet"],
             "location": "George Town",
-            "coatLength": 10, // Long coat in cm
+            "coatLength": 10,
             "isAdopted": "No",
             "isToiletTrained": "Yes",
             "listedPrice": 200
           },
           {
-            "agentID": "6707deec53a9b693044b49b7",
+            "agentID": "670c96688142bf17ef246a2b",
             "name": "Charlie",
             "age": 3,
             "type": "Dog",
@@ -69,13 +69,13 @@ const seedPet = async() => {
             "gender": "Male",
             "personality": ["playful", "friendly", "energetic"],
             "location": "Ipoh",
-            "coatLength": 5, // Short coat in cm
+            "coatLength": 5,
             "isAdopted": "Yes",
             "isToiletTrained": "Yes",
             "listedPrice": 550
           },
           {
-            "agentID": "6707deec53a9b693044b49b6",
+            "agentID": "670c96688142bf17ef246a2a",
             "name": "Lucy",
             "age": 5,
             "type": "Cat",
@@ -85,13 +85,13 @@ const seedPet = async() => {
             "gender": "Female",
             "personality": ["relaxed", "lazy", "loving"],
             "location": "Kota Kinabalu",
-            "coatLength": 5, // Short coat in cm
+            "coatLength": 5,
             "isAdopted": "No",
             "isToiletTrained": "No",
             "listedPrice": 150
           },
           {
-            "agentID": "6707deec53a9b693044b49b6",
+            "agentID": "670c96688142bf17ef246a2b",
             "name": "Rocky",
             "age": 6,
             "type": "Dog",
@@ -101,13 +101,13 @@ const seedPet = async() => {
             "gender": "Male",
             "personality": ["energetic", "strong", "loyal"],
             "location": "Shah Alam",
-            "coatLength": 7, // Medium coat in cm
+            "coatLength": 7,
             "isAdopted": "Yes",
             "isToiletTrained": "Yes",
             "listedPrice": 700
           },
           {
-            "agentID": "6707deec53a9b693044b49b7",
+            "agentID": "670c96688142bf17ef246a2a",
             "name": "Molly",
             "age": 3,
             "type": "Cat",
@@ -117,13 +117,13 @@ const seedPet = async() => {
             "gender": "Female",
             "personality": ["cuddly", "playful", "active"],
             "location": "Johor Bahru",
-            "coatLength": 10, // Long coat in cm
+            "coatLength": 10,
             "isAdopted": "No",
             "isToiletTrained": "Yes",
             "listedPrice": 250
           },
           {
-            "agentID": "6707deec53a9b693044b49b6",
+            "agentID": "670c96688142bf17ef246a2b",
             "name": "Duke",
             "age": 2,
             "type": "Dog",
@@ -133,13 +133,13 @@ const seedPet = async() => {
             "gender": "Male",
             "personality": ["protective", "loyal", "alert"],
             "location": "Seremban",
-            "coatLength": 5, // Short coat in cm
+            "coatLength": 5,
             "isAdopted": "No",
             "isToiletTrained": "Yes",
             "listedPrice": 650
           },
           {
-            "agentID": "6707deec53a9b693044b49b7",
+            "agentID": "670c96688142bf17ef246a2a",
             "name": "Daisy",
             "age": 1,
             "type": "Cat",
@@ -149,13 +149,13 @@ const seedPet = async() => {
             "gender": "Female",
             "personality": ["curious", "playful", "active"],
             "location": "Kuching",
-            "coatLength": 5, // Short coat in cm
+            "coatLength": 5,
             "isAdopted": "No",
             "isToiletTrained": "No",
             "listedPrice": 180
           },
           {
-            "agentID": "6707deec53a9b693044b49b6",
+            "agentID": "670c96688142bf17ef246a2b",
             "name": "Oscar",
             "age": 4,
             "type": "Dog",
@@ -165,13 +165,13 @@ const seedPet = async() => {
             "gender": "Male",
             "personality": ["calm", "friendly", "gentle"],
             "location": "Melaka",
-            "coatLength": 7, // Medium coat in cm
+            "coatLength": 7,
             "isAdopted": "No",
             "isToiletTrained": "Yes",
             "listedPrice": 500
           },
           {
-            "agentID": "6707deec53a9b693044b49b7",
+            "agentID": "670c96688142bf17ef246a2a",
             "name": "Milo",
             "age": 2,
             "type": "Dog",
@@ -181,13 +181,13 @@ const seedPet = async() => {
             "gender": "Male",
             "personality": ["energetic", "playful", "friendly"],
             "location": "Alor Setar",
-            "coatLength": 5, // Short coat in cm
+            "coatLength": 5,
             "isAdopted": "No",
             "isToiletTrained": "Yes",
             "listedPrice": 520
           },
           {
-            "agentID": "6707deec53a9b693044b49b6",
+            "agentID": "670c96688142bf17ef246a2b",
             "name": "Bailey",
             "age": 5,
             "type": "Dog",
@@ -197,13 +197,12 @@ const seedPet = async() => {
             "gender": "Female",
             "personality": ["affectionate", "cuddly", "friendly"],
             "location": "Kuala Terengganu",
-            "coatLength": 12, // Long coat in cm
+            "coatLength": 12,
             "isAdopted": "No",
             "isToiletTrained": "Yes",
             "listedPrice": 400
           }
         ];
-        
         
         await Pet.insertMany(pets);
 

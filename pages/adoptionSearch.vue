@@ -16,6 +16,7 @@ const { width } = useWindowSize();
 // 3. Pass the props (ref) to the child component
 
 const petData = ref([]);
+const agentData = ref([]);
 const selectedPet = ref({});
 const showDetails = ref(false);
 const petAgeType = ref(null);
@@ -49,9 +50,11 @@ const scrollToTop = () => {
 
 onMounted(async () => {
   // Axios syntax fetch pet data
-  const response = await axios.get("http://localhost:5001/pets/getPetData");
+  const responsePet = await axios.get("http://localhost:5001/pets/getPetData");
+  const responseAgent = await axios.get("http://localhost:5001/agents/getAgentData");
 
-  petData.value = response.data;
+  petData.value = responsePet.data;
+  agentData.value = responseAgent.data;
 });
 </script>
 

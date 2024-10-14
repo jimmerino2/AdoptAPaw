@@ -10,8 +10,24 @@ const seedAgent = async() => {
         console.log('Agent collection cleared.')
 
         const agents = [
-            { name: "Alice Smith (test)"},
-            { name: "Bob Johnson (test)"},
+            {
+                "name": "John Doe",
+                "email": "johndoe@example.com",
+                "desc": "An experienced pet adoption agent specializing in dog adoptions.",
+                "mission": "Helping dogs find loving homes.",
+                "address": "123 Pet Lane, Kuala Lumpur, Malaysia",
+                "type": "Agent",
+                "passno": "A1234567"
+              },
+              {
+                "name": "Happy Tails Shelter",
+                "email": "contact@happytailsshelter.org",
+                "desc": "A non-profit animal shelter providing care for abandoned pets.",
+                "mission": "To give every pet a second chance at a happy life.",
+                "address": "456 Shelter Road, Petaling Jaya, Malaysia",
+                "type": "Shelter",
+                "workingHrs": ["Monday - Friday: 9 AM - 6 PM", "Saturday: 10 AM - 4 PM"]
+              }
         ]
 
         await Agent.insertMany(agents);
