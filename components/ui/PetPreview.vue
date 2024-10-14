@@ -25,7 +25,7 @@ const selectPet = () =>{
         'w-[9.5rem]': width<1000 && width >=768,
         'w-[9rem]': width<768 && width >=450,
         'w-[8rem]': width<450 && width >=400,
-        'w-[10rem]': width<400 
+        'w-[9rem]': width<400 
       }">
         <img
           src="assets\css\logo_v1.png"

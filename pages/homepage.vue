@@ -25,7 +25,7 @@ const { width } = useWindowSize();
     'w-[80%]': width<576 
     }"/>
 
-    <div class="grid grid-flow-col grid-cols-auto-fill justify-around" :class="{
+    <div class="grid grid-flow-col grid-cols-auto-fill justify-around mt-[6rem]" :class="{
     'grid-rows-1 mt-[10rem] gap-4': width>=1000,
     'grid-rows-2 mt-[10rem] gap-2': width<1000
     }">
@@ -33,7 +33,7 @@ const { width } = useWindowSize();
         'size-[12rem]': width>=768,
         'size-[14rem]': width>=568 && width < 768,
         'size-[11.5rem]': width<568 && width >= 450,
-        'size-[10rem]': width<450
+        'size-[8.75rem]': width<450
       }">
         <img src="" alt="icon_image" class="size-3/4 border border-black">
         Adopt
@@ -42,7 +42,7 @@ const { width } = useWindowSize();
         'size-[12rem]': width>=768,
         'size-[14rem]': width>=568 && width < 768,
         'size-[11.5rem]': width<568 && width >= 450,
-        'size-[10rem]': width<450
+        'size-[8.75rem]': width<450
       }">
         <img src="" alt="icon_image" class="size-3/4 border border-black">
         Shelters
@@ -51,7 +51,7 @@ const { width } = useWindowSize();
         'size-[12rem]': width>=768,
         'size-[14rem]': width>=568 && width < 768,
         'size-[11.5rem]': width<568 && width >= 450,
-        'size-[10rem]': width<450
+        'size-[8.75rem]': width<450
       }">
         <img src="" alt="icon_image" class="size-3/4 border border-black">
         FAQ
@@ -60,7 +60,7 @@ const { width } = useWindowSize();
         'size-[12rem]': width>=768,
         'size-[14rem]': width>=568 && width < 768,
         'size-[11.5rem]': width<568 && width >= 450,
-        'size-[10rem]': width<450
+        'size-[8.75rem]': width<450
       }">
         <img src="" alt="icon_image" class="size-3/4 border border-black">
         Donate
