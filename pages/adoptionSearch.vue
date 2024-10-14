@@ -2,6 +2,7 @@
 import Footer from '~/components/layout/Footer.vue';
 import Header from '~/components/layout/Header.vue';
 import PetPreview from '~/components/ui/PetPreview.vue';
+import Button from '~/components/ui/button/Button.vue';
 import {Menubar, MenubarTrigger, MenubarMenu} from '~/components/ui/menubar';
 import axios from "axios";
 import { ref } from 'vue';
@@ -77,7 +78,7 @@ onMounted(async () => {
   </div>
 
   <!-- Pet Details -->
-   <div v-show="showDetails" class="h-[35rem] flex flex-col items-center bg-slate-100 custom-lg:px-[10vw] custom-md:px-[4vw]">
+   <div v-show="showDetails" class="h-full flex flex-col items-center bg-slate-100 custom-lg:px-[10vw] custom-md:px-[4vw]">
       <div v-on:click="showDetails = !showDetails" class="bg-slate-100 hover:cursor-pointer size-[2rem] border border-black fixed right-2.5 top-[5.25rem] flex text-[2rem] items-center justify-center z-20">X</div>
       <div class="w-full"><img src="" alt="pet_image" class="w-full max-h-[20rem] min-h-[1rem]"></div>
       <div class="flex-col bg-slate-200 w-full flex items-center justify-center py-4">
@@ -85,10 +86,11 @@ onMounted(async () => {
         <hr class="w-[90%] my-2 border border-zinc-400">
         <div class="py-1">{{ selectedPet.breed }}&nbsp; | &nbsp;{{ selectedPet.location }}</div>
         <div class="py-1 w-[90%] flex justify-around">
-          <div class="w-[33%] text-center">{{ petAgeType }} <span>({{ selectedPet.age }}yo)</span></div>
+          <div class="w-[33%] text-left ml-2">{{ petAgeType }} <span>({{ selectedPet.age }}yo)</span></div>
           <div class="w-[33%] text-center">{{ selectedPet.gender }}</div>
-          <div class="w-[33%] text-center">{{ selectedPet.weight }}kg</div>
+          <div class="w-[33%] text-right mr-2">{{ selectedPet.weight }}kg</div>
         </div>
+        <div class="pt-4"><Button>Adopt {{ selectedPet.name }}</Button></div>
       </div>
       <div class="w-full my-4 sticky top-[64px] z-10">
         <Menubar>
@@ -101,7 +103,24 @@ onMounted(async () => {
       </div>
       <div v-show="!toggleContent" class="py-4 bg-slate-300 w-full p-4">
         <p class="text-[1.5rem] font-bold">About</p>
+        <p class="pt-2 text-[1rem] font-bold">Description</p>
+        <p class="pt-1 text-[0.9rem]">{{ selectedPet.desc }}</p>
+
+        <!-- Health and Training -->
+        <p class="pt-2 text-[1rem] font-bold">Health and Training</p>
+        <p class="pt-1 text-[0.9rem]">(WIP) isVaccinated</p>
+        <p class="pt-1 text-[0.9rem]">(WIP) isSpayed</p>
+        <p class="pt-1 text-[0.9rem]">The pet has a coat length of {{ selectedPet.coatLength }}cm. </p>
+        <p class="pt-1 text-[0.9rem]">This pet is <span v-show="!selectedPet.isToiletTrained">NOT</span> toilet trained.</p>
+
+        <!-- Personality -->
+        <p class="pt-2 text-[1rem] font-bold">Personality</p>
+        <ul>
+          <li class="pt-1 text-[0.9rem] capitalize" v-for="n in selectedPet.personality">{{ n }}</li>
+        </ul>
       </div>
+
+      <!-- Agent Info-->
       <div v-show="toggleContent" class="py-4 bg-slate-300 w-full p-4">
         <p class="text-[1.5rem] font-bold">Agent Info</p>
       </div>
