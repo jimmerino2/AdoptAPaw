@@ -1,12 +1,3 @@
-<template>
-    <h1 class="text-2xl">Hello World!</h1>
-    <NuxtLink to="/homepage">To homepage</NuxtLink>
-</template>
-
-<style>
-
-</style>
-
 <script>
 export default {
   async asyncData({ redirect }) {

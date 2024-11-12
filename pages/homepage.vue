@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import Footer from '~/components/layout/Footer.vue';
-import Header from '~/components/layout/Header.vue';
-import HomepageSearch from '~/components/ui/HomepageSearch.vue';
 import { useWindowSize } from '@vueuse/core'
 
 const { width } = useWindowSize();
@@ -17,17 +14,11 @@ const { width } = useWindowSize();
     'px-[4vw]': width<768
   }">
     <div class="text-[3rem] p-5 pt-12">AdoptAPaw</div>
-    <div class="text-[1.5rem] p-5 text-center">What would you like to do today?</div>
+    <div class="text-[1.5rem] p-5 text-center">Help provide a home to loving pets around the country</div>
     
-    <HomepageSearch class="top-[12rem] z-0" :class="{
-    'w-[65%]': width>=768,
-    'w-[77.5%]': width<768 && width>= 576,
-    'w-[80%]': width<576 
-    }"/>
-
-    <div class="grid grid-flow-col grid-cols-auto-fill justify-around mt-[6rem]" :class="{
-    'grid-rows-1 mt-[10rem] gap-4': width>=1000,
-    'grid-rows-2 mt-[10rem] gap-2': width<1000
+    <div class="grid grid-flow-col grid-cols-auto-fill justify-around mt-[2rem]" :class="{
+    'grid-rows-1 gap-4': width>=1000,
+    'grid-rows-2 gap-2': width<1000
     }">
       <div class="flex m-2 items-center justify-center bg-slate-300 rounded-lg flex-col text-lg" :class="{
         'size-[12rem]': width>=768,

@@ -1,9 +1,4 @@
 <script setup>
-import Footer from '~/components/layout/Footer.vue';
-import Header from '~/components/layout/Header.vue';
-import PetPreview from '~/components/ui/PetPreview.vue';
-import Button from '~/components/ui/button/Button.vue';
-import {Menubar, MenubarTrigger, MenubarMenu} from '~/components/ui/menubar';
 import axios from "axios";
 import { ref } from 'vue';
 import { useWindowSize } from '@vueuse/core'
@@ -18,13 +13,15 @@ const { width } = useWindowSize();
 const petData = ref([]);
 const agentData = ref([]);
 const selectedPet = ref({});
+const selectedAgent = ref({});
 const showDetails = ref(false);
 const petAgeType = ref(null);
 const toggleContent = ref(false); // 0 - About,  1 - Agent
 
-const handlePetDetails = (pet) =>{
+const handlePetDetails = (pet) => {
   selectedPet.value = pet;
-} 
+  selectedAgent.value = agentData.value.find(agent => agent._id === pet.agentID);
+}
 
 const findAge = (pet) =>{
   if(pet.age<=2){
@@ -83,7 +80,9 @@ onMounted(async () => {
   <!-- Pet Details -->
    <div v-show="showDetails" class="h-full flex flex-col items-center bg-slate-100 custom-lg:px-[10vw] custom-md:px-[4vw]">
       <div v-on:click="showDetails = !showDetails" class="bg-slate-100 hover:cursor-pointer size-[2rem] border border-black fixed right-2.5 top-[5.25rem] flex text-[2rem] items-center justify-center z-20">X</div>
-      <div class="w-full"><img src="" alt="pet_image" class="w-full max-h-[20rem] min-h-[1rem]"></div>
+      <div class="w-full">
+        <img src="" alt="pet_image" class="w-full max-h-[20rem] min-h-[1rem]">
+      </div>
       <div class="flex-col bg-slate-200 w-full flex items-center justify-center py-4">
         <div class="text-[2rem] font-bold">{{ selectedPet.name }}</div>
         <hr class="w-[90%] my-2 border border-zinc-400">
@@ -104,6 +103,8 @@ onMounted(async () => {
           </MenubarMenu>
         </Menubar>
       </div>
+
+      <!-- Pet Info -->
       <div v-show="!toggleContent" class="py-4 bg-slate-300 w-full p-4">
         <p class="text-[1.5rem] font-bold">About</p>
         <p class="pt-2 text-[1rem] font-bold">Description</p>
@@ -125,7 +126,7 @@ onMounted(async () => {
 
       <!-- Agent Info-->
       <div v-show="toggleContent" class="py-4 bg-slate-300 w-full p-4">
-        <p class="text-[1.5rem] font-bold">Agent Info</p>
+        <p class="text-[1.5rem] font-bold">{{  }}</p>
       </div>
    </div>
   <Footer />  
