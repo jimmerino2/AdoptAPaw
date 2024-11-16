@@ -3,13 +3,11 @@
   "version": "1.0.0",
   "main": "server.js",
   "type": "module",
-  
   "scripts": {
     "server": "nodemon server.js",
     "client": "npm run --prefix ../ dev",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
-
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -21,5 +19,8 @@
     "express": "^4.21.0",
     "mongoose": "^8.6.3",
     "nodemon": "^3.1.7"
+  },
+  "devDependencies": {
+    "@nuxt/eslint": "^0.6.1"
   }
 }

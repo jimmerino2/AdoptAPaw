@@ -11,5 +11,5 @@ export default defineNuxtConfig({
       { path: '~/composables', extensions: ['vue'], pathPrefix: true }
     ]
   },
-  modules: ['@nuxtjs/tailwindcss', 'shadcn-nuxt']
+  modules: ['@nuxtjs/tailwindcss', 'shadcn-nuxt',  '@nuxt/eslint']
 });
