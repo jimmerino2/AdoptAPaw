@@ -16,20 +16,12 @@ const selectPet = () => {
   <HoverCard>
     <HoverCardTrigger class="hover:cursor-pointer" v-on:click="selectPet()">
       <div
-        class="border border-black rounded-md bg-slate-400"
-        :class="{
-          'w-[12rem]': width >= 1500,
-          'w-[10rem]': width < 1500 && width >= 1000,
-          'w-[9.5rem]': width < 1000 && width >= 768,
-          'w-[9rem]': width < 768 && width >= 450,
-          'w-[8rem]': width < 450 && width >= 400,
-          'w-[9rem]': width < 400,
-        }"
-      >
+        class="border border-black rounded-md bg-slate-400 w-full max-w-[300px] justify-self-center"
+      > 
         <img
           src="assets\images\logo_v1.png"
           alt="pet_image"
-          class="bg-slate-100 size-full rounded-md"
+          class="bg-slate-100 h-[300px] w-full object-cover rounded-md"
         />
 
         <div class="flex flex-col items-center">

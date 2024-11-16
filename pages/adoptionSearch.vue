@@ -73,15 +73,15 @@ onMounted(async () => {
     </div>
 
     <div
-      class="w-full grid gap-12 px-2"
+      class="w-full grid gap-6 px-2 max-w-[1200px]"
       :class="{
-        'grid-cols-5': width >= 1000,
-        'grid-cols-4': width < 1000 && width >= 768,
-        'grid-cols-3': width < 768 && width >= 400,
-        'grid-cols-2': width < 400,
+        'grid-cols-4': width >= 1500,
+        'grid-cols-3': width >= 1000,
+        'grid-cols-2': width < 1000 && width >= 400,
+        'grid-cols-1': width < 400,
       }"
     >
-      <div v-for="pet in petData" :key="pet._id" class="flex justify-center">
+      <div v-for="pet in petData" :key="pet._id" class="">
         <div v-on:click="(showDetails = !showDetails), (toggleContent = false)">
           <PetPreview
             :pet="pet"
