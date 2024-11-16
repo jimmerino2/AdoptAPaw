@@ -21,7 +21,7 @@ const toggleContent = ref(false); // 0 - About,  1 - Agent
 const handlePetDetails = (pet) => {
   selectedPet.value = pet;
   selectedAgent.value = agentData.value.find(
-    (agent) => agent._id === pet.agentID,
+    (agent) => agent._id === pet.agentID
   );
 };
 
@@ -49,7 +49,7 @@ onMounted(async () => {
   // Axios syntax fetch pet data
   const responsePet = await axios.get("http://localhost:5001/pets/getPetData");
   const responseAgent = await axios.get(
-    "http://localhost:5001/agents/getAgentData",
+    "http://localhost:5001/agents/getAgentData"
   );
 
   petData.value = responsePet.data;
