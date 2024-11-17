@@ -84,7 +84,7 @@ const { width } = useWindowSize();
             Help our website find their forever homes by donating to our
             organzation!
           </div>
-          <div class="m-5"><Button>To Donate Page</Button></div>
+          <Button class="m-5">To Donate Page</Button>
         </div>
       </div>
     </div>

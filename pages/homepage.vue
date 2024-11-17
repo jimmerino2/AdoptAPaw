@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { useWindowSize } from "@vueuse/core";
 
 const { width } = useWindowSize();
@@ -7,7 +7,7 @@ const { width } = useWindowSize();
 <template>
   <Header />
 
-  <!-- #region Search Area -->
+  <!-- #region Top Navigator -->
   <div
     class="relative h-fit py-4 flex flex-col items-center bg-slate-400 z-0"
     :class="{
@@ -20,6 +20,7 @@ const { width } = useWindowSize();
       Help provide a home to loving pets around the country
     </div>
 
+    <!-- Center Cards-->
     <div
       class="grid grid-flow-col grid-cols-auto-fill justify-around mt-[2rem]"
       :class="{
@@ -27,57 +28,59 @@ const { width } = useWindowSize();
         'grid-rows-2 gap-2': width < 1000,
       }"
     >
-      <div
-        class="flex m-2 items-center justify-center bg-slate-300 rounded-lg flex-col text-lg"
-        :class="{
-          'size-[12rem]': width >= 768,
-          'size-[14rem]': width >= 568 && width < 768,
-          'size-[11.5rem]': width < 568 && width >= 450,
-          'size-[8.75rem]': width < 450,
-        }"
+      <NuxtLink
+        v-for="(item, index) in cards"
+        :key="index"
+        :to="item.link"
+        class="your-classes-here"
       >
-        <img src="" alt="icon_image" class="size-3/4 border border-black" />
-        Adopt
-      </div>
-      <div
-        class="flex m-2 items-center justify-center bg-slate-300 rounded-lg flex-col text-lg"
-        :class="{
-          'size-[12rem]': width >= 768,
-          'size-[14rem]': width >= 568 && width < 768,
-          'size-[11.5rem]': width < 568 && width >= 450,
-          'size-[8.75rem]': width < 450,
-        }"
-      >
-        <img src="" alt="icon_image" class="size-3/4 border border-black" />
-        Shelters
-      </div>
-      <div
-        class="flex m-2 items-center justify-center bg-slate-300 rounded-lg flex-col text-lg"
-        :class="{
-          'size-[12rem]': width >= 768,
-          'size-[14rem]': width >= 568 && width < 768,
-          'size-[11.5rem]': width < 568 && width >= 450,
-          'size-[8.75rem]': width < 450,
-        }"
-      >
-        <img src="" alt="icon_image" class="size-3/4 border border-black" />
-        FAQ
-      </div>
-      <div
-        class="flex m-2 items-center justify-center bg-slate-300 rounded-lg flex-col text-lg"
-        :class="{
-          'size-[12rem]': width >= 768,
-          'size-[14rem]': width >= 568 && width < 768,
-          'size-[11.5rem]': width < 568 && width >= 450,
-          'size-[8.75rem]': width < 450,
-        }"
-      >
-        <img src="" alt="icon_image" class="size-3/4 border border-black" />
-        Donate
-      </div>
+        <div
+          class="flex m-2 items-center justify-center bg-slate-200 flex-col text-xl font-bold"
+          :class="{
+            'size-[12rem]': width >= 768,
+            'size-[14rem]': width >= 568 && width < 768,
+            'size-[11.5rem]': width < 568 && width >= 450,
+            'size-[8.75rem]': width < 450,
+          }"
+        >
+          <img :src="item.img" alt="icon_image" class="size-3/4" />
+          {{ item.label }}
+        </div>
+      </NuxtLink>
     </div>
   </div>
   <!-- #endregion -->
 
   <Footer />
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      cards: [
+        {
+          label: "Adopt",
+          img: "/assets/images/homepage_adopt.png",
+          link: "adoptionSearch",
+        },
+        {
+          label: "Shelters",
+          img: "/assets/images/homepage_shelter.png",
+          link: "shelters",
+        },
+        {
+          label: "FAQ",
+          img: "/assets/images/homepage_faq.png",
+          link: "faq",
+        },
+        {
+          label: "Donate",
+          img: "/assets/images/homepage_donate.png",
+          link: "donation",
+        },
+      ],
+    };
+  },
+};
+</script>

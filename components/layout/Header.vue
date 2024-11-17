@@ -25,7 +25,7 @@
     >
       <div class="flex-[8]">
         <ul class="flex justify-between" :class="menuList">
-          <NuxtLink to="homepage"
+          <NuxtLink to="/homepage"
             ><li
               class="text-lg p-4 hover:bg-slate-300 cursor-pointer"
               :class="menuListItem"
