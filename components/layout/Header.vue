@@ -83,21 +83,6 @@
                 Donations
               </div></NuxtLink
             >
-            <div
-              class="hidden group-hover:block absolute hover:block bg-slate-200 shadow-lg rounded-md w-fit z-1"
-              :class="menuDropdown"
-            >
-              <NuxtLink to="/donation"
-                ><div class="py-4 w-48 hover:bg-slate-300 px-2 rounded-md">
-                  Make a Donation
-                </div>
-              </NuxtLink>
-              <NuxtLink to="/donation"
-                ><div class="py-4 w-48 hover:bg-slate-300 px-2 rounded-md">
-                  My Donations
-                </div></NuxtLink
-              >
-            </div>
           </li>
 
           <li

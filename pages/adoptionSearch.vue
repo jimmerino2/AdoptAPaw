@@ -77,8 +77,8 @@ onMounted(async () => {
       :class="{
         'grid-cols-4': width >= 1500,
         'grid-cols-3': width >= 1000,
-        'grid-cols-2': width < 1000 && width >= 400,
-        'grid-cols-1': width < 400,
+        'grid-cols-2': width < 1000 && width >= 576,
+        'grid-cols-1': width < 576,
       }"
     >
       <div v-for="pet in petData" :key="pet._id" class="">
