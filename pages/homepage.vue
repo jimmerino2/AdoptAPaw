@@ -61,22 +61,22 @@ export default {
       cards: [
         {
           label: "Adopt",
-          img: "/assets/images/homepage_adopt.png",
+          img: "/homepage_adopt.png",
           link: "adoptionSearch",
         },
         {
           label: "Shelters",
-          img: "/assets/images/homepage_shelter.png",
+          img: "/homepage_shelter.png",
           link: "shelters",
         },
         {
           label: "FAQ",
-          img: "/assets/images/homepage_faq.png",
+          img: "/homepage_faq.png",
           link: "faq",
         },
         {
           label: "Donate",
-          img: "/assets/images/homepage_donate.png",
+          img: "/homepage_donate.png",
           link: "donation",
         },
       ],

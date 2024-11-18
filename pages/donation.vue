@@ -30,7 +30,7 @@ const { width } = useWindowSize();
 
     <!-- Mobile View -->
     <div v-show="width < 768" class="w-full text-center bg-slate-200 pb-4">
-      <img src="/assets/images/donation_wallpaper02.jpg" />
+      <img src="/public/donation_wallpaper02.jpg" />
       <div class="p-8">
         <p class="text-lg">Title</p>
         <br />
@@ -79,7 +79,7 @@ const { width } = useWindowSize();
     </p>
     <div :class="{ 'grid grid-cols-2': width >= 576 }">
       <img
-        src="/assets/images/donation_qr.jpg"
+        src="/public/donation_qr.jpg"
         class="justify-self-center"
         :class="{
           'max-w-72': width < 576,
@@ -98,7 +98,7 @@ const { width } = useWindowSize();
           Any donations will go directly to the development of the website and
           shelters we work together with.
         </p>
-        <img src="/assets/images/donation_wallpaper02.jpg" />
+        <img src="/public/donation_wallpaper02.jpg" />
       </div>
     </div>
   </div>
@@ -129,13 +129,13 @@ export default {
 <style>
 @media (min-width: 768px) {
   .bg-image {
-    background-image: url("/assets/images/donation_wallpaper01.jpg");
+    background-image: url("/public/donation_wallpaper01.jpg");
   }
 }
 
 @media (max-width: 768px) {
   .bg-image {
-    background-image: url("/assets/images/donation_wallpaper02.jpg");
+    background-image: url("/public/donation_wallpaper02.jpg");
   }
 }
 
