@@ -6,10 +6,13 @@ export default defineNuxtConfig({
   components: {
     dirs: [
       { path: "~/components", extensions: ["vue"], pathPrefix: false },
-      { path: "~/components/layout", extensions: ["vue"], pathPrefix: false },
       { path: "~/components/ui", extensions: ["vue"], pathPrefix: true },
       { path: "~/composables", extensions: ["vue"], pathPrefix: true },
     ],
   },
-  modules: ["@nuxtjs/tailwindcss", "shadcn-nuxt"],
+
+  modules: ["@nuxtjs/tailwindcss", "shadcn-nuxt", "@nuxtjs/supabase"],
+  supabase: {
+    redirect: false,
+  },
 });

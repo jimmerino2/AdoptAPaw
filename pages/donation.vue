@@ -5,7 +5,6 @@ const { width } = useWindowSize();
 </script>
 
 <template>
-  <Header />
   <!-- #region Top Screen -->
   <div
     class="bg-image min-h-[60vh] flex items-center"
@@ -103,8 +102,6 @@ const { width } = useWindowSize();
     </div>
   </div>
   <!-- #endregion -->
-
-  <Footer />
 </template>
 
 <script>

@@ -6,7 +6,6 @@ const defaultValue = "item-1";
 </script>
 
 <template>
-  <Header />
   <!-- Intro Section -->
   <div :class="{ 'grid grid-cols-5': width >= 700 }">
     <img src="/public/faq_wallpaper01.png" class="col-span-2" />
@@ -64,7 +63,6 @@ const defaultValue = "item-1";
       </AccordionItem>
     </Accordion>
   </div>
-  <Footer />
 </template>
 
 <script>

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Button from "../ui/button/Button.vue";
 import { useWindowSize } from "@vueuse/core";
 
 const { width } = useWindowSize();

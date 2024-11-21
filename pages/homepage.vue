@@ -5,8 +5,6 @@ const { width } = useWindowSize();
 </script>
 
 <template>
-  <Header />
-
   <!-- #region Top Navigator -->
   <div
     class="relative h-fit py-4 flex flex-col items-center bg-slate-400 z-0"
@@ -50,8 +48,6 @@ const { width } = useWindowSize();
     </div>
   </div>
   <!-- #endregion -->
-
-  <Footer />
 </template>
 
 <script>
