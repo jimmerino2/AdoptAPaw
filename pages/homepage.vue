@@ -58,7 +58,7 @@ export default {
         {
           label: "Adopt",
           img: "/homepage_adopt.png",
-          link: "adoptionSearch",
+          link: "adoptions",
         },
         {
           label: "Shelters",

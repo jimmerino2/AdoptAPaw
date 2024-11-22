@@ -1,7 +1,4 @@
 <script setup>
-import { useWindowSize } from "@vueuse/core";
-const { width } = useWindowSize();
-
 const props = defineProps({
   pet: Object,
 });

@@ -1,28 +1,25 @@
 <script setup>
-import axios from "axios";
 import { ref } from "vue";
 import { useWindowSize } from "@vueuse/core";
-
+import { useFetchData } from "@/composables/useFetchData";
+const { fetchData } = useFetchData();
 const { width } = useWindowSize();
 
 // Steps for parsing props to child components
 // 1. Import the child component
 // 2. Define the props (ref) in the parent component
 // 3. Pass the props (ref) to the child component
-
-const petData = ref([]);
-const agentData = ref([]);
-const selectedPet = ref({});
-const selectedAgent = ref({});
+const petData = await fetchData("pets", "*");
+const agentData = await fetchData("agents", "*");
+let selectedPet = ref({});
+let selectedAgent = ref({});
 const showDetails = ref(false);
 const petAgeType = ref(null);
 const toggleContent = ref(false); // 0 - About,  1 - Agent
 
 const handlePetDetails = (pet) => {
-  selectedPet.value = pet;
-  selectedAgent.value = agentData.value.find(
-    (agent) => agent._id === pet.agentID
-  );
+  selectedPet = pet;
+  selectedAgent = agentData.find((agent) => agent.id === pet.agentid);
 };
 
 const findAge = (pet) => {
@@ -44,17 +41,6 @@ const scrollToTop = () => {
   });
   console.log("Scrolled!");
 };
-
-onMounted(async () => {
-  // Axios syntax fetch pet data
-  const responsePet = await axios.get("http://localhost:5001/pets/getPetData");
-  const responseAgent = await axios.get(
-    "http://localhost:5001/agents/getAgentData"
-  );
-
-  petData.value = responsePet.data;
-  agentData.value = responseAgent.data;
-});
 </script>
 
 <template>
@@ -95,56 +81,58 @@ onMounted(async () => {
     v-show="showDetails"
     class="h-full flex flex-col items-center bg-slate-100 custom-lg:px-[10vw] custom-md:px-[4vw]"
   >
-    <div
-      v-on:click="showDetails = !showDetails"
-      class="bg-slate-100 hover:cursor-pointer size-[2rem] border border-black fixed right-2.5 top-[5.25rem] flex text-[2rem] items-center justify-center z-20"
-    >
-      X
-    </div>
+    <!-- Top Section-->
     <div class="w-full">
-      <img src="" alt="pet_image" class="w-full max-h-[20rem] min-h-[1rem]" />
-    </div>
-    <div
-      class="flex-col bg-slate-200 w-full flex items-center justify-center py-4"
-    >
-      <div class="text-[2rem] font-bold">{{ selectedPet.name }}</div>
-      <hr class="w-[90%] my-2 border border-zinc-400" />
-      <div class="py-1">
-        {{ selectedPet.breed }}&nbsp; | &nbsp;{{ selectedPet.location }}
+      <div
+        v-on:click="showDetails = !showDetails"
+        class="bg-slate-100 hover:cursor-pointer size-[2rem] border border-black fixed right-2.5 top-[5.25rem] flex text-[2rem] items-center justify-center z-20"
+      >
+        X
       </div>
-      <div class="py-1 w-[90%] flex justify-around">
-        <div class="w-[33%] text-left ml-2">
-          {{ petAgeType }} <span>({{ selectedPet.age }}yo)</span>
+      <div class="w-full">
+        <img src="" alt="pet_image" class="w-full max-h-[20rem] min-h-[1rem]" />
+      </div>
+      <div
+        class="flex-col bg-slate-200 w-full flex items-center justify-center py-4"
+      >
+        <div class="text-[2rem] font-bold">{{ selectedPet.name }}</div>
+        <hr class="w-[90%] my-2 border border-zinc-400" />
+        <div class="py-1">
+          {{ selectedPet.breed }}&nbsp; | &nbsp;{{ selectedPet.location }}
         </div>
-        <div class="w-[33%] text-center">{{ selectedPet.gender }}</div>
-        <div class="w-[33%] text-right mr-2">{{ selectedPet.weight }}kg</div>
+        <div class="py-1 w-[90%] flex justify-around">
+          <div class="w-[33%] text-left ml-2">
+            {{ petAgeType }} <span>({{ selectedPet.age }}yo)</span>
+          </div>
+          <div class="w-[33%] text-center">{{ selectedPet.gender }}</div>
+          <div class="w-[33%] text-right mr-2">{{ selectedPet.weight }}kg</div>
+        </div>
+        <div class="pt-4">
+          <Button>Adopt {{ selectedPet.name }}</Button>
+        </div>
       </div>
-      <div class="pt-4">
-        <Button>Adopt {{ selectedPet.name }}</Button>
+      <div class="w-full my-4 sticky top-[64px] z-10">
+        <Menubar>
+          <MenubarMenu>
+            <MenubarTrigger
+              class="hover:cursor-pointer"
+              v-on:click="toggleContent = false"
+              ><div class="">About</div></MenubarTrigger
+            >
+            <MenubarTrigger
+              class="hover:cursor-pointer"
+              v-on:click="toggleContent = true"
+              ><div class="">Agent or Shelter</div></MenubarTrigger
+            >
+            <MenubarTrigger
+              class="hover:cursor-pointer"
+              v-on:click="scrollToTop()"
+              ><div class="">Back to Start</div></MenubarTrigger
+            >
+          </MenubarMenu>
+        </Menubar>
       </div>
     </div>
-    <div class="w-full my-4 sticky top-[64px] z-10">
-      <Menubar>
-        <MenubarMenu>
-          <MenubarTrigger
-            class="hover:cursor-pointer"
-            v-on:click="toggleContent = false"
-            ><div class="">About</div></MenubarTrigger
-          >
-          <MenubarTrigger
-            class="hover:cursor-pointer"
-            v-on:click="toggleContent = true"
-            ><div class="">Agent or Shelter</div></MenubarTrigger
-          >
-          <MenubarTrigger
-            class="hover:cursor-pointer"
-            v-on:click="scrollToTop()"
-            ><div class="">Back to Start</div></MenubarTrigger
-          >
-        </MenubarMenu>
-      </Menubar>
-    </div>
-
     <!-- Pet Info -->
     <div v-show="!toggleContent" class="py-4 bg-slate-300 w-full p-4">
       <p class="text-[1.5rem] font-bold">About</p>

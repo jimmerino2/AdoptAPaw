@@ -4,11 +4,6 @@ import { ChevronsUpDown } from "lucide-vue-next";
 
 const { width } = useWindowSize();
 const isOpen = [ref(false), ref(false), ref(false), ref(false), ref(false)];
-
-definePageMeta({
-  middleware: ["auth"],
-});
-
 const user = useSupabaseUser();
 const router = useRouter();
 
@@ -57,7 +52,6 @@ function toProfile() {
             <SheetTrigger>
               <Avatar
                 class="size-12 bg-transparent"
-                v-on:click="toggleMenu"
                 :class="{ hidden: width >= 576 }"
               >
                 <AvatarImage src="/menu-icon.png" />
