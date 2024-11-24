@@ -1,19 +1,45 @@
 <script setup>
 import { useWindowSize } from "@vueuse/core";
 import { ChevronsUpDown } from "lucide-vue-next";
+import { useFetchData } from "@/composables/useFetchData";
 
 const { width } = useWindowSize();
 const isOpen = [ref(false), ref(false), ref(false), ref(false), ref(false)];
 const user = useSupabaseUser();
+
+const { fetchData, fetchImage, fetchUser } = useFetchData();
+
+const imageUrl = ref("");
+// Set Profile Icon
+onMounted(async () => {
+  if (!user.value) {
+    imageUrl.value = "/profile-icon.png";
+  } else {
+    const authUserData = await fetchUser();
+    const profileDetails = await fetchData("users", "*", [
+      "email",
+      authUserData.email,
+    ]);
+    const profile = profileDetails[0];
+
+    const profileImage = fetchImage(profile.imagepath);
+    imageUrl.value = profileImage;
+  }
+});
+
 const router = useRouter();
 
 function toProfile() {
-  !user.value ? router.push("/auth/login") : router.push("/auth/profile");
+  if (!user.value) {
+    router.push("/auth/login");
+  } else {
+    router.push("/auth/profile");
+  }
 }
 </script>
 
 <template>
-  <div class="sticky top-0 flex z-20 flex-col">
+  <div class="sticky top-0 flex z-20 flex-col m-0">
     <!-- Logo and Profile -->
     <div
       class="flex items-center h-24 bg-slate-500 custom-lg:px-[10vw] custom-md:px-[4vw] custom-sm:px-[4vw]"
@@ -37,7 +63,7 @@ function toProfile() {
                   class="size-12 mr-2 hover:cursor-pointer"
                   @click="toProfile"
                 >
-                  <AvatarImage src="/profile-icon.png" />
+                  <AvatarImage :src="imageUrl" />
                   <AvatarFallback>Profile</AvatarFallback>
                 </Avatar>
               </TooltipTrigger>
@@ -52,7 +78,7 @@ function toProfile() {
             <SheetTrigger>
               <Avatar
                 class="size-12 bg-transparent"
-                :class="{ hidden: width >= 576 }"
+                :class="{ hidden: width >= 625 }"
               >
                 <AvatarImage src="/menu-icon.png" />
                 <AvatarFallback>Profile</AvatarFallback>
@@ -67,6 +93,7 @@ function toProfile() {
                   </Avatar>
                   AdoptAPaw
                 </SheetTitle>
+                <SheetDescription />
               </SheetHeader>
 
               <Collapsible
@@ -83,7 +110,7 @@ function toProfile() {
                       variant="ghost"
                       size="sm"
                       class="w-9 p-0 bg-transparent"
-                      v-show="parent.childLinks != null"
+                      v-show="parent.childLinks.length > 0"
                     >
                       <ChevronsUpDown class="h-4 w-4" />
                       <span class="sr-only">Toggle</span>
@@ -105,30 +132,32 @@ function toProfile() {
 
     <!-- Menu for Desktop -->
     <div
-      class="bg-slate-300 custom-lg:px-[10vw] custom-md:px-[2vw] custom-md:flex py-2"
+      class="bg-slate-300 custom-lg:px-[10vw] custom-md:px-[2vw] custom-md:flex"
     >
       <Menubar
-        class="bg-slate-300 border-none flex w-full justify-between"
-        v-show="width >= 576"
+        class="bg-slate-300 border-none flex w-full justify-between py-2"
+        v-show="width >= 625"
       >
         <MenubarMenu v-for="(parent, index) in parentLinks" :key="index">
-          <MenubarTrigger
-            class="text-lg h-full hover:bg-slate-100 cursor-pointer"
-          >
-            <NuxtLink :to="parent.link">{{ parent.title }}</NuxtLink>
-          </MenubarTrigger>
+          <NuxtLink :to="parent.link">
+            <MenubarTrigger
+              class="text-lg h-full hover:bg-slate-100 cursor-pointer"
+            >
+              {{ parent.title }}
+            </MenubarTrigger>
+          </NuxtLink>
 
           <MenubarContent
-            class="p-0 bg-zinc-100"
+            class="p-0"
             :class="{
-              hidden: parent.childLinks === 'empty',
+              hidden: parent.childLinks.length == 0,
             }"
           >
             <MenubarItem
-              as-child
               v-for="(child, childIndex) in parent.childLinks"
               :key="childIndex"
-              class="p-4 hover:bg-zinc-200 text-md"
+              class="p-4 text-md"
+              as-child
             >
               <NuxtLink :to="child.link">{{ child.title }}</NuxtLink>
             </MenubarItem>
@@ -147,35 +176,22 @@ export default {
         {
           title: "Homepage",
           link: "/homepage",
-          childLinks: "empty",
+          childLinks: [],
         },
         {
-          title: "Adoptions",
-          link: null,
-          childLinks: [
-            {
-              title: "Find a Pet",
-              link: "/adoptions",
-            },
-            {
-              title: "Browse Shelters",
-              link: "/shelters",
-            },
-            {
-              title: "Tips for Adopting",
-              link: "/tips",
-            },
-          ],
+          title: "Adopt",
+          link: "/adoptions",
+          childLinks: [],
         },
         {
-          title: "Bookings",
-          link: "/bookings",
-          childLinks: "empty",
+          title: "Shelters",
+          link: "/shelters",
+          childLinks: [],
         },
         {
           title: "Donations",
           link: "/donation",
-          childLinks: "empty",
+          childLinks: [],
         },
         {
           title: "Support",

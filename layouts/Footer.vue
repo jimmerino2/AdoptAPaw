@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { useWindowSize } from "@vueuse/core";
 
 const { width } = useWindowSize();
@@ -21,6 +21,7 @@ const { width } = useWindowSize();
         class="border border-black my-2"
         :class="{ 'grid grid-cols-7 items-top p-4': width >= 768 }"
       >
+        <!-- Links -->
         <div
           :class="{
             'col-span-3 flex flex-row': width >= 768,
@@ -28,51 +29,21 @@ const { width } = useWindowSize();
           }"
         >
           <div
+            v-for="item in list"
             class="flex-grow text-md"
             :class="{
               'border border-black w-[100%] group relative': width < 768,
               'flex-grow text-md': width >= 768,
             }"
           >
-            <p class="text-lg">Title 1</p>
+            <p class="text-lg">{{ item.title }}</p>
             <ul :class="{ 'group-hover:block hidden': width < 768 }">
-              <li>Test1</li>
-              <li>Test1</li>
-              <li>Test1</li>
-              <li>Test1</li>
-            </ul>
-          </div>
-          <div
-            class="flex-grow text-md"
-            :class="{
-              'border border-black w-[100%] group relative': width < 768,
-              'flex-grow text-md': width >= 768,
-            }"
-          >
-            <p class="text-lg">Title 2</p>
-            <ul :class="{ 'group-hover:block hidden': width < 768 }">
-              <li>Test1</li>
-              <li>Test1</li>
-              <li>Test1</li>
-              <li>Test1</li>
-            </ul>
-          </div>
-          <div
-            class="flex-grow text-md"
-            :class="{
-              'border border-black w-[100%] group relative': width < 768,
-              'flex-grow text-md': width >= 768,
-            }"
-          >
-            <p class="text-lg">Title 3</p>
-            <ul :class="{ 'group-hover:block hidden': width < 768 }">
-              <li>Test1</li>
-              <li>Test1</li>
-              <li>Test1</li>
-              <li>Test1</li>
+              <li v-for="content in item.content">{{ content }}</li>
             </ul>
           </div>
         </div>
+
+        <!-- Donation -->
         <div
           class="bg-zinc-200 col-span-4 rounded-lg mx-4 px-10 flex items-center justify-center flex-col my-4"
         >
@@ -101,3 +72,29 @@ const { width } = useWindowSize();
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      list: [
+        {
+          title: "Title 1",
+          content: ["Item 1", "Item 2", "Item 3"],
+          links: [],
+        },
+        {
+          title: "Title 2",
+          content: ["Item 1", "Item 2", "Item 3"],
+          links: [],
+        },
+        {
+          title: "Title 3",
+          content: ["Item 1", "Item 2", "Item 3"],
+          links: [],
+        },
+      ],
+    };
+  },
+};
+</script>
