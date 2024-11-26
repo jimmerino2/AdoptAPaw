@@ -2,15 +2,12 @@
 import { ref } from "vue";
 import { useWindowSize } from "@vueuse/core";
 import { useFetchData } from "@/composables/useFetchData";
-const { fetchData } = useFetchData();
+const { fetchData, fetchImage } = useFetchData();
+
 const { width } = useWindowSize();
 
-// Steps for parsing props to child components
-// 1. Import the child component
-// 2. Define the props (ref) in the parent component
-// 3. Pass the props (ref) to the child component
-const petData = await fetchData("pets", "*");
-const agentData = await fetchData("agents", "*");
+const petData = await fetchData("pets");
+const agentData = await fetchData("agents");
 let selectedPet = ref({});
 let selectedAgent = ref({});
 const showDetails = ref(false);
@@ -47,7 +44,7 @@ const scrollToTop = () => {
   <!-- Pet Preview -->
   <div
     v-show="!showDetails"
-    class="h-fit py-4 flex flex-col items-center bg-slate-300 custom-lg:px-[10vw] custom-md:px-[4vw] custom-sm:px-[4vw]"
+    class="h-fit py-4 flex flex-col items-center bg-slate-200 custom-lg:px-[10vw] custom-md:px-[4vw] custom-sm:px-[4vw]"
   >
     <div class="mx-2 px-2 flex flex-col items-center py-8">
       <p class="text-[2.5rem]">Find a Pet</p>
@@ -83,15 +80,19 @@ const scrollToTop = () => {
   >
     <!-- Top Section-->
     <div class="w-full">
-      <div
-        v-on:click="showDetails = !showDetails"
-        class="bg-slate-100 hover:cursor-pointer size-[2rem] border border-black fixed right-2.5 top-[5.25rem] flex text-[2rem] items-center justify-center z-20"
-      >
-        X
+      <div class="w-full flex overflow-visible">
+        <div class="bg-slate-800 grow"></div>
+        <div class="h-full overflow-hidden bg-slate-200">
+          <img
+            :src="fetchImage(selectedPet.imagepath)"
+            alt="pet_image"
+            class="w-auto min-h-[16rem] max-h-[20rem]"
+          />
+        </div>
+
+        <div class="bg-slate-800 grow"></div>
       </div>
-      <div class="w-full">
-        <img src="" alt="pet_image" class="w-full max-h-[20rem] min-h-[1rem]" />
-      </div>
+
       <div
         class="flex-col bg-slate-200 w-full flex items-center justify-center py-4"
       >
@@ -111,27 +112,21 @@ const scrollToTop = () => {
           <Button>Adopt {{ selectedPet.name }}</Button>
         </div>
       </div>
-      <div class="w-full my-4 sticky top-[64px] z-10">
-        <Menubar>
-          <MenubarMenu>
-            <MenubarTrigger
-              class="hover:cursor-pointer"
-              v-on:click="toggleContent = false"
-              ><div class="">About</div></MenubarTrigger
-            >
-            <MenubarTrigger
-              class="hover:cursor-pointer"
-              v-on:click="toggleContent = true"
-              ><div class="">Agent or Shelter</div></MenubarTrigger
-            >
-            <MenubarTrigger
-              class="hover:cursor-pointer"
-              v-on:click="scrollToTop()"
-              ><div class="">Back to Start</div></MenubarTrigger
-            >
-          </MenubarMenu>
-        </Menubar>
-      </div>
+
+      <Menubar class="w-full top-14 py-5 z-10">
+        <MenubarMenu>
+          <MenubarTrigger
+            class="hover:cursor-pointer"
+            v-on:click="toggleContent = false"
+            ><div class="">About</div></MenubarTrigger
+          >
+          <MenubarTrigger
+            class="hover:cursor-pointer"
+            v-on:click="toggleContent = true"
+            ><div class="">Agent or Shelter</div></MenubarTrigger
+          >
+        </MenubarMenu>
+      </Menubar>
     </div>
     <!-- Pet Info -->
     <div v-show="!toggleContent" class="py-4 bg-slate-300 w-full p-4">
@@ -162,7 +157,17 @@ const scrollToTop = () => {
         </li>
       </ul>
     </div>
+    <Button
+      v-on:click="showDetails = !showDetails"
+      class="hover:cursor-pointer fixed bottom-[10px] right-[10px] flex size-[ items-center justify-center z-20"
+      >Back to Listings</Button
+    >
 
+    <Button
+      v-on:click="scrollToTop()"
+      class="hover:cursor-pointer fixed bottom-[60px] right-[10px] flex size-[ items-center justify-center z-20"
+      >Back to Top</Button
+    >
     <!-- Agent Info-->
     <div v-show="toggleContent" class="py-4 bg-slate-300 w-full p-4">
       <p class="text-[1.5rem] font-bold">{{}}</p>

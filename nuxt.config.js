@@ -1,4 +1,4 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
+// nuxt.config.ts
 export default defineNuxtConfig({
   compatibilityDate: "2024-04-03",
   devtools: { enabled: false },
@@ -10,9 +10,14 @@ export default defineNuxtConfig({
       { path: "~/composables", extensions: ["vue"], pathPrefix: true },
     ],
   },
-
   modules: ["@nuxtjs/tailwindcss", "shadcn-nuxt", "@nuxtjs/supabase"],
+  runtimeConfig: {
+    public: {
+      supabaseUrl: process.env.SUPABASE_URL,
+      supabaseKey: process.env.SUPABASE_KEY,
+    },
+  },
   supabase: {
-    redirect: false,
+    redirect: false, // Disable redirects for auth by default
   },
 });

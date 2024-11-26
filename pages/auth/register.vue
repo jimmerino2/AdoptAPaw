@@ -1,27 +1,131 @@
 <script setup>
-const client = useSupabaseClient();
+import { useFormValidation } from "~/composables/useFormValidation";
 
-const email = ref("");
-const password = ref(null);
-const errorMsg = ref(null);
-const successMsg = ref(null);
+const { valContact } = useFormValidation();
+const client = useSupabaseClient();
 
 definePageMeta({
   layout: "forms",
 });
 
+const errorMsg = ref(null);
+const successMsg = ref(null);
+const formData = ref({
+  name: "",
+  email: "",
+  password: "",
+  address: "",
+  contact: "",
+});
+
 async function signUp() {
   try {
-    const { data, error } = await client.auth.signUp({
-      email: email.value,
-      password: password.value,
-    });
-    if (error) throw error;
-    successMsg.value = "Check your email to confirm your account.";
+    // Reset any previous messages
+    errorMsg.value = null;
+    successMsg.value = null;
+
+    if (!valContact(formData.value.contact)) {
+      errorMsg.value = "Invalid Contact Number";
+    } else {
+      // 1. Sign up account
+      const { error } = await client.auth.signUp({
+        email: formData.value.email,
+        password: formData.value.password,
+        options: {
+          emailRedirectTo: "http://localhost:3000/auth/email_verification",
+        },
+      });
+      if (error) throw error;
+
+      await storeUnverifiedUserData();
+    }
   } catch (error) {
     errorMsg.value = error.message;
   }
 }
+
+async function storeUnverifiedUserData() {
+  try {
+    // Check if the email already exists in the users table
+    const { data: existingUser, error: fetchError } = await client
+      .from("users")
+      .select("*")
+      .eq("email", formData.value.email)
+      .single();
+
+    // Handle case where no user is found for the given email
+    if (fetchError && fetchError.code !== "PGRST116") {
+      throw fetchError;
+    }
+
+    if (existingUser) {
+      errorMsg.value =
+        "Email is already registered or pending for verification.";
+    } else {
+      // Insert the new user data, including the authenticated userId
+      const { error } = await client.from("users").insert([
+        {
+          name: formData.value.name,
+          email: formData.value.email,
+          contact: formData.value.contact,
+          address: formData.value.address,
+          verified: false,
+        },
+      ]);
+
+      if (error) throw error;
+      successMsg.value = "Check your email for verification.";
+    }
+  } catch (error) {
+    successMsg.value = "";
+    if (
+      error.message ==
+      `duplicate key value violates unique constraint "users_email_key"`
+    ) {
+      errorMsg.value = "Email is already pending for verification.";
+    } else {
+      errorMsg.value = error.message;
+    }
+  }
+}
+
+const inputList = [
+  {
+    label: "Username",
+    type: "text",
+    id: "name",
+    placeholder: "Enter your username",
+    model: "name", // Used for v-model binding
+  },
+  {
+    label: "Email",
+    type: "email",
+    id: "email",
+    placeholder: "Enter your email",
+    model: "email", // Used for v-model binding
+  },
+  {
+    label: "Password",
+    type: "password",
+    id: "password",
+    placeholder: "Enter your password",
+    model: "password",
+  },
+  {
+    label: "Address",
+    type: "text",
+    id: "address",
+    placeholder: "Optional: Enter - if rather not say",
+    model: "address",
+  },
+  {
+    label: "Contact Number",
+    type: "tel",
+    id: "contact",
+    placeholder: "Enter your contact number",
+    model: "contact",
+  },
+];
 </script>
 
 <template>
@@ -31,29 +135,16 @@ async function signUp() {
     </CardHeader>
     <form @submit.prevent="signUp">
       <CardContent class="max-w-[450px] justify-self-center grow w-[90%]">
-        <div class="mb-4">
-          <label for="email" class="block text-sm font-medium">Email</label>
+        <div v-for="item in inputList" :key="item.id" class="mb-4">
+          <label :for="item.id" class="block text-sm font-medium">
+            {{ item.label }}
+          </label>
           <input
-            v-model="email"
-            type="email"
-            id="email"
+            v-model="formData[item.model]"
+            :type="item.type"
+            :id="item.id"
+            :placeholder="item.placeholder"
             class="mt-1 p-2 border border-gray-300 rounded w-full"
-            placeholder="Enter your email"
-            required
-          />
-        </div>
-
-        <!-- Password Input -->
-        <div class="mb-4">
-          <label for="password" class="block text-sm font-medium"
-            >Password</label
-          >
-          <input
-            v-model="password"
-            type="password"
-            id="password"
-            class="mt-1 p-2 border border-gray-300 rounded w-full"
-            placeholder="Enter your password"
             required
           />
         </div>

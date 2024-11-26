@@ -1,11 +1,12 @@
 <script setup>
 import { useWindowSize } from "@vueuse/core";
-import { ChevronsUpDown } from "lucide-vue-next";
+import { ChevronsUpDown, User } from "lucide-vue-next";
 import { useFetchData } from "@/composables/useFetchData";
 
 const { width } = useWindowSize();
 const isOpen = [ref(false), ref(false), ref(false), ref(false), ref(false)];
 const user = useSupabaseUser();
+const router = useRouter();
 
 const { fetchData, fetchImage, fetchUser } = useFetchData();
 
@@ -13,7 +14,7 @@ const imageUrl = ref("");
 // Set Profile Icon
 onMounted(async () => {
   if (!user.value) {
-    imageUrl.value = "/profile-icon.png";
+    imageUrl.value = ""; // No path if not logged in
   } else {
     const authUserData = await fetchUser();
     const profileDetails = await fetchData("users", "*", [
@@ -22,13 +23,21 @@ onMounted(async () => {
     ]);
     const profile = profileDetails[0];
 
-    const profileImage = fetchImage(profile.imagepath);
-    imageUrl.value = profileImage;
+    if (profile.imagepath == null) {
+      imageUrl.value = "/profile-icon.png";
+    } else {
+      const profileImage = fetchImage(profile.imagepath);
+      imageUrl.value = profileImage;
+    }
   }
 });
 
-const router = useRouter();
+// Change between Button and Profile icon
+const isUserLoggedIn = computed(() => {
+  return user.value !== null && user.value !== undefined;
+});
 
+// Redirect for Profile
 function toProfile() {
   if (!user.value) {
     router.push("/auth/login");
@@ -62,10 +71,19 @@ function toProfile() {
                 <Avatar
                   class="size-12 mr-2 hover:cursor-pointer"
                   @click="toProfile"
+                  v-show="isUserLoggedIn"
                 >
                   <AvatarImage :src="imageUrl" />
                   <AvatarFallback>Profile</AvatarFallback>
                 </Avatar>
+
+                <Button
+                  v-show="!isUserLoggedIn"
+                  @click="toProfile"
+                  class="self-center mx-2"
+                >
+                  Log In
+                </Button>
               </TooltipTrigger>
               <TooltipContent>
                 <p>Go to Profile</p>
