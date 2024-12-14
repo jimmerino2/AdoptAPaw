@@ -20,4 +20,9 @@ export default defineNuxtConfig({
   supabase: {
     redirect: false, // Disable redirects for auth by default
   },
+  app: {
+    head: {
+      link: [{ rel: "icon", type: "image/x-icon", href: "/logo_v1.png" }],
+    },
+  },
 });
