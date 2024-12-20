@@ -124,7 +124,7 @@ const formData = ref({
 
 async function submitForm() {
   try {
-    const validated = ref(false);
+    const validated = ref(true);
     let inputDate = formData.value.date;
     inputDate = new Date(inputDate);
     minDate = new Date(minDate);
@@ -139,7 +139,9 @@ async function submitForm() {
       )
     ) {
       errorMsg.value = "Date did not meet the acceptable range.";
+      validated.value(false);
     }
+
     if (agentData.type == "Shelter") {
       // Check if date fits shelter schedule
 
@@ -155,6 +157,7 @@ async function submitForm() {
       const dayName = daysOfWeek[inputDate.getDay()];
       const [hours, minutes] = inputTime.split(":");
       const testTime = parseInt(hours) + parseInt(minutes) / 60;
+      validated.value = false;
 
       workingHrs.value.forEach((item) => {
         if (
@@ -165,21 +168,21 @@ async function submitForm() {
           validated.value = true;
         }
       });
-      if (!validated) {
+      if (!validated.value) {
         errorMsg.value = "Shelter is not available at that time or day.";
-        console.log(dayName, item.day);
-        console.log(inputTime, "> " + item.min);
-        console.log(inputTime, "< " + item.max);
       }
     }
 
     if (validated.value) {
+      const newDate = new Date(inputDate).toISOString().slice(0, 10);
+      const newTime = inputTime + ":00";
+      const datetime = newDate + " " + newTime;
       const { error } = await client.from("appointments").insert([
         {
           petid: petData.id,
           userid: userData.id,
-          date: inputDate,
-          start_time: inputTime,
+          date: datetime,
+          approved: false,
         },
       ]);
       if (error) throw error;
