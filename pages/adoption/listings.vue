@@ -36,7 +36,6 @@ const scrollToTop = () => {
     top: 0,
     behavior: "smooth",
   });
-  console.log("Scrolled!");
 };
 </script>
 
@@ -108,9 +107,15 @@ const scrollToTop = () => {
           <div class="w-[33%] text-center">{{ selectedPet.gender }}</div>
           <div class="w-[33%] text-right mr-2">{{ selectedPet.weight }}kg</div>
         </div>
-        <div class="pt-4">
-          <Button>Adopt {{ selectedPet.name }}</Button>
-        </div>
+
+        <NuxtLink
+          :to="{
+            path: '/adoption/schedule',
+            query: { petId: selectedPet.id },
+          }"
+        >
+          <Button class="mt-4">Adopt {{ selectedPet.name }}</Button>
+        </NuxtLink>
       </div>
 
       <Menubar class="w-full top-14 py-5 z-10">
@@ -128,22 +133,23 @@ const scrollToTop = () => {
         </MenubarMenu>
       </Menubar>
     </div>
+
     <!-- Pet Info -->
     <div v-show="!toggleContent" class="py-4 bg-slate-300 w-full p-4">
       <p class="text-[1.5rem] font-bold">About</p>
       <p class="pt-2 text-[1rem] font-bold">Description</p>
-      <p class="pt-1 text-[0.9rem]">{{ selectedPet.desc }}</p>
+      <p class="pt-1 text-[0.9rem]">{{ selectedPet.description }}</p>
 
       <!-- Health and Training -->
       <p class="pt-2 text-[1rem] font-bold">Health and Training</p>
       <p class="pt-1 text-[0.9rem]">(WIP) isVaccinated</p>
       <p class="pt-1 text-[0.9rem]">(WIP) isSpayed</p>
       <p class="pt-1 text-[0.9rem]">
-        The pet has a coat length of {{ selectedPet.coatLength }}cm.
+        The pet has a coat length of {{ selectedPet.coatlength }}cm.
       </p>
       <p class="pt-1 text-[0.9rem]">
         This pet is
-        <span v-show="!selectedPet.isToiletTrained">NOT</span> toilet trained.
+        <span v-show="!selectedPet.istoilettrained">NOT</span> toilet trained.
       </p>
 
       <!-- Personality -->
@@ -157,20 +163,42 @@ const scrollToTop = () => {
         </li>
       </ul>
     </div>
+
+    <!-- Agent Info-->
+    <div v-show="toggleContent" class="py-4 bg-slate-300 w-full p-4">
+      <p class="text-[1.5rem] font-bold">Agent</p>
+      <p class="pt-2 text-[1rem] font-bold">Description</p>
+      <p class="pt-1 text-[0.9rem]">{{ selectedAgent.description }}</p>
+      <p class="pt-2 text-[1rem] font-bold">Mission</p>
+      <p class="pt-1 text-[0.9rem]">{{ selectedAgent.mission }}</p>
+
+      <!-- Address -->
+      <p class="pt-2 text-[1rem] font-bold">Address</p>
+      <p class="pt-1 text-[0.9rem]">{{ selectedAgent.address }}</p>
+
+      <!-- Contact -->
+      <p class="pt-2 text-[1rem] font-bold">Contact</p>
+      <p class="pt-1 text-[0.9rem]">Email: {{ selectedAgent.email }}</p>
+      <p class="pt-1 text-[0.9rem]">Number: +{{ selectedAgent.contact }}</p>
+
+      <div v-show="selectedAgent.type == 'Shelter'">
+        <p class="pt-2 text-[1rem] font-bold">Working Hours</p>
+        <p class="pt-1 text-[0.9rem]" v-for="hours in selectedAgent.workinghrs">
+          {{ hours }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Fixed Buttons -->
     <Button
       v-on:click="showDetails = !showDetails"
       class="hover:cursor-pointer fixed bottom-[10px] right-[10px] flex size-[ items-center justify-center z-20"
       >Back to Listings</Button
     >
-
     <Button
       v-on:click="scrollToTop()"
       class="hover:cursor-pointer fixed bottom-[60px] right-[10px] flex size-[ items-center justify-center z-20"
       >Back to Top</Button
     >
-    <!-- Agent Info-->
-    <div v-show="toggleContent" class="py-4 bg-slate-300 w-full p-4">
-      <p class="text-[1.5rem] font-bold">{{}}</p>
-    </div>
   </div>
 </template>

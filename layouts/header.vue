@@ -198,7 +198,7 @@ export default {
         },
         {
           title: "Adopt",
-          link: "/adoptions",
+          link: "/adoption/listings",
           childLinks: [],
         },
         {

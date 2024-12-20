@@ -26,12 +26,7 @@ const { width } = useWindowSize();
         'grid-rows-2 gap-2': width < 1000,
       }"
     >
-      <NuxtLink
-        v-for="(item, index) in cards"
-        :key="index"
-        :to="item.link"
-        class="your-classes-here"
-      >
+      <NuxtLink v-for="(item, index) in cards" :key="index" :to="item.link">
         <div
           class="flex m-2 items-center justify-center bg-slate-200 flex-col text-xl font-bold"
           :class="{
@@ -58,22 +53,23 @@ export default {
         {
           label: "Adopt",
           img: "/homepage_adopt.png",
-          link: "adoptions",
+          link: "/adoption/listings",
         },
         {
           label: "Shelters",
           img: "/homepage_shelter.png",
-          link: "shelters",
+          link: "/shelters",
         },
+
         {
           label: "FAQ",
           img: "/homepage_faq.png",
-          link: "faq",
+          link: "/faq",
         },
         {
           label: "Donate",
           img: "/homepage_donate.png",
-          link: "donation",
+          link: "/donation",
         },
       ],
     };
