@@ -42,7 +42,7 @@ function toProfile() {
   if (!user.value) {
     router.push("/auth/login");
   } else {
-    router.push("/auth/profile");
+    router.push("/profile/appointments");
   }
 }
 </script>

@@ -9,6 +9,7 @@ export function useFetchData() {
           .from(table)
           .select(cols)
           .eq(condition1[0], condition1[1]);
+
         if (error) {
           throw new Error(
             `Error fetching data from ${table}: ${error.message}`

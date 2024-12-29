@@ -6,6 +6,7 @@ const { fetchData, fetchImage } = useFetchData();
 
 const { width } = useWindowSize();
 
+const user = useSupabaseUser();
 const petData = await fetchData("pets");
 const agentData = await fetchData("agents");
 let selectedPet = ref({});
@@ -200,5 +201,17 @@ const scrollToTop = () => {
       class="hover:cursor-pointer fixed bottom-[60px] right-[10px] flex size-[ items-center justify-center z-20"
       >Back to Top</Button
     >
+  </div>
+
+  <div
+    class="fixed bottom-[32px] right-[10px]"
+    v-show="showDetails == false && user"
+  >
+    <NuxtLink to="/profile/appointments">
+      <Avatar class="size-20 p-3 bg-slate-400">
+        <AvatarImage src="/appointments_icon.png" />
+        <AvatarFallback>Appointments</AvatarFallback>
+      </Avatar>
+    </NuxtLink>
   </div>
 </template>

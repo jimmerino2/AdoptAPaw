@@ -16,20 +16,26 @@ const user = useSupabaseUser();
 const client = useSupabaseClient();
 
 // #region Data Fetching
-// Pet Data
 const petId = route.query.petId;
-const fetchedPetData = await fetchData("pets", "id, agentid, imagepath, name", [
-  "id",
+const fetchedAppointmentData = await fetchData("appointments", "pets(id)", [
+  "petid",
   petId,
 ]);
-const petData = fetchedPetData[0];
 
-// Agent Data
-const fetchedAgentData = await fetchData("agents", "*", [
-  "id",
-  petData.agentid,
+const fetchedPetData = await fetchData(
+  "pets",
+  "id, agentid, imagepath, name, agents(*)",
+  ["id", petId]
+);
+
+const fetchedUserData = await fetchData("users", "id", [
+  "user_id",
+  user.value.id,
 ]);
-const agentData = fetchedAgentData[0];
+
+const userId = fetchedUserData[0].id;
+const petData = fetchedPetData[0];
+const agentData = fetchedPetData[0].agents;
 
 const convertTime = (string) => {
   const minHr = string.split("-")[0];
@@ -75,13 +81,6 @@ if (agentData.type === "Shelter") {
     }
   });
 }
-
-// User Data
-const fetchedUserData = await fetchData("users", "id", [
-  "user_id",
-  user.value.id,
-]);
-const userData = fetchedUserData[0];
 // #endregion
 
 // #region Form Input
@@ -92,8 +91,8 @@ function addDays(date, days) {
   return newDate;
 }
 
-let minDate = addDays(today, 1).toISOString().slice(0, 10);
-let maxDate = addDays(today, 22).toISOString().slice(0, 10);
+let minDate = addDays(today, 3).toISOString().slice(0, 10);
+let maxDate = addDays(today, 25).toISOString().slice(0, 10);
 
 const inputList = ref([
   {
@@ -131,20 +130,25 @@ async function submitForm() {
     maxDate = new Date(maxDate);
     let inputTime = formData.value.time;
 
+    // Check if date is out of range
     if (
-      // Check if date is out of range
       !(
         inputDate.getTime() >= minDate.getTime() &&
         inputDate.getTime() <= maxDate.getTime()
       )
     ) {
       errorMsg.value = "Date did not meet the acceptable range.";
-      validated.value(false);
+      validated.value = false;
     }
 
-    if (agentData.type == "Shelter") {
-      // Check if date fits shelter schedule
+    // Check if appointment exists
+    if (fetchedAppointmentData[0] !== undefined) {
+      errorMsg.value = "An appointment has already been scheduled.";
+      validated.value = false;
+    }
 
+    // Check if date fits shelter schedule
+    if (agentData.type == "Shelter") {
       const daysOfWeek = [
         "Sunday",
         "Monday",
@@ -173,6 +177,7 @@ async function submitForm() {
       }
     }
 
+    // Run if validated
     if (validated.value) {
       const newDate = new Date(inputDate).toISOString().slice(0, 10);
       const newTime = inputTime + ":00";
@@ -180,9 +185,8 @@ async function submitForm() {
       const { error } = await client.from("appointments").insert([
         {
           petid: petData.id,
-          userid: userData.id,
+          userid: userId,
           date: datetime,
-          approved: false,
         },
       ]);
       if (error) throw error;
@@ -253,20 +257,26 @@ async function submitForm() {
               required
             />
           </div>
+          <p v-if="errorMsg" class="text-red-500 text-sm mb-4 grow">
+            {{ errorMsg }}
+          </p>
         </div>
         <!-- #endregion -->
       </CardContent>
 
       <CardFooter class="w-full inline-block">
-        <p v-if="errorMsg" class="text-red-500 text-sm mb-4 grow">
-          {{ errorMsg }}
-        </p>
-        <div class="justify-center flex grow">
+        <div
+          class="justify-center flex grow"
+          :class="{ 'flex-col items-center': width <= 576 }"
+        >
+          <Button as-child class="w-[60%] m-2 max-w-[225px] py-2"
+            ><NuxtLink to="/adoption/listings">Back</NuxtLink></Button
+          >
           <button
             type="submit"
-            class="w-[80%] max-w-[225px] py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            class="w-[60%] m-2 max-w-[225px] py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
-            Sign Up
+            Make Appoinment
           </button>
         </div>
       </CardFooter>

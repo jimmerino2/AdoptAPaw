@@ -14,7 +14,6 @@ const formData = ref({
   name: "",
   email: "",
   password: "",
-  address: "",
   contact: "",
 });
 
@@ -68,7 +67,6 @@ async function storeUnverifiedUserData() {
           name: formData.value.name,
           email: formData.value.email,
           contact: formData.value.contact,
-          address: formData.value.address,
           verified: false,
         },
       ]);
@@ -110,13 +108,6 @@ const inputList = [
     id: "password",
     placeholder: "Enter your password",
     model: "password",
-  },
-  {
-    label: "Address",
-    type: "text",
-    id: "address",
-    placeholder: "Optional: Enter - if rather not say",
-    model: "address",
   },
   {
     label: "Contact Number",
