@@ -1,6 +1,5 @@
 <script setup>
 import { useFetchData } from "@/composables/useFetchData";
-import { useUploadImage } from "@/composables/useUploadImage";
 import { useWindowSize } from "@vueuse/core";
 definePageMeta({
   middleware: ["auth"],

@@ -41,7 +41,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="mt-10" :class="{ 'w-[350px]': width >= 1024 }">
+  <div class="mt-10" :class="{ 'min-w-[350px]': width >= 1024 }">
     <Card class="m-6 bg-slate-300">
       <CardHeader class="relative">
         <CardTitle class="flex flex-col items-center">
@@ -74,6 +74,12 @@ onMounted(async () => {
         <NuxtLink to="/profile/appointments" class="px-4 bg-slate-400 w-full">
           <div class="flex items-center justify-between w-full my-2">
             <p>View Appointments</p>
+            <img class="size-4" src="/public/right_arrow.png" />
+          </div>
+        </NuxtLink>
+        <NuxtLink to="/profile/favorites" class="px-4 bg-slate-300 w-full">
+          <div class="flex items-center justify-between w-full my-2">
+            <p>View Favorites</p>
             <img class="size-4" src="/public/right_arrow.png" />
           </div>
         </NuxtLink>
