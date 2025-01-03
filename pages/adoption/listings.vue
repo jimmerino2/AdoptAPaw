@@ -46,6 +46,7 @@ if (!userData.value) {
 }
 // #endregion
 
+// #region Local Functions
 const handlePetDetails = (pet) => {
   selectedPet = pet;
   selectedAgent = agentData.find((agent) => agent.id === pet.agentid);
@@ -102,6 +103,7 @@ async function updateUserData() {
   fetchedUserData.value = await fetchData("users");
   userData.value = fetchedUserData.value[0];
 }
+// #endregion
 
 // #region Search and Filtering
 const formData = ref({});
@@ -241,17 +243,19 @@ async function submitForm() {
     const isVaccinatedMatch =
       booleans[1].value === null ||
       booleans[1].value === undefined ||
-      pet.medicalrecord.some(
-        (record) => record.isvaccinated === booleans[1].value
-      );
+      (booleans[1].value === true
+        ? pet.medicalrecord?.some((record) => record.isvaccinated === true)
+        : !pet.medicalrecord ||
+          pet.medicalrecord.every((record) => record.isvaccinated === false));
 
     // Neutered
     const isNeuteredMatch =
       booleans[2].value === null ||
       booleans[2].value === undefined ||
-      pet.medicalrecord.some(
-        (record) => record.isneutered === booleans[2].value
-      );
+      (booleans[2].value == true
+        ? pet.medicalrecord?.some((record) => record.isneutered === true)
+        : !pet.medicalrecord ||
+          pet.medicalrecord.every((record) => record.isneutered === false));
     return isVaccinatedMatch && isNeuteredMatch;
   });
   petData.value = filteredPets;
@@ -267,6 +271,7 @@ async function resetForm() {
   formData.value.vaccine = "";
   formData.value.neuter = "";
 }
+// #endregion
 </script>
 
 <template>
@@ -284,7 +289,7 @@ async function resetForm() {
     </div>
 
     <!-- Search and Filter -->
-    <div class="w-full border border-black my-6 p-2 max-w-[1300px] flex">
+    <div class="w-full my-6 p-2 max-w-[1300px] flex">
       <input
         type="text"
         v-model="formData.name"
@@ -296,7 +301,7 @@ async function resetForm() {
         <SheetTrigger as-child>
           <Button class="ml-4">Filter</Button>
         </SheetTrigger>
-        <SheetContent class="bg-slate-100">
+        <SheetContent class="bg-slate-100 overflow-scroll">
           <SheetHeader>
             <SheetTitle>Filter Options</SheetTitle>
             <SheetDescription
@@ -318,10 +323,14 @@ async function resetForm() {
               </select>
             </div>
             <SheetFooter>
-              <Button class="p-4 bg-slate-200" @click="resetForm()"
-                >Clear</Button
-              >
-              <Button type="submit" class="p-4 bg-slate-300">Filter</Button>
+              <div class="flex justify-around">
+                <Button class="mx-8 px-8 bg-slate-200 grow" @click="resetForm()"
+                  >Clear</Button
+                >
+                <Button type="submit" class="mx-8 px-8 bg-slate-300 grow"
+                  >Filter</Button
+                >
+              </div>
             </SheetFooter>
           </form>
         </SheetContent>
@@ -513,7 +522,7 @@ async function resetForm() {
   <!-- Appointments -->
   <div
     class="fixed bottom-[32px] right-[10px]"
-    v-show="showDetails == false && pageUser.value"
+    v-show="!showDetails && pageUser"
   >
     <NuxtLink to="/profile/appointments">
       <Avatar class="size-20 p-3 bg-slate-400">
