@@ -5,8 +5,10 @@ import { useWindowSize } from "@vueuse/core";
 
 const { width } = useWindowSize();
 const { uploadImage } = useUploadImage();
-const { fetchData, fetchImage, fetchUser } = useFetchData();
+const { fetchData, fetchUser } = useFetchData();
 
+const user = useSupabaseUser();
+const client = useSupabaseClient();
 const authUserData = await fetchUser();
 const profileDetails = await fetchData("users", "*", [
   "email",
@@ -14,7 +16,6 @@ const profileDetails = await fetchData("users", "*", [
 ]);
 const profile = profileDetails[0];
 const errorMsg = ref(null);
-
 const selectedFile = ref(null);
 
 const changeProfileImage = async (event) => {
@@ -40,34 +41,46 @@ const changeProfileImage = async (event) => {
     "users",
     true
   );
-  console.log("Profile Picture Changed");
+
   window.location.reload();
 };
 
 const formData = ref({
-  name: "",
-  contact: "",
+  name: profile.name,
+  contact: profile.contact,
 });
 
 async function submitForm() {
   try {
-    const validated = ref(true);
-    const nameRegEx = /^[a-zA-Z_]{6,30}$/;
+    const nameRegEx = /^[a-zA-Z_]{6,15}$/;
+    const contactRegEx = /^[0][1][0-9]{8,9}$/;
 
-    // Check if fields are filled
-    if (
-      formData.value.name === undefined ||
-      formData.value.contact === undefined
-    ) {
+    // Checking
+    if (!formData.value.name || !formData.value.contact) {
       errorMsg.value = "All fields must be filled in.";
-      validated.value = false;
+    } else if (!nameRegEx.test(formData.value.name)) {
+      errorMsg.value = "Name must have 6 to 15 alphabetical characters.";
+    } else if (!contactRegEx.test(formData.value.contact)) {
+      errorMsg.value = "Invalid Malaysian contact format.";
+    } else {
+      errorMsg.value = "";
+      const { error } = await client
+        .from("users")
+        .update({
+          name: formData.value.name,
+          contact: formData.value.contact,
+        })
+        .eq("user_id", user.value.id)
+        .select();
+
+      if (error) throw error;
+      if (!error) {
+        window.location.reload();
+      }
     }
-    // Check name format
-    else if (!nameRegEx.test(formData.value.name)) {
-      errorMsg.value = "Name must have 5 to 30 alphabetical characters.";
-      validated.value = false;
-    }
-  } catch (error) {}
+  } catch (error) {
+    errorMsg.value = error;
+  }
 }
 </script>
 
@@ -115,7 +128,7 @@ async function submitForm() {
             </div>
           </CardContent>
           <CardFooter
-            class="bg-slate-200 flex justify-end items-center py-0 h-16"
+            class="bg-slate-200 flex justify-end items-center py-0 h-24"
           >
             <Button class="max-w-32 mr-2" as-child>
               <label for="new_pfp" class="cursor-pointer">
