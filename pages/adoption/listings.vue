@@ -18,7 +18,7 @@ petData.value = await fetchData("pets", "*, medicalrecord(*)", [
 ]);
 
 const agentData = await fetchData("agents");
-const fetchedUserData = ref("[]");
+const fetchedUserData = ref([]);
 fetchedUserData.value = await fetchData("users");
 const userData = ref("{}");
 userData.value = fetchedUserData.value[0];
@@ -394,35 +394,41 @@ async function resetForm() {
     v-show="showDetails"
     class="h-full flex flex-col items-center bg-slate-100 custom-lg:px-[10vw] custom-md:px-[4vw]"
   >
+    <!-- Image Section-->
+    <div class="w-full flex overflow-visible">
+      <div class="bg-slate-800 grow"></div>
+      <div class="h-full overflow-hidden bg-slate-200">
+        <img
+          :src="fetchImage(selectedPet.imagepath)"
+          alt="pet_image"
+          class="w-auto min-h-[16rem] max-h-[20rem]"
+        />
+      </div>
+      <div class="bg-slate-800 grow"></div>
+    </div>
+
     <!-- Top Section-->
     <div class="w-full">
-      <div class="w-full flex overflow-visible">
-        <div class="bg-slate-800 grow"></div>
-        <div class="h-full overflow-hidden bg-slate-200">
-          <img
-            :src="fetchImage(selectedPet.imagepath)"
-            alt="pet_image"
-            class="w-auto min-h-[16rem] max-h-[20rem]"
-          />
-        </div>
-
-        <div class="bg-slate-800 grow"></div>
-      </div>
-
       <div
         class="flex-col bg-slate-200 w-full flex items-center justify-center py-4"
       >
         <div class="text-[2rem] font-bold">{{ selectedPet.name }}</div>
         <hr class="w-[90%] my-2 border border-zinc-400" />
-        <div class="py-1">
-          {{ selectedPet.breed }}&nbsp; | &nbsp;{{ selectedPet.location }}
+        <div class="py-1 flex text-lg">
+          <img
+            v-if="selectedPet.gender == 'Female'"
+            src="/public/gender_f.png"
+            class="size-8 mr-2"
+          />
+          <img
+            v-if="selectedPet.gender == 'Male'"
+            src="/public/gender_m.png"
+            class="size-8 mr-2"
+          />
+          {{ selectedPet.breed }}
         </div>
-        <div class="py-1 w-[90%] flex justify-around">
-          <div class="w-[33%] text-left ml-2">
-            {{ petAgeType }} <span>({{ selectedPet.age }}yo)</span>
-          </div>
-          <div class="w-[33%] text-center">{{ selectedPet.gender }}</div>
-          <div class="w-[33%] text-right mr-2">{{ selectedPet.weight }}kg</div>
+        <div class="py-1 w-full justify-center flex">
+          {{ petAgeType }} <span>&nbsp;({{ selectedPet.age }}yo)</span>
         </div>
 
         <NuxtLink
@@ -435,7 +441,7 @@ async function resetForm() {
         </NuxtLink>
       </div>
 
-      <Menubar class="w-full top-14 py-5 z-10">
+      <Menubar class="w-full top-14 py-5 z-10" v-show="width <= 768">
         <MenubarMenu>
           <MenubarTrigger
             class="hover:cursor-pointer"
@@ -451,58 +457,130 @@ async function resetForm() {
       </Menubar>
     </div>
 
-    <!-- Pet Info -->
-    <div v-show="!toggleContent" class="py-4 bg-slate-300 w-full p-4">
-      <p class="text-[1.5rem] font-bold">About</p>
-      <p class="pt-2 text-[1rem] font-bold">Description</p>
-      <p class="pt-1 text-[0.9rem]">{{ selectedPet.description }}</p>
+    <!-- Details Section -->
+    <div class="w-full" :class="{ flex: width > 768 }">
+      <!-- Pet Info -->
+      <div
+        v-show="!toggleContent || width > 768"
+        class="py-4 bg-slate-300 w-full p-4"
+      >
+        <p class="text-2xl font-bold">Pet</p>
+        <!-- Description -->
+        <p class="pt-2 text-xl font-bold">Description</p>
+        <p class="pt-1 text-md">{{ selectedPet.description }}</p>
 
-      <!-- Health and Training -->
-      <p class="pt-2 text-[1rem] font-bold">Health and Training</p>
-      <p class="pt-1 text-[0.9rem]">(WIP) isVaccinated</p>
-      <p class="pt-1 text-[0.9rem]">(WIP) isSpayed</p>
-      <p class="pt-1 text-[0.9rem]">
-        The pet has a coat length of {{ selectedPet.coatlength }}cm.
-      </p>
-      <p class="pt-1 text-[0.9rem]">
-        This pet is
-        <span v-show="!selectedPet.istoilettrained">NOT</span> toilet trained.
-      </p>
+        <!-- Pet Details -->
+        <div class="" :class="{ 'flex mr-10': width > 1210 }">
+          <!-- Health and Training -->
+          <div class="grow max-w-[400px]">
+            <p class="pt-2 text-xl font-bold">Health and Training</p>
+            <p class="pt-1 text-md flex items-center">
+              <img
+                v-if="
+                  selectedPet.medicalrecord?.some(
+                    (record) => record.isvaccinated
+                  )
+                "
+                src="/public/vaccination_t.png"
+                class="size-8"
+              />
+              <img v-else src="/public/vaccination_f.png" class="size-8" />
+              {{
+                ((vaccinationRecord) =>
+                  vaccinationRecord
+                    ? "Vaccinated on " + vaccinationRecord.vaccinationdate + "."
+                    : "Not vaccinated.")(
+                  selectedPet.medicalrecord?.reduce((latest, record) => {
+                    if (
+                      record.isvaccinated &&
+                      (!latest ||
+                        new Date(record.vaccinationdate) >
+                          new Date(latest.vaccinationdate))
+                    ) {
+                      return record;
+                    }
+                    return latest;
+                  }, null)
+                )
+              }}
+            </p>
+            <p class="pt-1 text-md flex items-center">
+              <img
+                v-if="
+                  selectedPet.medicalrecord?.some((record) => record.isneutered)
+                "
+                src="/public/neuter_t.png"
+                class="size-8"
+              />
+              <img v-else src="/public/neuter_f.png" class="size-8" />
+              {{
+                ((neuterRecord) =>
+                  neuterRecord
+                    ? "Neutered or spayed on " + neuterRecord.neuterdate + "."
+                    : "Not Neutered or spayed.")(
+                  selectedPet.medicalrecord?.reduce((latest, record) => {
+                    if (
+                      record.isneutered &&
+                      (!latest ||
+                        new Date(record.neuterdate) >
+                          new Date(latest.neuterdate))
+                    ) {
+                      return record;
+                    }
+                    return latest;
+                  }, null)
+                )
+              }}
+            </p>
+            <p class="pt-1 text-md flex items-center">
+              <img
+                v-if="selectedPet?.istoilettrained"
+                src="/public/toilet_t.png"
+                class="size-8"
+              />
+              <img v-else src="/public/toilet_f.png" class="size-8" />
+              This pet is
+              <span v-show="!selectedPet.istoilettrained">not</span> toilet
+              trained.
+            </p>
+          </div>
 
-      <!-- Personality -->
-      <p class="pt-2 text-[1rem] font-bold">Personality</p>
-      <ul>
-        <li
-          class="pt-1 text-[0.9rem] capitalize"
-          v-for="n in selectedPet.personality"
-        >
-          {{ n }}
-        </li>
-      </ul>
-    </div>
+          <!-- Personality -->
+          <div class="">
+            <p class="pt-2 text-xl font-bold">Personality</p>
+            <ul>
+              <li
+                class="pt-1 text-md capitalize"
+                v-for="n in selectedPet.personality"
+              >
+                {{ n }}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
 
-    <!-- Agent Info-->
-    <div v-show="toggleContent" class="py-4 bg-slate-300 w-full p-4">
-      <p class="text-[1.5rem] font-bold">Agent</p>
-      <p class="pt-2 text-[1rem] font-bold">Description</p>
-      <p class="pt-1 text-[0.9rem]">{{ selectedAgent.description }}</p>
-      <p class="pt-2 text-[1rem] font-bold">Mission</p>
-      <p class="pt-1 text-[0.9rem]">{{ selectedAgent.mission }}</p>
+      <!-- Agent Info-->
+      <div
+        v-show="toggleContent || width > 768"
+        class="py-4 bg-slate-300 w-full p-4"
+      >
+        <p class="text-2xl font-bold">Agent</p>
+        <!-- Address -->
+        <p class="pt-2 text-xl font-bold">Address</p>
+        <p class="pt-1 text-md">{{ selectedAgent.address }}</p>
 
-      <!-- Address -->
-      <p class="pt-2 text-[1rem] font-bold">Address</p>
-      <p class="pt-1 text-[0.9rem]">{{ selectedAgent.address }}</p>
+        <!-- Contact -->
+        <p class="pt-2 text-xl font-bold">Contact</p>
+        <p class="pt-1 text-md">Email: {{ selectedAgent.email }}</p>
+        <p class="pt-1 text-md">Number: +{{ selectedAgent.contact }}</p>
 
-      <!-- Contact -->
-      <p class="pt-2 text-[1rem] font-bold">Contact</p>
-      <p class="pt-1 text-[0.9rem]">Email: {{ selectedAgent.email }}</p>
-      <p class="pt-1 text-[0.9rem]">Number: +{{ selectedAgent.contact }}</p>
-
-      <div v-show="selectedAgent.type == 'Shelter'">
-        <p class="pt-2 text-[1rem] font-bold">Working Hours</p>
-        <p class="pt-1 text-[0.9rem]" v-for="hours in selectedAgent.workinghrs">
-          {{ hours }}
-        </p>
+        <div v-show="selectedAgent.type == 'Shelter'">
+          <p class="pt-2 text-xl font-bold">Working Hours</p>
+          <p class="pt-1 text-md" v-for="hours in selectedAgent.workinghrs">
+            {{ hours }}
+          </p>
+        </div>
       </div>
     </div>
 

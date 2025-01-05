@@ -26,8 +26,18 @@ const selectPet = () => {
 
     <div class="flex flex-col items-center">
       <div class="text-lg font-bold pt-2">{{ props.pet?.name }}</div>
-      <div class="text-lg text-center w-3/4 truncate py-2">
-        {{ props.pet?.age }}yo | {{ props.pet?.breed }}
+      <div class="text-lg text-center w-full truncate py-2 flex justify-center">
+        <img
+          v-if="props.pet?.gender == 'Female'"
+          src="/public/gender_f.png"
+          class="size-8 mr-1"
+        />
+        <img
+          v-if="props.pet?.gender == 'Male'"
+          src="/public/gender_m.png"
+          class="size-8 mr-1"
+        />
+        {{ props.pet?.breed }}
       </div>
     </div>
   </div>
