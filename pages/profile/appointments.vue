@@ -93,6 +93,7 @@ async function deleteRecord(recordId) {
           </div>
 
           <!-- Details -->
+
           <hr class="border-t-black border-dashed" />
           <div class="mb-2">
             <h4 class="mt-2 font-bold">Date</h4>
@@ -104,7 +105,9 @@ async function deleteRecord(recordId) {
             <h4 class="mt-2 font-bold">Agent</h4>
             <span>{{ i.pets.agents.name }}</span>
             <h4 class="mt-2 font-bold">Comment</h4>
-            <span v-if="i.comment">{{ i.comment }}</span>
+            <div v-if="i.comment" class="text-ellipsis overflow-hidden">
+              {{ i.comment }}
+            </div>
             <span v-else>-</span>
           </div>
           <hr class="my-2 border-t-black border-dashed" />
