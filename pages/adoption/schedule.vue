@@ -94,24 +94,35 @@ function addDays(date, days) {
 let minDate = addDays(today, 3).toISOString().slice(0, 10);
 let maxDate = addDays(today, 25).toISOString().slice(0, 10);
 
-const inputList = ref([
-  {
-    label: "Select Date",
-    type: "date",
-    model: "date",
-    min: minDate,
-    max: maxDate,
-    condition: true,
-  },
-  {
-    label: "Select Time",
-    id: "time",
-    type: "time",
-    model: "time",
-    condition: true,
-    step: 900,
-  },
-]);
+const intervals = 30;
+const options = [];
+
+for (let hour = 8; hour < 18; hour++) {
+  for (let minutes = 0; minutes < 60; minutes += intervals) {
+    const displayHour = hour.toString().padStart(2, "0");
+    const displayMinutes = minutes.toString().padStart(2, "0");
+    options.push(`${displayHour}:${displayMinutes}`);
+  }
+}
+const filteredOptions = ref(options);
+const showDropdown = ref(false);
+
+function filterOptions() {
+  filteredOptions.value = options.filter((option) =>
+    option.startsWith(formData.value.time)
+  );
+}
+
+function selectOption(option) {
+  formData.value.time = option;
+  showDropdown.value = false;
+}
+
+function hideDropdown() {
+  setTimeout(() => {
+    showDropdown.value = false;
+  }, 100);
+}
 // #endregion
 
 // #region Form Handling
@@ -119,6 +130,7 @@ const errorMsg = ref(null);
 const formData = ref({
   date: "",
   time: "",
+  comment: "",
 });
 
 async function submitForm() {
@@ -177,6 +189,12 @@ async function submitForm() {
       }
     }
 
+    // Check if comment is not too long
+    if (formData.value.comment.length >= 300) {
+      validated.value = false;
+      errorMsg.value = "Comment must have less than 300 characters.";
+    }
+
     // Run if validated
     if (validated.value) {
       const newDate = new Date(inputDate).toISOString().slice(0, 10);
@@ -187,6 +205,7 @@ async function submitForm() {
           petid: petData.id,
           userid: userId,
           date: datetime,
+          comment: formData.value.comment,
         },
       ]);
       if (error) throw error;
@@ -200,86 +219,123 @@ async function submitForm() {
 </script>
 
 <template>
-  <Card class="w-[90%] max-w-[768px] h-fit">
-    <CardHeader>
-      <CardTitle class="text-center">Schedule Appointment</CardTitle>
-    </CardHeader>
+  <div
+    class="bg-white w-[90%] max-w-[1024px] h-fit flex"
+    :class="{ 'flex-col': width < 768 }"
+  >
+    <!-- Image -->
+    <div
+      :class="{
+        'w-full': width < 768,
+        'w-2/5': width >= 768,
+      }"
+    >
+      <img
+        :src="fetchImage(petData.imagepath)"
+        alt="Pet Image"
+        class="w-full h-full object-cover"
+      />
+    </div>
 
-    <form @submit.prevent="submitForm">
-      <CardContent class="justify-self-center grow w-[90%]">
-        <!-- #region Pet and Shelter Details -->
-        <div class="w-full" :class="{ 'flex flex-row h-fit': width >= 650 }">
-          <div class="bg-zinc-300 flex flex-col items-center">
-            <div
-              class="w-[200px] h-[200px] w-full overflow-hidden bg-slate-200 rounded"
+    <!-- Content -->
+    <Card class="grow border-none">
+      <CardHeader>
+        <CardTitle>Schedule for {{ petData.name }}</CardTitle>
+      </CardHeader>
+      <form @submit.prevent="submitForm">
+        <CardContent>
+          <!-- Details -->
+          <div>
+            <p class="font-bold text-xl py-2">Agent Details</p>
+            <p class="text-lg pt-2 font-bold">Name</p>
+            <p class="text-md">{{ agentData.name }}</p>
+            <p class="text-lg pt-2 font-bold">Contact</p>
+            <p class="text-md">+{{ agentData.contact }}</p>
+            <div v-if="agentData.type === 'Agent'">
+              <p class="text-lg pt-2 font-bold">Email</p>
+              <p class="text-md">{{ agentData.email }}</p>
+            </div>
+            <div v-else>
+              <p class="text-lg pt-2 font-bold">Working Hours</p>
+              <p class="text-md">
+                <span v-for="hrs in agentData.workinghrs">
+                  {{ hrs }} <br
+                /></span>
+              </p>
+            </div>
+          </div>
+
+          <!-- Form -->
+          <div class="my-4">
+            <!-- Date -->
+            <label for="date" class="block text-sm font-medium mt-4"
+              >Select Date</label
             >
-              <img
-                :src="fetchImage(petData.imagepath)"
-                alt="Pet Image"
-                class="h-full w-full object-cover"
-              />
-            </div>
-            <div class="p-2 text-center text-xl bg-zinc-100 w-full">
-              <span>{{ petData.name }}</span>
-            </div>
-          </div>
-          <div class="p-4 bg-slate-200 w-full">
-            <p class="text-center text-lg py-2 font-bold">Agent Details</p>
-            <p class="py-2">Name: {{ agentData.name }}</p>
-            <p class="py-2">Contact: {{ agentData.contact }}</p>
-            <p v-if="agentData.type === 'Agent'" class="py-2">
-              Email: {{ agentData.email }}
-            </p>
-            <p v-else class="py-2">
-              Working Hours: <br />
-              <span v-for="hrs in agentData.workinghrs"> {{ hrs }} <br /></span>
-            </p>
-          </div>
-        </div>
-        <!-- #endregion-->
-
-        <!-- #region Form Section -->
-        <div class="w-4/5 justify-self-center">
-          <div v-for="item in inputList" :key="item.id" class="my-4">
-            <label :for="item.id" class="block text-sm font-medium">
-              {{ item.label }}
-            </label>
             <input
-              v-model="formData[item.model]"
-              :type="item.type"
-              :id="item.id"
-              :placeholder="item.placeholder"
-              :min="item.min"
-              :max="item.max"
-              :step="item.step"
-              :disabled="!item.condition"
-              class="mt-1 p-2 border border-gray-300 rounded w-full"
+              type="date"
+              v-model="formData.date"
+              :min="minDate"
+              :max="maxDate"
               required
+              class="mt-1 p-2 border border-gray-300 rounded w-full"
             />
-          </div>
-          <p v-if="errorMsg" class="text-red-500 text-sm mb-4 grow">
-            {{ errorMsg }}
-          </p>
-        </div>
-        <!-- #endregion -->
-      </CardContent>
 
-      <CardFooter class="w-full inline-block">
-        <div
-          class="justify-center flex grow"
-          :class="{ 'flex-col items-center': width <= 576 }"
-        >
-          <Button as-child class="w-[60%] m-2 max-w-[225px] py-2"
-            ><NuxtLink to="/adoption/listings">Back</NuxtLink></Button
-          >
-          <button
-            type="submit"
-            class="w-[60%] m-2 max-w-[225px] py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Make Appoinment
-          </button>
-        </div>
-      </CardFooter>
-    </form>
-  </Card>
+            <!-- Time -->
+            <label for="time" class="block text-sm font-medium mt-4"
+              >Select Time</label
+            >
+            <div class="relative mb-4">
+              <input
+                type="text"
+                placeholder="--:-- --"
+                v-model="formData.time"
+                @focus="showDropdown = true"
+                @input="filterOptions"
+                @blur="hideDropdown"
+                class="mt-1 p-2 border border-gray-300 rounded w-full"
+              />
+              <ul
+                v-if="showDropdown"
+                class="absolute top-[100%] border bg-white z-10 w-full border-gray-200 rounded-md max-h-[200px] overflow-y-scroll"
+              >
+                <li
+                  v-for="option in filteredOptions"
+                  :key="option"
+                  @mousedown.prevent="selectOption(option)"
+                  class="p-2 w-full pointer hover:bg-gray-100"
+                >
+                  {{ option }}
+                </li>
+              </ul>
+            </div>
+
+            <!-- Comment -->
+            <label class="text-sm font-medium">Add a Comment</label>
+            <textarea
+              class="border p-2 border-gray-300 rounded w-full"
+              v-model="formData.comment"
+            />
+            <div class="h-4">
+              <p v-if="errorMsg" class="text-red-500 text-sm">
+                {{ errorMsg }}
+              </p>
+            </div>
+          </div>
+        </CardContent>
+        <CardFooter>
+          <div class="justify-center flex grow">
+            <Button as-child class="w-[60%] m-2 max-w-[225px] py-2"
+              ><NuxtLink to="/adoption/listings">Back</NuxtLink></Button
+            >
+            <Button
+              type="submit"
+              class="w-[60%] m-2 max-w-[225px] py-2 bg-blue-500 text-white hover:bg-blue-600 text-sm"
+            >
+              Submit
+            </Button>
+          </div>
+        </CardFooter>
+      </form>
+    </Card>
+  </div>
 </template>
