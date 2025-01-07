@@ -2,6 +2,52 @@
 import { useWindowSize } from "@vueuse/core";
 
 const { width } = useWindowSize();
+
+const user = useSupabaseUser();
+const client = useSupabaseClient();
+
+const role = ref("Guest");
+if (user.value) {
+  const { data } = await client
+    .from("users")
+    .select("role")
+    .eq("user_id", user.value.id);
+  role.value = data[0].role;
+}
+
+const cards = [
+  {
+    label: "Adopt",
+    img: "/homepage_adopt.png",
+    link: "/adoption/listings",
+    condition: role.value === "Guest" || role.value === "User",
+  },
+  {
+    label: "Post",
+    img: "/homepage_adopt.png",
+    link: "/profile/posts",
+    condition: role.value === "Agent",
+  },
+  {
+    label: "Shelters",
+    img: "/homepage_shelter.png",
+    link: "/shelters",
+    condition: true,
+  },
+
+  {
+    label: "FAQ",
+    img: "/homepage_faq.png",
+    link: "/faq",
+    condition: true,
+  },
+  {
+    label: "Donate",
+    img: "/homepage_donate.png",
+    link: "/donation",
+    condition: true,
+  },
+];
 </script>
 
 <template>
@@ -26,7 +72,12 @@ const { width } = useWindowSize();
         'grid-rows-2 gap-2': width < 1000,
       }"
     >
-      <NuxtLink v-for="(item, index) in cards" :key="index" :to="item.link">
+      <NuxtLink
+        v-for="(item, index) in cards"
+        :key="index"
+        :to="item.link"
+        v-show="item.condition"
+      >
         <div
           class="flex m-2 items-center justify-center bg-slate-200 flex-col text-xl font-bold"
           :class="{
@@ -44,35 +95,3 @@ const { width } = useWindowSize();
   </div>
   <!-- #endregion -->
 </template>
-
-<script>
-export default {
-  data() {
-    return {
-      cards: [
-        {
-          label: "Adopt",
-          img: "/homepage_adopt.png",
-          link: "/adoption/listings",
-        },
-        {
-          label: "Shelters",
-          img: "/homepage_shelter.png",
-          link: "/shelters",
-        },
-
-        {
-          label: "FAQ",
-          img: "/homepage_faq.png",
-          link: "/faq",
-        },
-        {
-          label: "Donate",
-          img: "/homepage_donate.png",
-          link: "/donation",
-        },
-      ],
-    };
-  },
-};
-</script>

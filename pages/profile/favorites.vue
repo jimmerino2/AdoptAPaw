@@ -3,7 +3,7 @@ import { useFetchData } from "@/composables/useFetchData";
 import { useWindowSize } from "@vueuse/core";
 
 definePageMeta({
-  middleware: ["auth"],
+  middleware: ["auth", "agentreject"],
 });
 
 const { width } = useWindowSize();

@@ -3,6 +3,10 @@ import { useFetchData } from "@/composables/useFetchData";
 import { useUploadImage } from "@/composables/useUploadImage";
 import { useWindowSize } from "@vueuse/core";
 
+definePageMeta({
+  middleware: ["auth"],
+});
+
 const { width } = useWindowSize();
 const { uploadImage } = useUploadImage();
 const { fetchData, fetchUser } = useFetchData();

@@ -18,8 +18,6 @@ const router = useRouter();
 // Determine Profile Picture
 const imagePath = ref("");
 
-console.log(profile.imagepath !== null);
-
 // Logout
 async function logout() {
   try {

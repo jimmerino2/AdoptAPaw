@@ -3,7 +3,7 @@ import { useFetchData } from "@/composables/useFetchData";
 import { useWindowSize } from "@vueuse/core";
 import TooltipContent from "~/components/ui/tooltip/TooltipContent.vue";
 definePageMeta({
-  middleware: ["auth"],
+  middleware: ["auth", "agentreject"],
 });
 
 const client = useSupabaseClient();
@@ -14,16 +14,15 @@ const { fetchData, fetchImage } = useFetchData();
 const fetchedAppointments = ref();
 fetchedAppointments.value = await fetchData(
   "appointments",
-  "id, date, approved, comment, pets(age, breed, gender, imagepath, name, agents(address, contact, email, name, passno, type, workinghrs))"
+  "id, date, approved, comment, pets(age, breed, gender, imagepath, name, agents(address, passno, type, workinghrs, users(*)))"
 );
 
 async function deleteRecord(recordId) {
   await client.from("appointments").delete().eq("id", recordId);
   fetchedAppointments.value = await fetchData(
     "appointments",
-    "id, date, approved, comment, pets(age, breed, gender, imagepath, name, agents(address, contact, email, name, passno, type, workinghrs))"
+    "id, date, approved, comment, pets(age, breed, gender, imagepath, name, agents(address, passno, type, workinghrs, users(*)))"
   );
-  console.log(recordId);
 }
 </script>
 
@@ -103,7 +102,7 @@ async function deleteRecord(recordId) {
             <h4 class="mt-2 font-bold">Location</h4>
             <span>{{ i.pets.agents.address }}</span>
             <h4 class="mt-2 font-bold">Agent</h4>
-            <span>{{ i.pets.agents.name }}</span>
+            <span>{{ i.pets.agents.users.name }}</span>
             <h4 class="mt-2 font-bold">Comment</h4>
             <div v-if="i.comment" class="text-ellipsis overflow-hidden">
               {{ i.comment }}

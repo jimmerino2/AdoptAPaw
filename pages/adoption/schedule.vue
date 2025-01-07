@@ -24,7 +24,7 @@ const fetchedAppointmentData = await fetchData("appointments", "pets(id)", [
 
 const fetchedPetData = await fetchData(
   "pets",
-  "id, agentid, imagepath, name, agents(*)",
+  "id, agentid, imagepath, name, agents(*, users(*))",
   ["id", petId]
 );
 
@@ -248,12 +248,12 @@ async function submitForm() {
           <div>
             <p class="font-bold text-xl py-2">Agent Details</p>
             <p class="text-lg pt-2 font-bold">Name</p>
-            <p class="text-md">{{ agentData.name }}</p>
+            <p class="text-md">{{ agentData.users.name }}</p>
             <p class="text-lg pt-2 font-bold">Contact</p>
-            <p class="text-md">+{{ agentData.contact }}</p>
+            <p class="text-md">+{{ agentData.users.contact }}</p>
             <div v-if="agentData.type === 'Agent'">
               <p class="text-lg pt-2 font-bold">Email</p>
-              <p class="text-md">{{ agentData.email }}</p>
+              <p class="text-md">{{ agentData.users.email }}</p>
             </div>
             <div v-else>
               <p class="text-lg pt-2 font-bold">Working Hours</p>
