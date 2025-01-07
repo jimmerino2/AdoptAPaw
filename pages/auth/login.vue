@@ -63,14 +63,17 @@ async function logIn() {
       </div>
     </CardContent>
     <CardFooter class="w-full inline-block">
-      <div class="justify-center flex grow">
-        <button
+      <div class="justify-center flex">
+        <NuxtLink to="/homepage" class="w-[40%] max-w-[150px] mx-4">
+          <Button type="button" class="w-full"> Cancel </Button>
+        </NuxtLink>
+        <Button
           @click="logIn"
           type="button"
-          class="w-[80%] max-w-[225px] py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          class="w-[40%] max-w-[150px] mx-4 bg-blue-500 hover:bg-blue-600"
         >
           Log In
-        </button>
+        </Button>
       </div>
     </CardFooter>
   </Card>

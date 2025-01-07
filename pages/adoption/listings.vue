@@ -18,10 +18,6 @@ petData.value = await fetchData("pets", "*, medicalrecord(*)", [
 ]);
 
 const agentData = await fetchData("agents");
-const fetchedUserData = ref([]);
-fetchedUserData.value = await fetchData("users");
-const userData = ref("{}");
-userData.value = fetchedUserData.value[0];
 
 let selectedPet = ref({});
 let selectedAgent = ref({});
@@ -29,20 +25,27 @@ const showDetails = ref(false);
 const petAgeType = ref(null);
 const toggleContent = ref(false); // 0 - About,  1 - Agent
 
+// User data if user is not guest
+const fetchedUserData = ref([]);
+const userData = ref({
+  favorites: [],
+});
+if (user.value) {
+  fetchedUserData.value = await fetchData("users", "*", [
+    "user_id",
+    user.value.id,
+  ]);
+  userData.value = fetchedUserData.value[0];
+}
+if (pageUser.value === null) {
+  pageUser.value = false;
+}
+
 // Check if accessed from other pages
 if (route.query.petid !== undefined && route.query.toggle !== undefined) {
   const fetchedPet = await fetchData("pets", "*", ["id", route.query.petid]);
   selectedPet.value = fetchedPet[0];
   showDetails.value = route.query.toggle;
-}
-
-// #region Guest Accounts
-if (pageUser.value === null) {
-  pageUser.value = false;
-}
-
-if (!userData.value) {
-  userData.value = { favorites: [] };
 }
 // #endregion
 

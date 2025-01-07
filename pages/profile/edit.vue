@@ -6,6 +6,7 @@ import { useWindowSize } from "@vueuse/core";
 const { width } = useWindowSize();
 const { uploadImage } = useUploadImage();
 const { fetchData, fetchUser } = useFetchData();
+const { valName, valContact } = useFormValidation();
 
 const user = useSupabaseUser();
 const client = useSupabaseClient();
@@ -52,15 +53,12 @@ const formData = ref({
 
 async function submitForm() {
   try {
-    const nameRegEx = /^[a-zA-Z_]{6,15}$/;
-    const contactRegEx = /^[0][1][0-9]{8,9}$/;
-
     // Checking
     if (!formData.value.name || !formData.value.contact) {
       errorMsg.value = "All fields must be filled in.";
-    } else if (!nameRegEx.test(formData.value.name)) {
+    } else if (!valName(formData.value.name)) {
       errorMsg.value = "Name must have 6 to 15 alphabetical characters.";
-    } else if (!contactRegEx.test(formData.value.contact)) {
+    } else if (!valContact(formData.value.contact)) {
       errorMsg.value = "Invalid Malaysian contact format.";
     } else {
       errorMsg.value = "";

@@ -11,6 +11,7 @@ const { fetchData, fetchImage } = useFetchData();
 
 const client = useSupabaseClient();
 const router = useRouter();
+const user = useSupabaseUser();
 
 // #region Data Parsing
 const fetchedPetData = ref([]);
@@ -19,7 +20,10 @@ const userData = ref({});
 const petData = ref([]);
 
 async function updateData() {
-  fetchedUserData.value = await fetchData("users");
+  fetchedUserData.value = await fetchData("users", "*", [
+    "user_id",
+    user.value.id,
+  ]);
   userData.value = fetchedUserData.value[0];
   fetchedPetData.value = await client
     .from("pets")

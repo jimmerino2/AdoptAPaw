@@ -1,11 +1,13 @@
 <script setup>
 definePageMeta({
-  middleware: ["auth"], // Ensures user authentication middleware is applied
+  middleware: ["auth"],
 });
 
 const router = useRouter();
-const user = useSupabaseUser(); // Gets the currently authenticated user
-const client = useSupabaseClient(); // Supabase client instance
+const user = useSupabaseUser();
+const client = useSupabaseClient();
+
+console.log(user.value.email);
 
 onMounted(async () => {
   try {
@@ -15,13 +17,8 @@ onMounted(async () => {
       return;
     }
 
-    const { data, error } = await client
-      .from("users")
-      .select("*")
-      .eq("email", user.value.email);
-
     // Update the 'verified' column to true and user_id
-    const { data: finalData, error: updateError } = await client
+    const { error: updateError } = await client
       .from("users")
       .update({ verified: true, user_id: user.value.id })
       .eq("email", user.value.email);

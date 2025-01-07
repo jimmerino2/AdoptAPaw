@@ -1,14 +1,14 @@
 <script setup>
 import { useFetchData } from "@/composables/useFetchData";
-const { fetchData, fetchImage, fetchUser } = useFetchData();
+const { fetchData, fetchImage } = useFetchData();
 import { useWindowSize } from "@vueuse/core";
 import AvatarImage from "~/components/ui/avatar/AvatarImage.vue";
 
 const { width } = useWindowSize();
-const authUserData = await fetchUser();
+const user = useSupabaseUser();
 const profileDetails = await fetchData("users", "*", [
-  "email",
-  authUserData.email,
+  "user_id",
+  user.value.id,
 ]);
 const profile = profileDetails[0];
 
@@ -17,6 +17,8 @@ const router = useRouter();
 
 // Determine Profile Picture
 const imagePath = ref("");
+
+console.log(profile.imagepath !== null);
 
 // Logout
 async function logout() {
@@ -50,7 +52,7 @@ onMounted(async () => {
           >
             <Avatar class="size-full">
               <AvatarImage v-if="profile.imagepath" :src="imagePath" />
-              <AvatarImage v-else src="/public/profile-icon.png" />
+              <AvatarImage v-else src="/profile-icon.png" />
               <AvatarFallback></AvatarFallback>
             </Avatar>
           </div>
