@@ -229,7 +229,7 @@ async function storeUnverifiedUserData() {
         });
         agentDataToInsert.workinghrs = formattedWorkingHrs;
       } else {
-        agentDataToInsert.passno = gentData.value.passno;
+        agentDataToInsert.passno = agentData.value.passno;
       }
 
       // Insert data
@@ -507,7 +507,7 @@ agentInputList.value = [
                 type="text"
                 v-model="agentData.passno"
                 id="passno"
-                placeholder="Enter your IC or Passport No."
+                placeholder="Enter your IC or Passport No (No dashes)."
                 :required="isAgent && agentData.type == 'Agent'"
                 class="mt-1 p-2 border border-gray-300 rounded w-full"
               />
