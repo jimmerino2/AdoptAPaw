@@ -35,6 +35,7 @@ export function useUploadImage() {
     file,
     id,
     tableName,
+    saveToDb = true,
     deleteHistory = false
   ) => {
     try {
@@ -43,7 +44,7 @@ export function useUploadImage() {
       }
 
       if (deleteHistory) {
-        await removePreviousImages(folder, file, id);
+        await removePreviousImages(folder, id);
       }
 
       // Upload Image to Bucket
@@ -54,26 +55,21 @@ export function useUploadImage() {
       }
 
       // Save File Path to the Database
-      const { data: dbData, error: dbError } = await client
-        .from(tableName)
-        .update({ imagepath: filePath })
-        .eq("id", id);
+      if (saveToDb) {
+        await client
+          .from(tableName)
+          .update({ imagepath: filePath })
+          .eq("id", id);
+      }
 
-      const { data } = await client.from(tableName).select("*"); // Fetch all columns and all rows
-
-      if (dbError)
-        throw new Error(
-          `Failed to save image path to database: ${dbError.message}`
-        );
-
-      return { success: true, filePath };
+      return filePath;
     } catch (err) {
       console.error(`Error in uploadImage: ${err.message}`);
       return { success: false, error: err.message };
     }
   };
 
-  const removePreviousImages = async (folder, file, id) => {
+  const removePreviousImages = async (folder, id) => {
     const bucket = "images";
     const folderPath = `${folder}/${id}/`;
 
@@ -97,5 +93,5 @@ export function useUploadImage() {
     }
   };
 
-  return { uploadImage };
+  return { removePreviousImages, uploadImage };
 }

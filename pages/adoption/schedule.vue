@@ -4,7 +4,7 @@ import { useFetchData } from "@/composables/useFetchData";
 import { useWindowSize } from "@vueuse/core";
 
 definePageMeta({
-  middleware: ["adoption", "auth"],
+  middleware: ["adoption", "auth", "agentreject"],
   layout: "forms",
 });
 
