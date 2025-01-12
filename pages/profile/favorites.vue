@@ -43,7 +43,10 @@ async function sendPetData(pet) {
 
 async function updateFavorite(petId) {
   try {
-    const fetchedUpdatedUserData = await fetchData("users");
+    const fetchedUpdatedUserData = await fetchData("users", "*", [
+      "user_id",
+      user.value.id,
+    ]);
     const updatedUserData = fetchedUpdatedUserData[0];
 
     if (updatedUserData.favorites.includes(petId)) {

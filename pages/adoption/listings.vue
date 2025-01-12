@@ -21,8 +21,7 @@ petData.value = await fetchData("pets", "*, medicalrecord(*)", [
   false,
 ]);
 
-let selectedPet = ref({});
-
+const selectedPet = ref({});
 const showDetails = ref(false);
 
 // User data if user is not guest
@@ -50,7 +49,10 @@ if (route.query.petid !== undefined && route.query.toggle !== undefined) {
 
 async function updateFavorite(petId) {
   try {
-    const fetchedUpdatedUserData = await fetchData("users");
+    const fetchedUpdatedUserData = await fetchData("users", "*", [
+      "user_id",
+      user.value.id,
+    ]);
     const updatedUserData = fetchedUpdatedUserData[0];
 
     if (updatedUserData.favorites.includes(petId)) {
@@ -77,7 +79,10 @@ async function updateFavorite(petId) {
 }
 
 async function updateUserData() {
-  fetchedUserData.value = await fetchData("users");
+  fetchedUserData.value = await fetchData("users", "*", [
+    "user_id",
+    user.value.id,
+  ]);
   userData.value = fetchedUserData.value[0];
 }
 // #endregion
