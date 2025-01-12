@@ -34,7 +34,7 @@ export function usePetFormValidation() {
   };
 
   const valDesc = (desc) => {
-    const regEx = /^[A-Za-z1-9 ',".!?;:()&%$#@+=<>~*_/\\-]{,500}$/;
+    const regEx = /^[A-Za-z1-9 ',".!?;:()&%$#@+=<>~*_/\\-]{0,500}$/;
     return regEx.test(desc);
   };
 

@@ -64,7 +64,7 @@ const inputList = [
       label: "Age (years)",
       placeholder: "Enter pet age",
       id: "age",
-      step: "0.02",
+      step: "0.5",
     },
     {
       type: "number",
@@ -382,6 +382,19 @@ async function submitForm() {
         },
       ])
       .select();
+
+    await client.from("medicalrecord").insert([
+      {
+        isneutered: convBoolean(formData.value.neuter),
+        isvaccinated: convBoolean(formData.value.vaccine),
+        neuterdate: formData.value.neuterDate ? formData.value.neuterDate : "",
+        vaccinationdate: formData.value.vaccDate ? formData.value.vaccDate : "",
+        petid: data[0].id,
+        specialcondition: formData.value.condition
+          ? formData.value.condition
+          : "",
+      },
+    ]);
 
     // Image
     await client
