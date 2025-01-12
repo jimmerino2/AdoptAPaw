@@ -188,6 +188,7 @@ async function storeUnverifiedUserData() {
         contact: formData.value.contact,
         verified: false,
         role: isAgent.value ? "Agent" : "User",
+        imagepath: "",
       },
     ]);
     if (error) throw error;

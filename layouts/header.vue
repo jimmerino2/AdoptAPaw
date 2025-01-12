@@ -11,15 +11,28 @@ const user = useSupabaseUser();
 const router = useRouter();
 
 const profileDetails = ref();
-const profile = ref({ role: "Guest" });
-if (user.value) {
-  profileDetails.value = await fetchData("users", "*", [
-    "user_id",
-    user.value.id,
-  ]);
+const profile = ref({ role: "Guest", imagepath: "" });
 
-  profile.value = profileDetails.value[0];
-}
+watchEffect(async () => {
+  if (user.value?.id) {
+    try {
+      console.log("Fetching profile for user:", user.value.id);
+      profileDetails.value = await fetchData("users", "*", [
+        "user_id",
+        user.value.id,
+      ]);
+
+      profile.value = profileDetails.value?.[0] || {
+        role: "Guest",
+        imagepath: "",
+      };
+      console.log("Profile loaded:", profile.value);
+    } catch (error) {
+      console.error("Error fetching profile data:", error);
+    }
+  }
+});
+
 async function toProfile() {
   if (profile.value.role === "Agent") {
     router.push("/profile/posts");
@@ -27,8 +40,6 @@ async function toProfile() {
     router.push("/profile/appointments");
   }
 }
-
-const imageUrl = ref("");
 
 const parentLinks = [
   {
@@ -39,15 +50,19 @@ const parentLinks = [
   },
   {
     title: "Post",
-    link: "/profile/posts",
+    link: "/agent/post",
     childLinks: [],
-    condition: profile.value.role === "Agent",
+    condition: computed(() => {
+      profile.value.role === "Agent";
+    }),
   },
   {
     title: "Adopt",
     link: "/adoption/listings",
     childLinks: [],
-    condition: profile.value.role === "User" || profile.value.role === "Guest",
+    condition: computed(() => {
+      profile.value.role === "User" || profile.value.role === "Guest";
+    }),
   },
   {
     title: "Shelters",
@@ -83,18 +98,17 @@ const parentLinks = [
 ];
 
 // Set Profile Icon
-onMounted(async () => {
-  if (!user.value) {
-    imageUrl.value = ""; // No path if not logged in
+const imageUrl = ref("");
+if (!user.value) {
+  imageUrl.value = ""; // No path if not logged in
+} else {
+  if (profile.value.imagepath === null || profile.value.imagepath === "") {
+    imageUrl.value = "/profile-icon.png";
   } else {
-    if (profile.value.imagepath == null) {
-      imageUrl.value = "/profile-icon.png";
-    } else {
-      const profileImage = fetchImage(profile.value.imagepath);
-      imageUrl.value = profileImage;
-    }
+    const profileImage = fetchImage(profile.value.imagepath);
+    imageUrl.value = profileImage;
   }
-});
+}
 </script>
 
 <template>
@@ -232,11 +246,13 @@ onMounted(async () => {
         </Menubar>
       </div>
       <!-- Shelter Account Banner -->
+      <!--
       <div
         class="bg-teal-100 w-full custom-lg:px-[10vw] custom-md:px-[2vw] flex justify-center text-lg p-2 font-bold"
       >
         Shelter Account
       </div>
+       -->
     </div>
   </div>
 </template>
