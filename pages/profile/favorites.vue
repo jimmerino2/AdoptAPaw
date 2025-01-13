@@ -7,7 +7,7 @@ definePageMeta({
 });
 
 const { width } = useWindowSize();
-const { fetchData, fetchImage } = useFetchData();
+const { fetchData } = useFetchData();
 
 const client = useSupabaseClient();
 const router = useRouter();
@@ -28,7 +28,8 @@ async function updateData() {
   fetchedPetData.value = await client
     .from("pets")
     .select("*")
-    .in("id", userData.value.favorites);
+    .in("id", userData.value.favorites)
+    .eq("status", "active");
   petData.value = fetchedPetData.value.data;
 }
 await updateData();

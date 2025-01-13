@@ -8,15 +8,20 @@ definePageMeta({
 const { width } = useWindowSize();
 const { fetchData } = useFetchData();
 const user = useSupabaseUser();
+const client = useSupabaseClient();
 
-const data = ref();
 const adoptedPets = ref();
 const listedPets = ref();
 const userId = await fetchData("users", "id", ["user_id", user.value.id]);
 const agentId = await fetchData("agents", "id", ["uid", userId[0].id]);
-data.value = await fetchData("pets", "*", ["agentid", agentId[0].id]);
-adoptedPets.value = data.value.filter((pet) => pet.isadopted === true);
-listedPets.value = data.value.filter((pet) => pet.isadopted === false);
+const { data } = await client
+  .from("pets")
+  .select("*")
+  .eq("agentid", agentId[0].id)
+  .eq("status", "active");
+
+adoptedPets.value = data.filter((pet) => pet.isadopted === true);
+listedPets.value = data.filter((pet) => pet.isadopted === false);
 
 const accordionData = ref([]);
 accordionData.value = [
@@ -32,10 +37,28 @@ accordionData.value = [
   },
 ];
 
+async function deleteListing(pet) {
+  const { data, error } = await client
+    .from("pets")
+    .update({
+      status: "removed",
+    })
+    .eq("id", pet.id);
+  if (error) {
+    console.log(error);
+  }
+  refreshData();
+}
+
 async function refreshData() {
-  data.value = await fetchData("pets", "*", ["agentid", agentId[0].id]);
-  adoptedPets.value = data.value.filter((pet) => pet.isadopted === true);
-  listedPets.value = data.value.filter((pet) => pet.isadopted === false);
+  const { data } = await client
+    .from("pets")
+    .select("*")
+    .eq("agentid", agentId[0].id)
+    .eq("status", "active");
+  adoptedPets.value = data.filter((pet) => pet.isadopted === true);
+  listedPets.value = data.filter((pet) => pet.isadopted === false);
+
   accordionData.value = [
     {
       value: "listed",
@@ -94,7 +117,14 @@ async function refreshData() {
               >
                 <div class="absolute top-5 right-5 flex justify-between w-fit">
                   <NuxtLink
-                    to="/agent/addPost"
+                    :to="{
+                      path: '/agent/addPost',
+                      query: {
+                        petid: items.id,
+                        agentid: items.agentid,
+                        edit: true,
+                      },
+                    }"
                     class="hover:cursor-pointer mr-2"
                     v-show="inputs.value === 'listed'"
                   >
@@ -120,11 +150,15 @@ async function refreshData() {
                   <div
                     class="bg-white p-2 rounded-full hover:cursor-pointer ml-2"
                     v-show="inputs.value === 'listed'"
+                    @click="deleteListing(items)"
                   >
                     <img src="/trash_icon.png" class="size-6" />
                   </div>
                 </div>
-                <PetPreview :pet="items" class="max-w-[275px]" />
+                <PetPreview
+                  :pet="items"
+                  class="max-w-[275px] hover:cursor-default"
+                />
               </div>
             </div>
             <div v-else>No pets in this category</div>

@@ -16,10 +16,12 @@ const client = useSupabaseClient();
 const route = useRoute();
 
 const petData = ref([]);
-petData.value = await fetchData("pets", "*, medicalrecord(*)", [
-  "isadopted",
-  false,
-]);
+const { data } = await client
+  .from("pets")
+  .select("*, medicalrecord(*)")
+  .eq("isadopted", false)
+  .eq("status", "active");
+petData.value = data;
 
 const selectedPet = ref({});
 const showDetails = ref(false);

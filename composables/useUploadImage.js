@@ -1,21 +1,50 @@
 export function useUploadImage() {
   const client = useSupabaseClient();
 
+  const isValidUrl = (url) => {
+    try {
+      new URL(url); // Try creating a URL object
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
   const uploadToBucket = async (folder, file, id) => {
     try {
       if (!folder || !file || !id) {
         throw new Error("Invalid arguments provided to uploadToBucket.");
       }
 
-      // Generate File Name and Path
-      const fileExtension = file.name.split(".").pop();
-      const customFileName = `${folder}_${id}_${Date.now()}.${fileExtension}`;
-      const filePath = `${folder}/${id}/${customFileName}`;
+      let filePath;
+      let fileData;
+
+      // Check if URL
+      if (typeof file === "string" && isValidUrl(file)) {
+        // Fetch the image from the URL
+        const response = await fetch(file);
+        if (!response.ok)
+          throw new Error(`Failed to fetch image from URL: ${file}`);
+
+        // Convert the image to a Blob
+        const blob = await response.blob();
+        fileData = new File([blob], `${folder}_${id}_${Date.now()}.jpg`, {
+          type: blob.type,
+        });
+
+        // Generate the file path
+        filePath = `${folder}/${id}/${folder}_${id}_${Date.now()}.jpg`;
+      } else {
+        const fileExtension = file.name.split(".").pop();
+        const customFileName = `${folder}_${id}_${Date.now()}.${fileExtension}`;
+        filePath = `${folder}/${id}/${customFileName}`;
+        fileData = file;
+      }
 
       // Insert Image into Supabase Bucket
       const { data, error } = await client.storage
         .from("images")
-        .upload(filePath, file, {
+        .upload(filePath, fileData, {
           cacheControl: "3600", // Cache for 1 hour
           upsert: true, // Overwrite if file exists
         });
@@ -36,7 +65,8 @@ export function useUploadImage() {
     id,
     tableName,
     saveToDb = true,
-    deleteHistory = false
+    column = "imagepath",
+    deleteHistory = true
   ) => {
     try {
       if (!folder || !file || !id || !tableName) {
@@ -58,7 +88,7 @@ export function useUploadImage() {
       if (saveToDb) {
         await client
           .from(tableName)
-          .update({ imagepath: filePath })
+          .update({ [column]: filePath })
           .eq("id", id);
       }
 

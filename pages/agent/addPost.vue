@@ -28,6 +28,7 @@ const { fetchData, fetchImage } = useFetchData();
 const user = useSupabaseUser();
 const client = useSupabaseClient();
 const router = useRouter();
+const route = useRoute();
 
 // #region Form Input
 const formData = ref({
@@ -174,8 +175,17 @@ const handleFileChange = (imageKey, event) => {
 
 const createObjectURL = (file) => URL.createObjectURL(file);
 
-const isImage = (file) => {
-  return file.type.startsWith("image/");
+const isImageUrl = (url) => {
+  const urlRegex =
+    /^(https?:\/\/)?[^\s(["<,>]*\.(?:jpg|jpeg|png|gif|bmp|webp)(?:[^\s]*)$/i;
+  return urlRegex.test(url);
+};
+
+const isImageFile = (file) => {
+  if (file instanceof Blob) {
+    return file.type.startsWith("image/");
+  }
+  return false;
 };
 
 const imageInputList = ref([
@@ -186,9 +196,14 @@ const imageInputList = ref([
       return selectedImagePrimary.value;
     }),
     image: computed(() => {
-      return selectedImagePrimary.value && isImage(selectedImagePrimary.value)
-        ? createObjectURL(selectedImagePrimary.value)
-        : null;
+      const selectedImage = selectedImagePrimary.value;
+      if (!selectedImage) return null;
+      if (typeof selectedImage === "string" && isImageUrl(selectedImage)) {
+        return selectedImage;
+      } else if (selectedImage instanceof Blob && isImageFile(selectedImage)) {
+        return createObjectURL(selectedImage);
+      }
+      return null;
     }),
     desc: "This photo will be shown in pet listings and the photo seen when users view your listing.",
   },
@@ -200,10 +215,14 @@ const imageInputList = ref([
       return selectedImageSecondary.value;
     }),
     image: computed(() => {
-      return selectedImageSecondary.value &&
-        isImage(selectedImageSecondary.value)
-        ? createObjectURL(selectedImageSecondary.value)
-        : null;
+      const selectedImage = selectedImageSecondary.value;
+      if (!selectedImage) return null;
+      if (typeof selectedImage === "string" && isImageUrl(selectedImage)) {
+        return selectedImage;
+      } else if (selectedImage instanceof Blob && isImageFile(selectedImage)) {
+        return createObjectURL(selectedImage);
+      }
+      return null;
     }),
     desc: "Extra photos if may.",
   },
@@ -215,13 +234,83 @@ const imageInputList = ref([
       return selectedImageThird.value;
     }),
     image: computed(() => {
-      return selectedImageThird.value && isImage(selectedImageThird.value)
-        ? createObjectURL(selectedImageThird.value)
-        : null;
+      const selectedImage = selectedImageThird.value;
+      if (!selectedImage) return null;
+      if (typeof selectedImage === "string" && isImageUrl(selectedImage)) {
+        return selectedImage;
+      } else if (selectedImage instanceof Blob && isImageFile(selectedImage)) {
+        return createObjectURL(selectedImage);
+      }
+      return null;
     }),
     desc: "Extra photos if may.",
   },
 ]);
+// #endregion
+
+// #region Query Management
+function convBoolean(value) {
+  if (value === "Yes" || value === "No") return value === "Yes" ? true : false;
+  else if (value === true || value === false)
+    return value === true ? "Yes" : "No";
+}
+
+if (route.query.petid && route.query.agentid) {
+  const petDetails = await fetchData("pets", "*, medicalrecord(*)", [
+    "id",
+    route.query.petid,
+  ]);
+
+  if ((route.query.agentid = petDetails[0].agentid)) {
+    formData.value.name = petDetails[0].name;
+    formData.value.type = petDetails[0].type;
+    formData.value.breed = petDetails[0].breed;
+    formData.value.gender = petDetails[0].gender;
+    formData.value.age = petDetails[0].age;
+    formData.value.weight = petDetails[0].weight;
+    formData.value.price = petDetails[0].listedprice;
+    formData.value.toilet = convBoolean(petDetails[0].istoilettrained); // Test
+    formData.value.personality = petDetails[0].personality;
+    formData.value.desc = petDetails[0].description;
+
+    formData.value.vaccine =
+      petDetails[0].medicalrecord[0]?.isvaccinated === undefined
+        ? null
+        : convBoolean(petDetails[0].medicalrecord[0].isvaccinated);
+
+    formData.value.vaccDate =
+      petDetails[0].medicalrecord[0]?.vaccinationdate === undefined
+        ? null
+        : petDetails[0].medicalrecord[0].vaccinationdate;
+
+    formData.value.neuter =
+      petDetails[0].medicalrecord[0]?.isneutered === undefined
+        ? null
+        : convBoolean(petDetails[0].medicalrecord[0].isneutered);
+
+    formData.value.neuterDate =
+      petDetails[0].medicalrecord[0]?.vaccinationdate === undefined
+        ? null
+        : petDetails[0].medicalrecord[0].neuterdate;
+
+    formData.value.condition =
+      petDetails[0].medicalrecord[0]?.specialcondition === undefined
+        ? null
+        : convBoolean(petDetails[0].medicalrecord[0].specialcondition);
+
+    selectedImagePrimary.value = fetchImage(petDetails[0].imagepath);
+    if (petDetails[0].addimages !== null) {
+      petDetails[0].addimages[0]
+        ? (selectedImageSecondary.value = fetchImage(
+            petDetails[0].addimages[0]
+          ))
+        : "";
+      petDetails[0].addimages[1]
+        ? (selectedImageThird.value = fetchImage(petDetails[0].addimages[1]))
+        : "";
+    }
+  }
+}
 // #endregion
 
 // #region Form Val
@@ -273,13 +362,26 @@ async function submitForm() {
       errorMsg.value = "Medical details not filled.";
     }
   } else if (
-    !(selectedImagePrimary.value && isImage(selectedImagePrimary.value))
+    !(
+      selectedImagePrimary.value &&
+      isImageFile(
+        selectedImagePrimary.value ||
+          isImageUrl(selectedImagePrimary.value) ||
+          isImageFile(selectedImagePrimary.value)
+      )
+    )
   ) {
     verified.value = false;
     errorMsg.value = "Primary image not filled.";
   } else if (
-    (selectedImageSecondary.value && !isImage(selectedImageSecondary.value)) ||
-    (selectedImageThird.value && !isImage(selectedImageThird.value))
+    (selectedImageSecondary.value &&
+      !(
+        isImageFile(selectedImageSecondary.value) ||
+        isImageUrl(selectedImageSecondary)
+      )) ||
+    (selectedImageThird.value &&
+      (!isImageFile(selectedImageThird.value) ||
+        isImageUrl(selectedImageThird.value)))
   ) {
     verified.value = false;
     errorMsg.value = "Invalid image format.";
@@ -348,9 +450,8 @@ async function submitForm() {
   }
   // #endregion
 
-  // Submission
+  // #region Submission
   if (verified.value) {
-    // Insertion
     const userData = await fetchData("users", "id", ["user_id", user.value.id]);
     const agentData = await fetchData("agents", "id", ["uid", userData[0].id]);
     const breed = formData.value.breed
@@ -358,14 +459,10 @@ async function submitForm() {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(" ");
 
-    function convBoolean(value) {
-      return value === "Yes" ? true : false;
-    }
-
-    const { data } = await client
-      .from("pets")
-      .insert([
-        {
+    if (route.query.edit && route.query.edit === true) {
+      await client
+        .from("pets")
+        .update({
           name: formData.value.name,
           age: formData.value.age,
           type: formData.value.type,
@@ -373,78 +470,166 @@ async function submitForm() {
           description: formData.value.desc,
           gender: formData.value.gender,
           personality: formData.value.personality,
-          isadopted: false,
           istoilettrained: convBoolean(formData.value.toilet),
           listedprice: formData.value.price,
           breed: breed,
-          imagepath: "",
-          agentid: agentData[0].id,
+        })
+        .eq("id", route.query.petid);
+
+      await client
+        .from("medicalrecord")
+        .update({
+          isneutered: convBoolean(formData.value.neuter),
+          isvaccinated: convBoolean(formData.value.vaccine),
+          neuterdate: formData.value.neuterDate
+            ? formData.value.neuterDate
+            : "",
+          vaccinationdate: formData.value.vaccDate
+            ? formData.value.vaccDate
+            : "",
+          specialcondition: formData.value.condition
+            ? formData.value.condition
+            : "",
+        })
+        .eq("petid", route.query.petid);
+
+      // Image
+      await client
+        .from("pets")
+        .update({
+          imagepath: await uploadImage(
+            "pets",
+            selectedImagePrimary.value,
+            route.query.petid,
+            "pets",
+            true
+          ),
+        })
+        .eq("id", route.query.petid);
+
+      const filepaths = [];
+
+      if (selectedImageSecondary.value) {
+        filepaths.push(
+          await uploadImage(
+            "pets_secondary",
+            selectedImageSecondary.value,
+            route.query.petid,
+            "pets",
+            false
+          )
+        );
+      }
+
+      if (selectedImageThird.value) {
+        filepaths.push(
+          await uploadImage(
+            "pets_third",
+            selectedImageThird.value,
+            route.query.petid,
+            "pets",
+            false
+          )
+        );
+      }
+
+      await client
+        .from("pets")
+        .update({
+          addimages: filepaths,
+        })
+        .eq("id", route.query.petid);
+    } else {
+      const { data } = await client
+        .from("pets")
+        .insert([
+          {
+            name: formData.value.name,
+            age: formData.value.age,
+            type: formData.value.type,
+            weight: formData.value.weight,
+            description: formData.value.desc,
+            gender: formData.value.gender,
+            personality: formData.value.personality,
+            isadopted: false,
+            istoilettrained: convBoolean(formData.value.toilet),
+            listedprice: formData.value.price,
+            breed: breed,
+            imagepath: "",
+            agentid: agentData[0].id,
+          },
+        ])
+        .select();
+
+      const { error } = await client.from("medicalrecord").insert([
+        {
+          isneutered: convBoolean(formData.value.neuter),
+          isvaccinated: convBoolean(formData.value.vaccine),
+          neuterdate: formData.value.neuterDate
+            ? formData.value.neuterDate
+            : null,
+          vaccinationdate: formData.value.vaccDate
+            ? formData.value.vaccDate
+            : null,
+          petid: data[0].id, // Ensure data[0].id exists in the pets table
+          specialcondition: formData.value.condition
+            ? formData.value.condition
+            : null,
         },
-      ])
-      .select();
+      ]);
+      if (error) console.error("Insert failed:", error);
 
-    await client.from("medicalrecord").insert([
-      {
-        isneutered: convBoolean(formData.value.neuter),
-        isvaccinated: convBoolean(formData.value.vaccine),
-        neuterdate: formData.value.neuterDate ? formData.value.neuterDate : "",
-        vaccinationdate: formData.value.vaccDate ? formData.value.vaccDate : "",
-        petid: data[0].id,
-        specialcondition: formData.value.condition
-          ? formData.value.condition
-          : "",
-      },
-    ]);
+      // Image
+      await client
+        .from("pets")
+        .update({
+          imagepath: await uploadImage(
+            "pets",
+            selectedImagePrimary.value,
+            data[0].id,
+            "pets"
+          ),
+        })
+        .eq("id", data[0].id);
 
-    // Image
-    await client
-      .from("pets")
-      .update({
-        imagepath: await uploadImage(
-          "pets",
-          selectedImagePrimary.value,
-          data[0].id,
-          "pets"
-        ),
-      })
-      .eq("id", data[0].id);
+      const filepaths = [];
 
-    const filepaths = [];
+      if (selectedImageSecondary.value) {
+        filepaths.push(
+          await uploadImage(
+            "pets_secondary",
+            selectedImageSecondary.value,
+            data[0].id,
+            "pets",
+            false
+          )
+        );
+      }
 
-    if (selectedImageSecondary.value) {
-      filepaths.push(
-        await uploadImage(
-          "pets_secondary",
-          selectedImageSecondary.value,
-          data[0].id,
-          "pets",
-          false
-        )
-      );
+      if (selectedImageThird.value) {
+        filepaths.push(
+          await uploadImage(
+            "pets_third",
+            selectedImageThird.value,
+            data[0].id,
+            "pets",
+            false
+          )
+        );
+      }
+
+      await client
+        .from("pets")
+        .update({
+          addimages: filepaths,
+        })
+        .eq("id", data[0].id);
     }
-
-    if (selectedImageThird.value) {
-      filepaths.push(
-        await uploadImage(
-          "pets_third",
-          selectedImageThird.value,
-          data[0].id,
-          "pets",
-          false
-        )
-      );
-    }
-
-    await client
-      .from("pets")
-      .update({
-        addimages: filepaths,
-      })
-      .eq("id", data[0].id);
 
     successMsg.value = "Upload Success!";
     router.push("/agent/posts");
   }
+  // #endregion
 }
 
 // #endregion
@@ -487,7 +672,13 @@ async function submitForm() {
                 </div>
                 <p class="text-red-600 text-center h-8">
                   <span
-                    v-if="item.selectedImage && !isImage(item.selectedImage)"
+                    v-if="
+                      item.selectedImage &&
+                      !(
+                        isImageFile(item.selectedImage) ||
+                        isImageUrl(item.selectedImage)
+                      )
+                    "
                     >Please upload an image file.</span
                   >
                 </p>
@@ -546,7 +737,13 @@ async function submitForm() {
                 </div>
                 <p class="text-red-600 text-center h-8">
                   <span
-                    v-if="item.selectedImage && !isImage(item.selectedImage)"
+                    v-if="
+                      item.selectedImage &&
+                      !(
+                        isImageFile(item.selectedImage) ||
+                        isImageUrl(item.selectedImage)
+                      )
+                    "
                     >Please upload an image file.</span
                   >
                 </p>
@@ -756,7 +953,11 @@ async function submitForm() {
                         />
                         <p
                           v-show="
-                            item.selectedImage && !isImage(item.selectedImage)
+                            item.selectedImage &&
+                            !(
+                              isImageFile(item.selectedImage) ||
+                              isImageUrl(item.selectedImage)
+                            )
                           "
                           class="text-red-600 text-center"
                         >
