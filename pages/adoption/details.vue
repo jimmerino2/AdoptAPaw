@@ -3,21 +3,27 @@ import { useWindowSize } from "@vueuse/core";
 const { fetchData, fetchImage } = useFetchData();
 const { width } = useWindowSize();
 
-definePageMeta({
-  middleware: ["agentreject"],
-});
-
 const route = useRoute();
-const petId = route.query.petid;
+const toggleContent = ref(false); // 0 - About,  1 - Agent
+
+// #region Query processing
+const petId = route.query?.petid;
+const origin = route.query?.origin;
+const agent = route.query?.agent;
+// #endregion
+
+// #region Data processing
 const fetchedPetDetails = await fetchData(
   "pets",
   "*, medicalrecord(*), agents(*, users(*))",
   ["id", petId]
 );
-const selectedPet = fetchedPetDetails[0];
-
-const showDetails = ref(false);
-const toggleContent = ref(false); // 0 - About,  1 - Agent
+const selectedPet = ref(fetchedPetDetails[0]);
+if (!selectedPet.value.addimages) {
+  selectedPet.value.addimages = ["", ""];
+} else if (!selectedPet.value.addimages[1]) {
+  selectedPet.value.addimages[1] = "";
+}
 
 const petAgeType = ref(null);
 if (selectedPet.age <= 2) {
@@ -29,7 +35,67 @@ if (selectedPet.age <= 2) {
 } else {
   petAgeType.value = "Adult";
 }
+// #endregion
 
+// #region Slideshow
+const images = ref([
+  {
+    image: selectedPet.value.addimages[0],
+    condition: selectedPet.value.addimages[0] !== "",
+    id: "image2",
+  },
+  {
+    image: selectedPet.value.imagepath,
+    condition: true,
+    id: "image1",
+  },
+  {
+    image:
+      selectedPet.value.addimages[1] !== ""
+        ? selectedPet.value.addimages[1]
+        : selectedPet.value.addimages[0],
+    condition: selectedPet.value.addimages[0] !== "",
+    id: "image3",
+  },
+]);
+
+const currentIndex = ref(0);
+const previousImage = () => {
+  currentIndex.value = (currentIndex.value + 1) % images.value.length;
+  updateOpacity();
+};
+
+const nextImage = () => {
+  currentIndex.value =
+    (currentIndex.value - 1 + images.value.length) % images.value.length;
+  updateOpacity();
+};
+
+const updatedImages = computed(() => {
+  const totalImages = images.value.length;
+  const index = currentIndex.value;
+
+  return [
+    images.value[index],
+    images.value[(index + 1) % totalImages],
+    images.value[(index + 2) % totalImages],
+  ];
+});
+
+const updateOpacity = () => {
+  updatedImages.value.forEach((image, index) => {
+    if (index === 0 || index === 2) {
+      image.opacity = 0.2;
+    } else {
+      image.opacity = 1;
+    }
+  });
+};
+
+onMounted(() => {
+  updateOpacity();
+});
+// #endregion
 const scrollToTop = () => {
   window.scrollTo({
     top: 0,
@@ -43,16 +109,46 @@ const scrollToTop = () => {
     class="h-full flex flex-col items-center bg-slate-100 custom-lg:px-[10vw] custom-md:px-[4vw]"
   >
     <!-- Image Section-->
-    <div class="w-full flex overflow-visible">
-      <div class="bg-slate-800 grow"></div>
-      <div class="h-full overflow-hidden bg-slate-200">
-        <img
-          :src="fetchImage(selectedPet.imagepath)"
-          alt="pet_image"
-          class="w-auto min-h-[16rem] max-h-[20rem]"
-        />
+    <div class="w-full flex justify-center bg-slate-800">
+      <div class="relative flex justify-center overflow-hidden">
+        <div class="flex justify-center max-w-[900px] bg-black">
+          <img
+            v-for="item in updatedImages"
+            v-show="item.condition"
+            :key="item.id"
+            :src="fetchImage(item.image)"
+            :id="item.id"
+            alt="pet_image"
+            class="w-full object-cover max-h-[400px]"
+            :style="{ opacity: item.opacity }"
+            :class="{
+              'min-w-[300px]': width < 576,
+              'min-w-[400px]': width >= 576,
+            }"
+          />
+        </div>
+        <div
+          class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex justify-between h-fit"
+          :class="{
+            'min-w-[320px]': width < 576,
+            'min-w-[420px]': width >= 576,
+          }"
+          v-show="
+            selectedPet.addimages[0] !== '' || selectedPet.addimages[1] !== ''
+          "
+        >
+          <img
+            src="/left_arrow.png"
+            class="size-10 bg-gray-300 p-3 rounded-full hover:cursor-pointer"
+            @click="previousImage"
+          />
+          <img
+            src="/right_arrow.png"
+            class="size-10 bg-gray-300 p-3 rounded-full hover:cursor-pointer"
+            @click="nextImage"
+          />
+        </div>
       </div>
-      <div class="bg-slate-800 grow"></div>
     </div>
 
     <!-- Top Section-->
@@ -84,6 +180,7 @@ const scrollToTop = () => {
             path: '/adoption/schedule',
             query: { petId: petId },
           }"
+          v-show="origin !== 'posts'"
         >
           <Button class="mt-4">Adopt {{ selectedPet.name }}</Button>
         </NuxtLink>
@@ -246,7 +343,12 @@ const scrollToTop = () => {
       class="hover:cursor-pointer fixed bottom-[10px] right-[10px] flex size-[ items-center justify-center z-20"
       as-child
     >
-      <NuxtLink to="/adoption/listings">Back to Listings</NuxtLink>
+      <NuxtLink to="/adoption/listings" v-if="origin !== 'posts'"
+        >Back to Listings</NuxtLink
+      >
+      <NuxtLink to="/agent/posts" v-else-if="origin === 'posts'"
+        >Back to Listings</NuxtLink
+      >
     </Button>
 
     <Button

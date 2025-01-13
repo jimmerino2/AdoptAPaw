@@ -17,20 +17,15 @@ const parentLinks = ref([]);
 
 watchEffect(async () => {
   if (user.value?.id) {
-    try {
-      profileDetails.value = await fetchData("users", "*", [
-        "user_id",
-        user.value.id,
-      ]);
+    profileDetails.value = await fetchData("users", "*", [
+      "user_id",
+      user.value.id,
+    ]);
 
-      profile.value = profileDetails.value?.[0] || {
-        role: "Guest",
-        imagepath: "",
-      };
-      console.log("Profile loaded:", profile.value);
-    } catch (error) {
-      console.error("Error fetching profile data:", error);
-    }
+    profile.value = profileDetails.value?.[0] || {
+      role: "Guest",
+      imagepath: "",
+    };
   }
 
   // Set Profile Icon
@@ -54,8 +49,8 @@ watchEffect(async () => {
       condition: true,
     },
     {
-      title: "Post",
-      link: "/agent/post",
+      title: "Posts",
+      link: "/agent/posts",
       childLinks: [],
       condition: profile.value.role === "Agent",
     },
@@ -102,7 +97,7 @@ watchEffect(async () => {
 
 async function toProfile() {
   if (profile.value.role === "Agent") {
-    router.push("/profile/posts");
+    router.push("/profile/requests");
   } else if (profile.value.role === "Guest" || profile.value.role === "User") {
     router.push("/profile/appointments");
   }
@@ -113,7 +108,7 @@ async function toProfile() {
   <div class="sticky top-0 flex z-20 flex-col m-0">
     <!-- Logo and Profile -->
     <div
-      class="flex items-center h-24 bg-slate-500 custom-lg:px-[10vw] custom-md:px-[4vw] custom-sm:px-[4vw]"
+      class="flex items-center h-24 bg-slate-500 custom-lg:px-[10vw] custom-md:px-[4vw] custom-sm:px-[4vw] z-20"
     >
       <div class="flex-grow flex items-center justify-between">
         <!-- Logo -->

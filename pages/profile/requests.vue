@@ -1,10 +1,14 @@
 <script setup>
 import { useWindowSize } from "@vueuse/core";
+import { useFetchData } from "@/composables/useFetchData";
 
-const { width } = useWindowSize();
 definePageMeta({
   middleware: ["auth", "agentaccept"],
 });
+const { width } = useWindowSize();
+const { fetchData } = useFetchData();
+const user = useSupabaseUser();
+const client = useSupabaseClient();
 </script>
 
 <template>
@@ -23,3 +27,4 @@ definePageMeta({
     </div>
   </div>
 </template>
+>

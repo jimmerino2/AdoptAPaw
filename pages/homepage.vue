@@ -25,7 +25,7 @@ const cards = [
   {
     label: "Post",
     img: "/homepage_adopt.png",
-    link: "/profile/posts",
+    link: "/agent/posts",
     condition: role.value === "Agent",
   },
   {

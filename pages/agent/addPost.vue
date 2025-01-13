@@ -443,7 +443,7 @@ async function submitForm() {
       .eq("id", data[0].id);
 
     successMsg.value = "Upload Success!";
-    router.push("/profile/posts");
+    router.push("/agent/posts");
   }
 }
 
@@ -799,7 +799,7 @@ async function submitForm() {
 
         <div class="flex justify-center">
           <Button class="mx-2" type="button" as-child>
-            <NuxtLink to="/profile/posts">Cancel</NuxtLink>
+            <NuxtLink to="/agent/posts">Cancel</NuxtLink>
           </Button>
           <Button class="mx-2">Submit</Button>
         </div>

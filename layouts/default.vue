@@ -5,7 +5,7 @@ import Footer from "./footer.vue";
 
 <template>
   <div class="flex flex-col min-h-screen">
-    <Header />
+    <Header class="z-30" />
     <div class="grow">
       <slot />
     </div>
