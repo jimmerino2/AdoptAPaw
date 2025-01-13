@@ -12,11 +12,12 @@ const router = useRouter();
 
 const profileDetails = ref();
 const profile = ref({ role: "Guest", imagepath: "" });
+const imageUrl = ref("");
+const parentLinks = ref([]);
 
 watchEffect(async () => {
   if (user.value?.id) {
     try {
-      console.log("Fetching profile for user:", user.value.id);
       profileDetails.value = await fetchData("users", "*", [
         "user_id",
         user.value.id,
@@ -31,6 +32,72 @@ watchEffect(async () => {
       console.error("Error fetching profile data:", error);
     }
   }
+
+  // Set Profile Icon
+  if (!user.value) {
+    imageUrl.value = ""; // No path if not logged in
+  } else {
+    if (profile.value.imagepath === null || profile.value.imagepath === "") {
+      imageUrl.value = "/profile-icon.png";
+    } else {
+      const profileImage = fetchImage(profile.value.imagepath);
+      imageUrl.value = profileImage;
+    }
+  }
+
+  // Set Links
+  parentLinks.value = [
+    {
+      title: "Homepage",
+      link: "/homepage",
+      childLinks: [],
+      condition: true,
+    },
+    {
+      title: "Post",
+      link: "/agent/post",
+      childLinks: [],
+      condition: profile.value.role === "Agent",
+    },
+    {
+      title: "Adopt",
+      link: "/adoption/listings",
+      childLinks: [],
+      condition:
+        profile.value.role === "User" || profile.value.role === "Guest",
+    },
+    {
+      title: "Shelters",
+      link: "/shelters",
+      childLinks: [],
+      condition: true,
+    },
+    {
+      title: "Donations",
+      link: "/donation",
+      childLinks: [],
+      condition: true,
+    },
+    {
+      title: "Support",
+      link: null,
+      childLinks: [
+        {
+          title: "FAQ Section",
+          link: "/faq",
+        },
+        {
+          title: "Contact Us",
+          link: "/contact",
+        },
+        {
+          title: "Tips for Adopting",
+          link: "/tips",
+        },
+      ],
+      condition: true,
+    },
+  ];
 });
 
 async function toProfile() {
@@ -38,75 +105,6 @@ async function toProfile() {
     router.push("/profile/posts");
   } else if (profile.value.role === "Guest" || profile.value.role === "User") {
     router.push("/profile/appointments");
-  }
-}
-
-const parentLinks = [
-  {
-    title: "Homepage",
-    link: "/homepage",
-    childLinks: [],
-    condition: true,
-  },
-  {
-    title: "Post",
-    link: "/agent/post",
-    childLinks: [],
-    condition: computed(() => {
-      profile.value.role === "Agent";
-    }),
-  },
-  {
-    title: "Adopt",
-    link: "/adoption/listings",
-    childLinks: [],
-    condition: computed(() => {
-      profile.value.role === "User" || profile.value.role === "Guest";
-    }),
-  },
-  {
-    title: "Shelters",
-    link: "/shelters",
-    childLinks: [],
-    condition: true,
-  },
-  {
-    title: "Donations",
-    link: "/donation",
-    childLinks: [],
-    condition: true,
-  },
-  {
-    title: "Support",
-    link: null,
-    childLinks: [
-      {
-        title: "FAQ Section",
-        link: "/faq",
-      },
-      {
-        title: "Contact Us",
-        link: "/contact",
-      },
-      {
-        title: "Tips for Adopting",
-        link: "/tips",
-      },
-    ],
-    condition: true,
-  },
-];
-
-// Set Profile Icon
-const imageUrl = ref("");
-if (!user.value) {
-  imageUrl.value = ""; // No path if not logged in
-} else {
-  if (profile.value.imagepath === null || profile.value.imagepath === "") {
-    imageUrl.value = "/profile-icon.png";
-  } else {
-    const profileImage = fetchImage(profile.value.imagepath);
-    imageUrl.value = profileImage;
   }
 }
 </script>
