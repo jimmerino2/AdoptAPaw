@@ -296,7 +296,7 @@ if (route.query.petid && route.query.agentid) {
     formData.value.condition =
       petDetails[0].medicalrecord[0]?.specialcondition === undefined
         ? null
-        : convBoolean(petDetails[0].medicalrecord[0].specialcondition);
+        : petDetails[0].medicalrecord[0].specialcondition;
 
     selectedImagePrimary.value = fetchImage(petDetails[0].imagepath);
     if (petDetails[0].addimages !== null) {
@@ -451,6 +451,7 @@ async function submitForm() {
   // #endregion
 
   // #region Submission
+
   if (verified.value) {
     const userData = await fetchData("users", "id", ["user_id", user.value.id]);
     const agentData = await fetchData("agents", "id", ["uid", userData[0].id]);
@@ -459,7 +460,7 @@ async function submitForm() {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(" ");
 
-    if (route.query.edit && route.query.edit === true) {
+    if (route.query.edit && route.query.edit === "true") {
       await client
         .from("pets")
         .update({
