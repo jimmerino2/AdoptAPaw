@@ -8,7 +8,8 @@ export function useFetchData() {
         const { data, error } = await client
           .from(table)
           .select(cols)
-          .eq(condition1[0], condition1[1]);
+          .eq(condition1[0], condition1[1])
+          .order("id", { ascending: true });
 
         if (error) {
           throw new Error(
@@ -18,7 +19,10 @@ export function useFetchData() {
 
         return data; // Return the resolved array
       } else {
-        const { data, error } = await client.from(table).select(cols);
+        const { data, error } = await client
+          .from(table)
+          .select(cols)
+          .order("id", { ascending: true });
         if (error) {
           throw new Error(
             `Error fetching data from ${table}: ${error.message}`
