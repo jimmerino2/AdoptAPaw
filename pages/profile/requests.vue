@@ -7,8 +7,22 @@ definePageMeta({
 });
 const { width } = useWindowSize();
 const { fetchData } = useFetchData();
-const user = useSupabaseUser();
-const client = useSupabaseClient();
+
+const data = ref(
+  await fetchData(
+    "appointments",
+    "id, date, approved, comment, pets(age, breed, gender, imagepath, name, agents(address, passno, type, workinghrs, users(*)))",
+    ["status", "active"]
+  )
+);
+
+async function refreshData() {
+  data.value = await fetchData(
+    "appointments",
+    "id, date, approved, comment, pets(age, breed, gender, imagepath, name, agents(address, passno, type, workinghrs, users(*)))",
+    ["status", "active"]
+  );
+}
 </script>
 
 <template>
@@ -23,7 +37,19 @@ const client = useSupabaseClient();
     >
       <div
         class="p-4 flex items-center flex-col w-full h-full bg-slate-100"
-      ></div>
+        :class="{
+          'grid grid-cols-2 justify-center w-full':
+            width >= 1440 && width < 1850,
+          'grid grid-cols-3 justify-center w-full': width >= 1850,
+        }"
+      >
+        <AppointmentCard
+          v-for="items in data"
+          :appointment="items"
+          :type="'agent'"
+          @appointmentChange="refreshData()"
+        ></AppointmentCard>
+      </div>
     </div>
   </div>
 </template>
