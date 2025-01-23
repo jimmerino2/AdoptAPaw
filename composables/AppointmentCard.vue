@@ -28,17 +28,16 @@ async function handleRemoval(appointment) {
     .update({ status: "removed" })
     .eq("id", appointment.id)
     .select();
-
   appointmentChange();
 }
 </script>
 
 <template>
   <div
-    class="relative rounded-md px-4 py-2 m-4 bg-slate-100 max-w-[350px] border-4 border-slate-400"
+    class="relative rounded-md px-4 py-2 m-4 bg-beige-300 max-w-[350px] hover:scale-[101%] hover:border-beige-400 hover:shadow-xl border-transparent border-2 ease-in duration-100"
   >
     <!-- Status -->
-    <div class="absolute top-3 right-3 size-14">
+    <div class="absolute top-3 right-6 size-14">
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
@@ -109,7 +108,11 @@ async function handleRemoval(appointment) {
           variant="destructive"
           >Deny</Button
         >
-        <Button @click="handleRequest(props?.appointment, true)">Accept</Button>
+        <Button
+          class="bg-emerald-600 hover:bg-emerald-500"
+          @click="handleRequest(props?.appointment, true)"
+          >Accept</Button
+        >
       </div>
       <div v-else>
         <Button variant="destructive" @click="handleRemoval(props?.appointment)"

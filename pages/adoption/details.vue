@@ -8,7 +8,7 @@ const toggleContent = ref(false); // 0 - About,  1 - Agent
 
 // #region Query processing
 const petId = route.query?.petid;
-const origin = route.query?.origin;
+const role = route.query?.role;
 const agent = route.query?.agent;
 // #endregion
 
@@ -96,20 +96,15 @@ onMounted(() => {
   updateOpacity();
 });
 // #endregion
-const scrollToTop = () => {
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth",
-  });
-};
 </script>
 
 <template>
-  <div
-    class="h-full flex flex-col items-center bg-slate-100 custom-lg:px-[10vw] custom-md:px-[4vw]"
-  >
+  <div class="h-full flex flex-col items-center scaling">
     <!-- Image Section-->
-    <div class="w-full flex justify-center bg-slate-800">
+    <div
+      class="w-full flex justify-center bg-black"
+      :class="{ 'h-[400px]': width > 576, 'h-[300px]': width <= 576 }"
+    >
       <div class="relative flex justify-center overflow-hidden">
         <div class="flex justify-center max-w-[900px] bg-black">
           <img
@@ -154,10 +149,10 @@ const scrollToTop = () => {
     <!-- Top Section-->
     <div class="w-full">
       <div
-        class="flex-col bg-slate-200 w-full flex items-center justify-center py-4"
+        class="flex-col bg-beige-300 w-full flex items-center justify-center py-4"
       >
         <div class="text-[2rem] font-bold">{{ selectedPet.name }}</div>
-        <hr class="w-[90%] my-2 border border-zinc-400" />
+        <hr class="w-[90%] my-2 border border-gray-400" />
         <div class="py-1 flex text-lg">
           <img
             v-if="selectedPet.gender == 'Female'"
@@ -180,23 +175,25 @@ const scrollToTop = () => {
             path: '/adoption/schedule',
             query: { petId: petId },
           }"
-          v-show="origin !== 'posts'"
+          v-show="role !== 'Agent'"
         >
-          <Button class="mt-4">Adopt {{ selectedPet.name }}</Button>
+          <Button class="bg-green-700 hover:bg-green-600 mt-4"
+            >Adopt {{ selectedPet.name }}</Button
+          >
         </NuxtLink>
       </div>
 
       <Menubar class="w-full top-14 py-5 z-10" v-show="width <= 768">
         <MenubarMenu>
           <MenubarTrigger
-            class="hover:cursor-pointer"
+            class="hover:cursor-pointer w-full flex bg-beige-200 justify-center"
             v-on:click="toggleContent = false"
-            ><div class="">About</div></MenubarTrigger
+            >About</MenubarTrigger
           >
           <MenubarTrigger
-            class="hover:cursor-pointer"
+            class="hover:cursor-pointer w-full flex bg-beige-200 justify-center"
             v-on:click="toggleContent = true"
-            ><div class="">Agent or Shelter</div></MenubarTrigger
+            >Agent or Shelter</MenubarTrigger
           >
         </MenubarMenu>
       </Menubar>
@@ -207,7 +204,7 @@ const scrollToTop = () => {
       <!-- Pet Info -->
       <div
         v-show="!toggleContent || width > 768"
-        class="py-4 bg-slate-300 w-full p-4"
+        class="py-4 bg-orange-300 w-full p-4"
       >
         <p class="text-2xl font-bold">Pet</p>
         <!-- Description -->
@@ -308,7 +305,7 @@ const scrollToTop = () => {
       <!-- Agent Info-->
       <div
         v-show="toggleContent || width > 768"
-        class="py-4 bg-slate-300 w-full p-4"
+        class="py-4 bg-orange-300 w-full p-4"
       >
         <p class="text-2xl font-bold">Agent</p>
         <!-- Name -->
@@ -340,22 +337,15 @@ const scrollToTop = () => {
 
     <!-- Fixed Buttons -->
     <Button
-      class="hover:cursor-pointer fixed bottom-[10px] right-[10px] flex size-[ items-center justify-center z-20"
+      class="hover:cursor-pointer fixed bottom-4 right-4 flex items-center justify-center z-20 bg-yellow-600 hover:bg-yellow-500"
       as-child
     >
-      <NuxtLink to="/adoption/listings" v-if="origin !== 'posts'"
+      <NuxtLink to="/adoption/listings" v-if="role !== 'Agent'"
         >Back to Listings</NuxtLink
       >
-      <NuxtLink to="/agent/posts" v-else-if="origin === 'posts'"
+      <NuxtLink to="/agent/posts" v-else-if="role === 'Agent'"
         >Back to Listings</NuxtLink
       >
     </Button>
-
-    <Button
-      v-on:click="scrollToTop()"
-      class="hover:cursor-pointer fixed bottom-[60px] right-[10px] flex size-[ items-center justify-center z-20"
-      v-show="width <= 768"
-      >Back to Top</Button
-    >
   </div>
 </template>

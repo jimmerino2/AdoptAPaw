@@ -13,20 +13,22 @@ const selectPet = () => {
 
 <template>
   <div
-    class="hover:cursor-pointer rounded bg-slate-400 w-full max-w-[300px] justify-self-center"
+    class="hover:cursor-pointer w-full rounded-xl max-w-[250px] justify-self-center shadow-lg drop-shadow-xl border-transparent hover:border-orange-100 border-2 hover:shadow-2xl"
     v-on:click="selectPet()"
   >
-    <div class="h-[300px] w-full overflow-hidden bg-slate-200 rounded">
+    <div class="h-[250px] w-full overflow-hidden">
       <img
         :src="fetchImage(props.pet?.imagepath)"
         alt="Pet Image"
-        class="h-full w-full object-cover"
+        class="h-full w-full object-cover rounded-t-xl"
       />
     </div>
 
-    <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center bg-beige-200 rounded-b-xl">
       <div class="text-lg font-bold pt-2">{{ props.pet?.name }}</div>
-      <div class="text-lg text-center w-full truncate py-2 flex justify-center">
+      <div
+        class="text-base text-center w-full truncate py-2 flex items-center justify-center"
+      >
         <img
           v-if="props.pet?.gender == 'Female'"
           src="/public/gender_f.png"

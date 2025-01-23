@@ -1,11 +1,9 @@
 <script setup>
 import { useWindowSize } from "@vueuse/core";
-import { ChevronsUpDown } from "lucide-vue-next";
+import { ChevronsUp, ChevronsDown } from "lucide-vue-next";
 import { useFetchData } from "@/composables/useFetchData";
 
 const { width } = useWindowSize();
-const isOpen = [ref(false), ref(false), ref(false), ref(false), ref(false)];
-
 const { fetchData, fetchImage } = useFetchData();
 const user = useSupabaseUser();
 const router = useRouter();
@@ -14,6 +12,11 @@ const profileDetails = ref();
 const profile = ref({ role: "Guest", imagepath: "" });
 const imageUrl = ref("");
 const parentLinks = ref([]);
+
+const chevronIsDown = ref(false);
+function toggleChevron() {
+  chevronIsDown.value = !chevronIsDown.value;
+}
 
 watchEffect(async () => {
   if (user.value?.id) {
@@ -63,7 +66,13 @@ watchEffect(async () => {
     },
     {
       title: "Shelters",
-      link: "/shelters",
+      link: "/agent/shelters",
+      childLinks: [],
+      condition: true,
+    },
+    {
+      title: "FAQ",
+      link: "/tips",
       childLinks: [],
       condition: true,
     },
@@ -71,25 +80,6 @@ watchEffect(async () => {
       title: "Donations",
       link: "/donation",
       childLinks: [],
-      condition: true,
-    },
-    {
-      title: "Support",
-      link: null,
-      childLinks: [
-        {
-          title: "FAQ Section",
-          link: "/faq",
-        },
-        {
-          title: "Contact Us",
-          link: "/contact",
-        },
-        {
-          title: "Tips for Adopting",
-          link: "/tips",
-        },
-      ],
       condition: true,
     },
   ];
@@ -106,18 +96,13 @@ async function toProfile() {
 
 <template>
   <div class="sticky top-0 flex z-20 flex-col m-0">
-    <!-- Logo and Profile -->
-    <div
-      class="flex items-center h-24 bg-slate-500 custom-lg:px-[10vw] custom-md:px-[4vw] custom-sm:px-[4vw] z-20"
-    >
+    <div class="flex items-center h-24 bg-beige-300 scaling z-20">
       <div class="flex-grow flex items-center justify-between">
         <!-- Logo -->
         <div class="ml-2 flex items-center">
-          <Avatar class="size-12">
-            <AvatarImage src="/logo_v1.png" />
-            <AvatarFallback>Logo</AvatarFallback>
-          </Avatar>
-          <p class="text-2xl ml-2">AdoptAPaw</p>
+          <NuxtLink to="/homepage">
+            <img src="/public/logo_font.png" class="w-48" />
+          </NuxtLink>
         </div>
 
         <div class="flex justify-end custom-sm:justify-between">
@@ -134,9 +119,12 @@ async function toProfile() {
                   <AvatarFallback>Profile</AvatarFallback>
                 </Avatar>
 
-                <Button as-child v-show="!user" class="self-center mx-2">
-                  <NuxtLink to="/auth/login"> Log In </NuxtLink>
-                </Button>
+                <NuxtLink to="/auth/login" v-show="!user">
+                  <img
+                    src="/public/profile-icon.png"
+                    class="size-12 bg-orange-700 rounded-full p-1 mx-2"
+                  />
+                </NuxtLink>
               </TooltipTrigger>
               <TooltipContent>
                 <p>Go to Profile</p>
@@ -145,54 +133,59 @@ async function toProfile() {
           </TooltipProvider>
 
           <!-- Menu for Mobile -->
-          <Sheet>
+          <Sheet v-if="width < 625">
             <SheetTrigger>
-              <Avatar
-                class="size-12 bg-transparent"
-                :class="{ hidden: width >= 625 }"
-              >
-                <AvatarImage src="/menu-icon.png" />
-                <AvatarFallback>Profile</AvatarFallback>
-              </Avatar>
+              <img class="size-12" src="/menu-icon.png" />
             </SheetTrigger>
-            <SheetContent side="left" class="p-0 bg-slate-200">
-              <SheetHeader class="p-2 bg-slate-400">
-                <SheetTitle class="text-left flex items-center">
-                  <Avatar class="size-12 mr-2">
-                    <AvatarImage src="/logo_v1.png" />
-                    <AvatarFallback>Logo</AvatarFallback>
-                  </Avatar>
-                  AdoptAPaw
+            <SheetContent side="left" class="p-0 bg-orange-500 w-5/6">
+              <SheetHeader class="gap-0 py-6 bg-beige-100 pl-4">
+                <SheetTitle class="h-full flex items-center">
+                  <img src="/public/logo_font.png" class="w-48" />
                 </SheetTitle>
                 <SheetDescription />
               </SheetHeader>
 
-              <Collapsible
-                v-for="(parent, index) in parentLinks"
-                v-model:open="isOpen[index].value"
-                class="w-full"
-              >
+              <Collapsible v-for="parent in parentLinks" class="w-full">
                 <NuxtLink :to="parent.link" v-show="parent.condition">
                   <CollapsibleTrigger
-                    class="w-full text-left flex justify-between items-center border-y border-solid border-black h-12 px-2 my-4"
+                    class="w-full text-left text-xl flex justify-between items-center h-12 py-8 pl-4 focus:bg-orange-300 text-white ease-in duration-100"
+                    @click="toggleChevron"
                   >
-                    <div>{{ parent.title }}</div>
+                    <div class="flex items-center">
+                      <p class="text-xl">{{ parent.title }}</p>
+                    </div>
                     <Button
                       variant="ghost"
                       size="sm"
                       class="w-9 p-0 bg-transparent"
                       v-show="parent.childLinks.length > 0"
                     >
-                      <ChevronsUpDown class="h-4 w-4" />
+                      <ChevronsDown
+                        v-if="!chevronIsDown"
+                        class="h-4 w-4"
+                        @click="toggleChevron()"
+                      />
+                      <ChevronsUp
+                        v-else
+                        class="h-4 w-4"
+                        @click="toggleChevron()"
+                      />
                       <span class="sr-only">Toggle</span>
                     </Button>
                   </CollapsibleTrigger>
                 </NuxtLink>
+
                 <CollapsibleContent
                   v-for="child in parent.childLinks"
-                  class="bg-slate-300 p-1"
+                  class="w-full"
                 >
-                  <NuxtLink :to="child.link">{{ child.title }}</NuxtLink>
+                  <NuxtLink :to="child.link">
+                    <div
+                      class="w-full p-4 text-xl pl-6 hover:bg-orange-300 text-white ease-in duration-100"
+                    >
+                      {{ child.title }}
+                    </div>
+                  </NuxtLink>
                 </CollapsibleContent>
               </Collapsible>
             </SheetContent>
@@ -202,19 +195,16 @@ async function toProfile() {
     </div>
 
     <!-- Menu for Desktop -->
-    <div class="bg-slate-300">
+    <div class="bg-orange-700 opacity-90">
       <!-- Menubar -->
-      <div
-        class="custom-lg:px-[10vw] custom-md:px-[2vw] flex flex-col"
-        v-show="width >= 625"
-      >
+      <div class="scaling flex flex-col" v-show="width >= 625">
         <Menubar
-          class="bg-slate-300 border-none flex w-full justify-between py-2"
+          class="bg-transparent border-none flex w-full justify-between py-2"
         >
           <MenubarMenu v-for="(parent, index) in parentLinks" :key="index">
             <NuxtLink :to="parent.link" v-show="parent.condition">
               <MenubarTrigger
-                class="text-lg h-full hover:bg-slate-100 cursor-pointer"
+                class="text-lg h-full text-white hover:bg-orange-600 cursor-pointer"
               >
                 {{ parent.title }}
               </MenubarTrigger>
@@ -232,7 +222,9 @@ async function toProfile() {
                 class="p-4 text-md"
                 as-child
               >
-                <NuxtLink :to="child.link">{{ child.title }}</NuxtLink>
+                <NuxtLink :to="child.link" class="focus:bg-orange-100">{{
+                  child.title
+                }}</NuxtLink>
               </MenubarItem>
             </MenubarContent>
           </MenubarMenu>

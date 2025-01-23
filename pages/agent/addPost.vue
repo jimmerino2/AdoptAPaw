@@ -107,8 +107,8 @@ const inputList = [
     },
     {
       type: "textarea",
-      label: "Description",
-      placeholder: "Enter description",
+      label: "Description ",
+      placeholder: "Let people know more about the story of your pet.",
       id: "desc",
     },
   ],
@@ -197,7 +197,7 @@ const imageInputList = ref([
     }),
     image: computed(() => {
       const selectedImage = selectedImagePrimary.value;
-      if (!selectedImage) return null;
+      if (!selectedImage) return "/transparent.png";
       if (typeof selectedImage === "string" && isImageUrl(selectedImage)) {
         return selectedImage;
       } else if (selectedImage instanceof Blob && isImageFile(selectedImage)) {
@@ -216,7 +216,7 @@ const imageInputList = ref([
     }),
     image: computed(() => {
       const selectedImage = selectedImageSecondary.value;
-      if (!selectedImage) return null;
+      if (!selectedImage) return "/transparent.png";
       if (typeof selectedImage === "string" && isImageUrl(selectedImage)) {
         return selectedImage;
       } else if (selectedImage instanceof Blob && isImageFile(selectedImage)) {
@@ -235,7 +235,7 @@ const imageInputList = ref([
     }),
     image: computed(() => {
       const selectedImage = selectedImageThird.value;
-      if (!selectedImage) return null;
+      if (!selectedImage) return "/transparent.png";
       if (typeof selectedImage === "string" && isImageUrl(selectedImage)) {
         return selectedImage;
       } else if (selectedImage instanceof Blob && isImageFile(selectedImage)) {
@@ -639,12 +639,12 @@ async function submitForm() {
 <template>
   <form @submit.prevent="submitForm" class="w-full flex justify-center">
     <div
-      class="bg-white w-full max-w-[1350px] h-fit flex flex-col p-8 items-center rounded-md"
+      class="w-full max-w-[1350px] flex flex-col p-2 items-center rounded-lg"
     >
       <!-- Title -->
-      <div class="w-fullflex items-center flex-col p-2">
+      <div class="w-full flex items-center flex-col p-2">
         <p class="text-3xl font-bold">Create Listing</p>
-        <p class="text-sm my-2 text-gray-500">
+        <p class="text-sm my-2 text-gray-500 text-center">
           Help a pet find their forever home
         </p>
       </div>
@@ -652,11 +652,11 @@ async function submitForm() {
       <!-- Content -->
       <div class="w-full flex justify-center">
         <!-- PC Image -->
-        <div class="mr-4 p-2 w-fit border border-gray-200" v-show="width > 768">
-          <div class="font-bold p-2">Pet Images</div>
+        <div class="mr-4 w-fit bg-beige-200" v-show="width > 768">
+          <div class="font-bold p-3 rounded-t-md bg-orange-500">Pet Images</div>
 
           <!-- Primary -->
-          <div class="p-2" v-for="item in imageInputList.slice(0, 1)">
+          <div class="p-4" v-for="item in imageInputList.slice(0, 1)">
             <div
               class="flex items-center"
               :class="{ 'flex-col': width < 1440 }"
@@ -706,7 +706,7 @@ async function submitForm() {
                 />
                 <label
                   :for="item.key"
-                  class="bg-slate-400 w-fit p-2 rounded-md my-2 hover:cursor-pointer hover:bg-slate-100 duration-200"
+                  class="bg-orange-500 w-fit p-2 rounded-md my-2 hover:cursor-pointer hover:bg-orange-500 transform hover:scale-105 ease-in duration-100"
                   >Upload Image</label
                 >
               </div>
@@ -757,7 +757,7 @@ async function submitForm() {
                 />
                 <label
                   :for="item.key"
-                  class="bg-slate-400 w-fit p-2 rounded-md my-2 hover:cursor-pointer hover:bg-slate-100 duration-200"
+                  class="bg-orange-500 w-fit p-2 rounded-md my-2 hover:cursor-pointer hover:bg-orange-500 transform hover:scale-105 ease-in duration-100"
                   >Upload Image</label
                 >
               </div>
@@ -776,12 +776,12 @@ async function submitForm() {
             <!-- Basic Details -->
             <AccordionItem value="basic">
               <AccordionTrigger
-                class="p-3 border border-gray-200 justify-start hover:no-underline"
+                class="p-3 bg-orange-400 hover:bg-orange-500 rounded-t-lg hover:no-underline focus:bg-orange-500"
               >
                 Basic Details
               </AccordionTrigger>
               <AccordionContent
-                class="border border-gray-200"
+                class="bg-beige-200 px-2"
                 :class="{ 'flex flex-col': width > 768 }"
               >
                 <div :class="{ 'grow flex': width > 768 }">
@@ -798,7 +798,7 @@ async function submitForm() {
                         :type="i.type"
                         :id="i.id"
                         v-model="formData[i.id]"
-                        class="w-full p-2 text-sm border border-grey-400"
+                        class="w-full p-2 text-sm"
                         :placeholder="i.placeholder"
                         :step="i.step"
                         required
@@ -808,7 +808,7 @@ async function submitForm() {
                       <select
                         v-else-if="i.type === 'select'"
                         v-model="formData[i.id]"
-                        class="w-full p-2 text-sm border border-grey-400"
+                        class="w-full p-2 text-sm"
                       >
                         <option v-for="(item, idx) in i.values" :value="item">
                           {{ item }}
@@ -827,7 +827,7 @@ async function submitForm() {
                       <select
                         v-if="i.type === 'select'"
                         v-model="formData[i.id]"
-                        class="w-full p-2 text-sm border border-grey-400"
+                        class="w-full p-2 text-sm"
                         required
                       >
                         <option v-for="(item, idx) in i.values" :value="item">
@@ -844,6 +844,7 @@ async function submitForm() {
                       >
                         <input
                           type="checkbox"
+                          class="checked:bg-red-200"
                           :value="item"
                           v-model="formData[i.id]"
                           :disabled="
@@ -864,7 +865,7 @@ async function submitForm() {
                     <label :for="i.id" class="block m-1">{{ i.label }}</label>
                     <textarea
                       :key="index"
-                      class="w-full p-2 text-sm border border-grey-400"
+                      class="w-full p-2 text-sm"
                       :placeholder="i.placeholder"
                       v-model="formData[i.id]"
                       required
@@ -877,16 +878,15 @@ async function submitForm() {
             <!-- Medical Records -->
             <AccordionItem value="medical">
               <AccordionTrigger
-                class="p-3 border border-gray-200 justify-start hover:no-underline"
+                class="p-3 bg-orange-400 hover:bg-orange-500 rounded-t-lg hover:no-underline focus:bg-orange-500"
                 >Medical Records
               </AccordionTrigger>
-              <AccordionContent class="border border-gray-200">
+              <AccordionContent class="bg-beige-200">
                 <div v-for="(item, index) in inputList[1]" :key="index">
-                  <fieldset
-                    class="border border-gray-200 m-2 p-2"
-                    v-if="item.legend"
-                  >
-                    <legend class="text-md font-bold">{{ item.legend }}</legend>
+                  <fieldset class="py-4 px-2" v-if="item.legend">
+                    <legend class="text-md font-bold py-2">
+                      {{ item.legend }}
+                    </legend>
                     <div class="text-sm" v-for="items in item.items">
                       <div v-if="items.type === 'date'">
                         <label class="block">{{ items.label }}</label>
@@ -932,12 +932,11 @@ async function submitForm() {
             <!-- Image -->
             <AccordionItem value="image" v-show="width <= 768">
               <AccordionTrigger
-                class="p-3 border border-gray-200 justify-start hover:no-underline"
+                class="p-3 bg-orange-400 hover:bg-orange-500 rounded-t-lg hover:no-underline focus:bg-orange-500"
               >
                 Pet Images
               </AccordionTrigger>
-
-              <AccordionContent class="border border-gray-200">
+              <AccordionContent class="bg-beige-200">
                 <div
                   class="border border-gray-200 p-2"
                   v-for="item in imageInputList"
@@ -950,7 +949,7 @@ async function submitForm() {
                       <div class="w-48 h-48">
                         <img
                           :src="item.image"
-                          class="w-full h-full flex items-center justify-center bg-gray-200 rounded-md object-cover"
+                          class="w-full h-full flex items-center justify-center rounded-md object-cover"
                         />
                         <p
                           v-show="
@@ -980,7 +979,7 @@ async function submitForm() {
                       />
                       <label
                         :for="item.key"
-                        class="bg-slate-400 w-fit p-2 rounded-md my-2 hover:cursor-pointer hover:bg-slate-100 duration-200"
+                        class="bg-orange-500 w-fit p-2 rounded-md my-2"
                         >Upload Image</label
                       >
                     </div>

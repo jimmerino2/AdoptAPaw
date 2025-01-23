@@ -69,10 +69,26 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .scaling {
+    padding-left: 2vw; /* Default for <576px */
+    padding-right: 2vw;
+
+    @media (min-width: 576px) {
+      /* custom-md */
+      padding-left: 4vw;
+      padding-right: 4vw;
+    }
+
+    @media (min-width: 768px) {
+      /* custom-lg */
+      padding-left: 10vw;
+      padding-right: 10vw;
+    }
   }
 }

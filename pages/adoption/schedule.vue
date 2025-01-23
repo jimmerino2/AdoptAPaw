@@ -324,12 +324,14 @@ async function submitForm() {
         </CardContent>
         <CardFooter>
           <div class="justify-center flex grow">
-            <Button as-child class="w-[60%] m-2 max-w-[225px] py-2"
+            <Button
+              as-child
+              class="w-[60%] m-2 max-w-[225px] py-2 bg-orange-600 hover:bg-orange-500"
               ><NuxtLink to="/adoption/listings">Back</NuxtLink></Button
             >
             <Button
               type="submit"
-              class="w-[60%] m-2 max-w-[225px] py-2 bg-blue-500 text-white hover:bg-blue-600 text-sm"
+              class="w-[60%] m-2 max-w-[225px] py-2 bg-green-600 hover:bg-green-500"
             >
               Submit
             </Button>

@@ -75,15 +75,16 @@ async function refreshData() {
 </script>
 
 <template>
-  <div
-    class="custom-lg:px-[10vw] custom-md:px-[4vw] custom-sm:px-[4vw] pt-2 pb-10"
-  >
+  <div class="scaling pt-2 pb-10">
     <!-- Title -->
-    <div class="mx-2 px-2 flex flex-col items-center">
-      <p class="text-[2.5rem]">Posted Listings</p>
+    <div class="mx-2 p-8 flex flex-col items-center w-full">
+      <p class="text-3xl text-center">Posted Listings</p>
       <p class="text-lg text-center py-2">
         Navigate and manage your existing listings
       </p>
+      <Button as-child class="bg-orange-700 hover:bg-orange-600"
+        ><NuxtLink to="/agent/addPost">Add Listing</NuxtLink>
+      </Button>
     </div>
 
     <!-- Accordion -->
@@ -96,10 +97,12 @@ async function refreshData() {
       >
         <AccordionItem v-for="inputs in accordionData" :value="inputs.value">
           <AccordionTrigger
-            class="border bg-white p-2 border-gray-200 hover:no-underline"
+            class="bg-white p-2 hover:no-underline bg-orange-300 rounded-t-md focus:bg-orange-400"
             >{{ inputs.label }}
           </AccordionTrigger>
-          <AccordionContent class="border bg-white p-2 border-gray-200">
+          <AccordionContent
+            class="border-x bg-white p-2 rounded-b-md bg-beige-200"
+          >
             <div
               v-if="inputs.data.length > 0"
               class="grid"
@@ -115,7 +118,9 @@ async function refreshData() {
                 v-for="items in inputs.data"
                 class="p-2 relative justify-self-center"
               >
-                <div class="absolute top-5 right-5 flex justify-between w-fit">
+                <div
+                  class="absolute top-5 right-5 flex justify-between w-fit z-20 opacity-75"
+                >
                   <NuxtLink
                     :to="{
                       path: '/agent/addPost',
@@ -128,7 +133,7 @@ async function refreshData() {
                     class="hover:cursor-pointer mr-2"
                     v-show="inputs.value === 'listed'"
                   >
-                    <div class="bg-white p-2 rounded-full">
+                    <div class="bg-orange-200 p-2 rounded-full">
                       <img src="/edit_icon.png" class="size-6" />
                     </div>
                   </NuxtLink>
@@ -143,12 +148,12 @@ async function refreshData() {
                       },
                     }"
                   >
-                    <div class="bg-white p-2 rounded-full">
-                      <img src="/view_icon.jpg" class="size-6" />
+                    <div class="bg-orange-200 p-2 rounded-full">
+                      <img src="/view_icon.png" class="size-6" />
                     </div>
                   </NuxtLink>
                   <div
-                    class="bg-white p-2 rounded-full hover:cursor-pointer ml-2"
+                    class="p-2 rounded-full hover:cursor-pointer ml-2 bg-orange-200"
                     v-show="inputs.value === 'listed'"
                     @click="deleteListing(items)"
                   >
@@ -165,13 +170,6 @@ async function refreshData() {
           </AccordionContent>
         </AccordionItem>
       </Accordion>
-    </div>
-
-    <!-- Buttons -->
-    <div class="fixed bottom-5 right-5">
-      <Button as-child
-        ><NuxtLink to="/agent/addPost">Add Listing</NuxtLink>
-      </Button>
     </div>
   </div>
 </template>

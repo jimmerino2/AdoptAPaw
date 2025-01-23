@@ -87,13 +87,10 @@ async function submitForm() {
 </script>
 
 <template>
-  <div
-    class="custom-lg:px-[10vw] custom-md:px-[4vw] custom-sm:px-[4vw] pt-2 pb-10"
-    :class="{ flex: width >= 1024 }"
-  >
+  <div class="scaling pb-10" :class="{ flex: width >= 1024 }">
     <ProfileCard />
     <div
-      class="grow rounded-md bg-slate-300 justify-self-center"
+      class="grow justify-self-center"
       :class="{
         'w-11/12': width < 1024,
         'mt-16 w-1/2': width >= 1024,
@@ -101,15 +98,15 @@ async function submitForm() {
     >
       <form @submit.prevent="submitForm">
         <Card class="w-full h-full">
-          <CardHeader class="bg-slate-300">
+          <CardHeader class="bg-orange-300 rounded-t-md">
             <CardTitle>Edit Profile</CardTitle>
           </CardHeader>
-          <CardContent class="flex flex-col bg-slate-100 py-4">
+          <CardContent class="flex flex-col bg-beige-300 py-4">
             <div class="py-2">
               <h1 class="text-lg">Name</h1>
               <input
                 type="text"
-                class="w-full p-2 my-2 border border-grey"
+                class="w-full p-2 my-2"
                 v-model="formData.name"
                 required
               />
@@ -118,7 +115,7 @@ async function submitForm() {
               <h1 class="text-lg">Contact</h1>
               <input
                 type="text"
-                class="w-full p-2 my-2 border border-grey"
+                class="w-full p-2 my-2"
                 v-model="formData.contact"
                 required
               />
@@ -129,11 +126,12 @@ async function submitForm() {
               </p>
             </div>
           </CardContent>
-          <CardFooter
-            class="bg-slate-200 flex justify-end items-center py-0 h-24"
-          >
+          <CardFooter class="bg-orange-300 flex justify-end items-center py-4">
             <Button class="max-w-32 mr-2" as-child>
-              <label for="new_pfp" class="cursor-pointer">
+              <label
+                for="new_pfp"
+                class="cursor-pointer bg-amber-700 hover:bg-amber-600 transform hover:scale-[101%]"
+              >
                 <input
                   type="file"
                   id="new_pfp"
@@ -145,7 +143,7 @@ async function submitForm() {
               <!-- Submit Button to trigger the handlePhotoChange -->
               <button type="submit" class="hidden"></button>
             </Button>
-            <Button>Save</Button>
+            <Button class="bg-emerald-700 hover:bg-emerald-600">Save</Button>
           </CardFooter>
         </Card>
       </form>
