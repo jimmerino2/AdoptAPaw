@@ -209,7 +209,7 @@ async function submitForm() {
         },
       ]);
       if (error) throw error;
-      router.push("/homepage");
+      router.push("/profile/appointments");
     }
   } catch (error) {
     errorMsg.value = error.message;

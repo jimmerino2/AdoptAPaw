@@ -28,6 +28,7 @@ async function handleRemoval(appointment) {
     .update({ status: "removed" })
     .eq("id", appointment.id)
     .select();
+
   appointmentChange();
 }
 </script>
