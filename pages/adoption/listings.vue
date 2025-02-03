@@ -99,7 +99,9 @@ async function searchName() {
     const { data } = await client
       .from("pets")
       .select("*")
-      .ilike("name", "%" + formData.value.name + "%");
+      .ilike("name", "%" + formData.value.name + "%")
+      .eq("isadopted", false)
+      .eq("status", "active");
     petData.value = data;
   } else {
     petData.value = await fetchData("pets");
@@ -186,7 +188,8 @@ async function submitForm() {
     .like("type", "%" + formData.value.type + "%")
     .like("breed", "%" + formData.value.breed + "%")
     .like("gender", "%" + formData.value.gender + "%")
-    .eq("isadopted", false);
+    .eq("isadopted", false)
+    .eq("status", "active");
 
   // Age
   let isChild;
@@ -196,7 +199,7 @@ async function submitForm() {
     isChild = false;
   }
   if (isChild !== null && isChild !== undefined) {
-    query.filter("age", isChild ? "gt" : "lte", 2);
+    query.filter("age", isChild ? "lte" : "gt", 2);
   }
 
   const [isToiletTrained, isVaccinated, isNeutered] = [ref(), ref(), ref()];
