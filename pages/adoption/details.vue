@@ -175,7 +175,7 @@ onMounted(() => {
             path: '/adoption/schedule',
             query: { petId: petId },
           }"
-          v-show="role !== 'Agent'"
+          v-show="!agent"
         >
           <Button class="bg-green-700 hover:bg-green-600 mt-4"
             >Adopt {{ selectedPet.name }}</Button
