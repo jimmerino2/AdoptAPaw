@@ -115,10 +115,29 @@ async function handleRemoval(appointment) {
           >Accept</Button
         >
       </div>
-      <div v-else>
-        <Button variant="destructive" @click="handleRemoval(props?.appointment)"
-          >Remove</Button
-        >
+      <div v-else class="w-full flex justify-center">
+        <AlertDialog>
+          <AlertDialogTrigger>
+            <Button variant="destructive">Remove</Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent class="bg-orange-50">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Remove Appointment</AlertDialogTitle>
+              <AlertDialogDescription
+                >Are you sure you want to remove this appointment?
+              </AlertDialogDescription>
+              <AlertDialogFooter>
+                <AlertDialogCancel> Cancel </AlertDialogCancel>
+                <AlertDialogAction
+                  @click="handleRemoval(props?.appointment)"
+                  class="bg-orange-600 hover:bg-orange-500"
+                >
+                  Confirm
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogHeader>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   </div>

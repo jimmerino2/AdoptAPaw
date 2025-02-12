@@ -2,6 +2,7 @@
 import { useFetchData } from "@/composables/useFetchData";
 const { fetchData, fetchImage } = useFetchData();
 import { useWindowSize } from "@vueuse/core";
+import AlertDialog from "~/components/ui/alert-dialog/AlertDialog.vue";
 
 const { width } = useWindowSize();
 const user = useSupabaseUser();
@@ -81,11 +82,31 @@ const links = [
                 >Edit Profile</Button
               >
             </NuxtLink>
-            <Button
-              class="m-2 bg-orange-700 hover:bg-orange-600"
-              @click="logout"
-              >Log Out</Button
-            >
+            <AlertDialog>
+              <AlertDialogTrigger>
+                <Button class="m-2 bg-orange-700 hover:bg-orange-600"
+                  >Log Out</Button
+                >
+              </AlertDialogTrigger>
+              <AlertDialogContent class="bg-orange-50">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Log Out</AlertDialogTitle>
+                  <AlertDialogDescription
+                    >Are you sure you want to log out of your
+                    account.</AlertDialogDescription
+                  >
+                  <AlertDialogFooter>
+                    <AlertDialogCancel> Cancel </AlertDialogCancel>
+                    <AlertDialogAction
+                      @click="logout"
+                      class="bg-orange-600 hover:bg-orange-500"
+                    >
+                      Confirm
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogHeader>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
           <hr class="mt-2 border border-black w-full" />
         </CardTitle>
