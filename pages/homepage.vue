@@ -19,7 +19,7 @@ if (user.value) {
 
 const { data } = await client
   .from("pets")
-  .select("*")
+  .select("*, agents(*)")
   .eq("isadopted", false)
   .eq("status", "active")
   .range(0, 4);

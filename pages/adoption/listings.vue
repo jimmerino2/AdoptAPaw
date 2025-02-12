@@ -3,7 +3,7 @@ import { ref } from "vue";
 import { useWindowSize } from "@vueuse/core";
 import { useFetchData } from "@/composables/useFetchData";
 import TooltipTrigger from "~/components/ui/tooltip/TooltipTrigger.vue";
-const { fetchData, fetchImage } = useFetchData();
+const { fetchData } = useFetchData();
 
 const { width } = useWindowSize();
 
@@ -19,7 +19,7 @@ const route = useRoute();
 const petData = ref([]);
 const { data } = await client
   .from("pets")
-  .select("*, medicalrecord(*)")
+  .select("*, medicalrecord(*), agents(*)")
   .eq("isadopted", false)
   .eq("status", "active");
 petData.value = data;
@@ -88,25 +88,9 @@ async function updateUserData() {
   ]);
   userData.value = fetchedUserData.value[0];
 }
-// #endregion
 
 // #region Search and Filtering
 const formData = ref({});
-
-// Name
-async function searchName() {
-  if (formData.value.name) {
-    const { data } = await client
-      .from("pets")
-      .select("*")
-      .ilike("name", "%" + formData.value.name + "%")
-      .eq("isadopted", false)
-      .eq("status", "active");
-    petData.value = data;
-  } else {
-    petData.value = await fetchData("pets");
-  }
-}
 
 // Breeds and Age
 const breeds = ref([]);
@@ -118,7 +102,9 @@ async function setType() {
     const data = await fetchData("pets", "*", ["type", formData.value.type]);
 
     data.forEach((element) => {
-      breeds.value.push(element.breed);
+      if (!breeds.value.includes(element.breed)) {
+        breeds.value.push(element.breed);
+      }
     });
     if (formData.value.type == "Dog") {
       age.value = ["Puppy", "Adult"];
@@ -176,22 +162,32 @@ filterList.value = [
 ];
 
 async function submitForm() {
-  formData.value.name = formData.value.name || "";
+  const { data: agentData } = await client
+    .from("agents")
+    .select("id")
+    .ilike("city", `${formData.value.city}%`);
+
+  const agentIds = agentData.map((agent) => agent.id);
+
+  let query = client
+    .from("pets")
+    .select("*, agents(*), medicalrecord(*)")
+    .eq("isadopted", false)
+    .eq("status", "active");
+
+  formData.value.city = formData.value.city || "";
   formData.value.type = formData.value.type || "";
   formData.value.breed = formData.value.breed || "";
   formData.value.gender = formData.value.gender || "";
 
-  const query = client
-    .from("pets")
-    .select("*, medicalrecord(*)")
-    .ilike("name", "%" + formData.value.name + "%")
-    .like("type", "%" + formData.value.type + "%")
-    .like("breed", "%" + formData.value.breed + "%")
-    .like("gender", "%" + formData.value.gender + "%")
-    .eq("isadopted", false)
-    .eq("status", "active");
+  query = query
+    .ilike("type", `%${formData.value.type}%`)
+    .ilike("breed", `%${formData.value.breed}%`)
+    .like("gender", `%${formData.value.gender}%`);
 
-  // Age
+  agentIds.length > 0 && query.in("agentid", agentIds);
+
+  // #region Age
   let isChild;
   if (formData.value.age == "Kitten" || formData.value.age == "Puppy") {
     isChild = true;
@@ -201,7 +197,9 @@ async function submitForm() {
   if (isChild !== null && isChild !== undefined) {
     query.filter("age", isChild ? "lte" : "gt", 2);
   }
+  // #endregion
 
+  // #region Booleans
   const [isToiletTrained, isVaccinated, isNeutered] = [ref(), ref(), ref()];
   const booleans = [isToiletTrained, isVaccinated, isNeutered];
   const formDatas = [
@@ -224,33 +222,33 @@ async function submitForm() {
   if (booleans[0].value !== null && booleans[0].value !== undefined) {
     query.filter("istoilettrained", "eq", booleans[0].value);
   }
+  // #endregion
 
+  // #region Medical Records
   const { data } = await query;
-  const filteredPets = data.filter((pet) => {
-    // Vaccinated
+  const filteredData = data.filter((pet) => {
     const isVaccinatedMatch =
       booleans[1].value === null ||
       booleans[1].value === undefined ||
-      (booleans[1].value === true
+      (booleans[1].value
         ? pet.medicalrecord?.some((record) => record.isvaccinated === true)
-        : !pet.medicalrecord ||
-          pet.medicalrecord.every((record) => record.isvaccinated === false));
+        : pet.medicalrecord?.every((record) => record.isvaccinated === false));
 
-    // Neutered
     const isNeuteredMatch =
       booleans[2].value === null ||
       booleans[2].value === undefined ||
-      (booleans[2].value == true
+      (booleans[2].value
         ? pet.medicalrecord?.some((record) => record.isneutered === true)
-        : !pet.medicalrecord ||
-          pet.medicalrecord.every((record) => record.isneutered === false));
+        : pet.medicalrecord?.every((record) => record.isneutered === false));
+
     return isVaccinatedMatch && isNeuteredMatch;
   });
-  petData.value = filteredPets;
+
+  petData.value = filteredData;
 }
 
 async function resetForm() {
-  formData.value.name = "";
+  formData.value.city = "";
   formData.value.type = "";
   formData.value.breed = "";
   formData.value.gender = "";
@@ -277,10 +275,10 @@ async function resetForm() {
     <div class="w-full my-8 flex bg-red">
       <input
         type="text"
-        v-model="formData.name"
-        placeholder="Pet Name"
+        v-model="formData.city"
+        placeholder="Search City"
         class="p-2 w-full grow border rounded-lg border-orange-200"
-        @input="searchName"
+        @input="submitForm"
       />
       <Sheet>
         <SheetTrigger as-child>

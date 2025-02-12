@@ -27,7 +27,7 @@ async function updateData() {
   userData.value = fetchedUserData.value[0];
   fetchedPetData.value = await client
     .from("pets")
-    .select("*")
+    .select("*, agents(*)")
     .in("id", userData.value.favorites)
     .eq("status", "active");
   petData.value = fetchedPetData.value.data;
