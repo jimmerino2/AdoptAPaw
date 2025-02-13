@@ -12,7 +12,7 @@ const { fetchData } = useFetchData();
 const fetchedAppointments = ref(
   await fetchData(
     "appointments",
-    "id, date, approved, comment, pets(age, breed, gender, imagepath, name, agents(address, passno, type, workinghrs, users(*)))",
+    "*, pets(age, breed, gender, imagepath, name, agents(address, passno, type, workinghrs, users(*)))",
     ["status", "active"]
   )
 );
@@ -20,7 +20,7 @@ const fetchedAppointments = ref(
 async function refreshData() {
   fetchedAppointments.value = await fetchData(
     "appointments",
-    "id, date, approved, comment, pets(age, breed, gender, imagepath, name, agents(address, passno, type, workinghrs, users(*)))",
+    "*, pets(age, breed, gender, imagepath, name, agents(address, passno, type, workinghrs, users(*)))",
     ["status", "active"]
   );
 }

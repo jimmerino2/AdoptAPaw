@@ -11,7 +11,7 @@ const { fetchData } = useFetchData();
 const data = ref(
   await fetchData(
     "appointments",
-    "id, date, approved, comment, pets(age, breed, gender, imagepath, name, agents(address, passno, type, workinghrs, users(*)))",
+    "*, users(*), pets(age, breed, gender, imagepath, name, agents(address, passno, type, workinghrs, users(*)))",
     ["status", "active"]
   )
 );
@@ -19,7 +19,7 @@ const data = ref(
 async function refreshData() {
   data.value = await fetchData(
     "appointments",
-    "id, date, approved, comment, pets(age, breed, gender, imagepath, name, agents(address, passno, type, workinghrs, users(*)))",
+    "*, users(*), pets(age, breed, gender, imagepath, name, agents(address, passno, type, workinghrs, users(*)))",
     ["status", "active"]
   );
 }
@@ -30,6 +30,7 @@ async function refreshData() {
     <ProfileCard />
     <div class="grow rounded-md" :class="{ 'mt-12': width >= 1024 }">
       <div
+        v-if="data.length > 0"
         class="flex items-center flex-col"
         :class="{
           'grid grid-cols-2 justify-center w-full':
@@ -43,6 +44,11 @@ async function refreshData() {
           :type="'agent'"
           @appointmentChange="refreshData()"
         ></AppointmentCard>
+      </div>
+      <div v-else class="flex items-center justify-center w-full h-full">
+        <div class="flex flex-col">
+          <p class="text-xl">No appointments made</p>
+        </div>
       </div>
     </div>
   </div>

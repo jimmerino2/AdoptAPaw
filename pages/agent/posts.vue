@@ -38,7 +38,7 @@ accordionData.value = [
 ];
 
 async function deleteListing(pet) {
-  const { data, error } = await client
+  const { error } = await client
     .from("pets")
     .update({
       status: "removed",
