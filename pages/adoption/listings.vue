@@ -165,7 +165,7 @@ async function submitForm() {
   const { data: agentData } = await client
     .from("agents")
     .select("id")
-    .ilike("city", `${formData.value.city}%`);
+    .ilike("city", formData.value.city + "%");
 
   const agentIds = agentData.map((agent) => agent.id);
 
@@ -185,7 +185,7 @@ async function submitForm() {
     .ilike("breed", `%${formData.value.breed}%`)
     .like("gender", `%${formData.value.gender}%`);
 
-  agentIds.length > 0 && query.in("agentid", agentIds);
+  query.in("agentid", agentIds);
 
   // #region Age
   let isChild;
@@ -243,8 +243,10 @@ async function submitForm() {
 
     return isVaccinatedMatch && isNeuteredMatch;
   });
+  // #endregion
 
   petData.value = filteredData;
+  console.log(filteredData);
 }
 
 async function resetForm() {
