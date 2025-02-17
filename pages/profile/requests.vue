@@ -31,11 +31,10 @@ async function refreshData() {
     <div class="grow rounded-md" :class="{ 'mt-12': width >= 1024 }">
       <div
         v-if="data.length > 0"
-        class="flex items-center flex-col"
+        class="grid"
         :class="{
-          'grid grid-cols-2 justify-center w-full':
-            width >= 1440 && width < 1850,
-          'grid grid-cols-3 justify-center w-full': width >= 1850,
+          'grid-cols-2 ': width < 1800,
+          'grid-cols-3 ': width >= 1800,
         }"
       >
         <AppointmentCard
@@ -45,7 +44,10 @@ async function refreshData() {
           @appointmentChange="refreshData()"
         ></AppointmentCard>
       </div>
-      <div v-else class="flex items-center justify-center w-full h-full">
+      <div
+        v-else
+        class="flex items-center justify-center w-full h-full bg-beige-300 mt-4 rounded-lg"
+      >
         <div class="flex flex-col">
           <p class="text-xl">No appointments made</p>
         </div>

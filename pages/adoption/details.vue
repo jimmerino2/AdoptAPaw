@@ -8,7 +8,6 @@ const toggleContent = ref(false); // 0 - About,  1 - Agent
 
 // #region Query processing
 const petId = route.query?.petid;
-const role = route.query?.role;
 const agent = route.query?.agent;
 // #endregion
 
@@ -340,12 +339,10 @@ onMounted(() => {
       class="hover:cursor-pointer fixed bottom-4 right-4 flex items-center justify-center z-20 bg-yellow-600 hover:bg-yellow-500"
       as-child
     >
-      <NuxtLink to="/adoption/listings" v-if="role !== 'Agent'"
+      <NuxtLink to="/adoption/listings" v-if="!agent"
         >Back to Listings</NuxtLink
       >
-      <NuxtLink to="/agent/posts" v-else-if="role === 'Agent'"
-        >Back to Listings</NuxtLink
-      >
+      <NuxtLink to="/agent/posts" v-else>Back to Listings</NuxtLink>
     </Button>
   </div>
 </template>

@@ -127,7 +127,10 @@ async function submitForm() {
             </div>
           </CardContent>
           <CardFooter class="bg-orange-300 flex justify-end items-center py-4">
-            <Button class="max-w-32 mr-2" as-child>
+            <Button
+              class="max-w-32 mr-2 bg-orange-500 hover:bg-orange-400"
+              as-child
+            >
               <label
                 for="new_pfp"
                 class="cursor-pointer bg-amber-700 hover:bg-amber-600 transform hover:scale-[101%]"
@@ -143,7 +146,7 @@ async function submitForm() {
               <!-- Submit Button to trigger the handlePhotoChange -->
               <button type="submit" class="hidden"></button>
             </Button>
-            <Button class="bg-emerald-700 hover:bg-emerald-600">Save</Button>
+            <Button class="bg-emerald-600 hover:bg-emerald-500">Save</Button>
           </CardFooter>
         </Card>
       </form>

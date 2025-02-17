@@ -1,13 +1,13 @@
 <script setup>
 import { useFetchData } from "@/composables/useFetchData";
-import AlertDialogTrigger from "~/components/ui/alert-dialog/AlertDialogTrigger.vue";
+import { useWindowSize } from "@vueuse/core";
 const { fetchImage } = useFetchData();
 const props = defineProps({
   appointment: Object,
   type: String,
 });
+const { width } = useWindowSize();
 const client = useSupabaseClient();
-
 const emit = defineEmits(["appointmentChange"]);
 const appointmentChange = () => {
   emit("appointmentChange");
@@ -46,7 +46,7 @@ async function handleRemoval(appointment) {
 
 <template>
   <div
-    class="relative rounded-md px-4 py-2 m-4 bg-beige-300 max-w-[350px] hover:scale-[101%] hover:shadow-xl border-transparent border-2 ease-in duration-100"
+    class="relative rounded-md px-4 py-2 m-4 bg-beige-300 max-w-[320px] hover:scale-[101%] hover:shadow-xl border-transparent border-2 ease-in duration-100"
   >
     <!-- Status -->
     <div class="absolute top-3 right-6 size-14">
@@ -81,7 +81,10 @@ async function handleRemoval(appointment) {
 
     <!-- Image and Name-->
     <div class="flex flex-col items-center p-4">
-      <div class="w-[250px] h-[250px] overflow-hidden bg-slate-100 rounded">
+      <div
+        class="w-[250px] h-[250px] overflow-hidden bg-slate-100 rounded"
+        :class="{ 'max-w-48 max-h-48': width < 400 }"
+      >
         <img
           :src="fetchImage(props.appointment?.pets.imagepath)"
           class="h-full w-full object-cover"
@@ -131,7 +134,6 @@ async function handleRemoval(appointment) {
       <span v-else>-</span>
 
       <!-- Denial Reason -->
-
       <div v-if="props.appointment.approved === false">
         <h4 class="mt-2 font-bold">Denial Reason</h4>
         <span>{{ props.appointment.reason }}</span>
@@ -142,7 +144,7 @@ async function handleRemoval(appointment) {
     <!-- Buttons -->
     <div class="flex justify-between w-full">
       <div
-        v-if="props?.type === 'agent' && props?.approved != null"
+        v-if="props?.type === 'agent' && props?.appointment.approved == null"
         class="flex justify-around w-full"
       >
         <AlertDialog>
@@ -189,14 +191,18 @@ async function handleRemoval(appointment) {
           <AlertDialogContent class="bg-orange-50">
             <AlertDialogHeader>
               <AlertDialogTitle>Remove Appointment</AlertDialogTitle>
-              <AlertDialogDescription
+              <AlertDialogDescription class="text-black"
                 >Are you sure you want to remove this appointment?
               </AlertDialogDescription>
               <AlertDialogFooter>
-                <AlertDialogCancel> Cancel </AlertDialogCancel>
+                <AlertDialogCancel
+                  class="bg-orange-500 hover:bg-orange-400 text-white"
+                >
+                  Cancel
+                </AlertDialogCancel>
                 <AlertDialogAction
                   @click="handleRemoval(props?.appointment)"
-                  class="bg-orange-600 hover:bg-orange-500"
+                  class="bg-emerald-500 hover:bg-emerald-400"
                 >
                   Confirm
                 </AlertDialogAction>

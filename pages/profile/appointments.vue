@@ -31,10 +31,11 @@ async function refreshData() {
     <ProfileCard />
     <div class="grow pb-4 rounded-md" :class="{ 'mt-12': width >= 1024 }">
       <div
-        class="justify-items-center w-full"
+        class="justify-items-center grid w-full"
         :class="{
-          'grid grid-cols-2 justify-center': width >= 1440 && width < 1850,
-          'grid grid-cols-3 justify-center': width >= 1850,
+          'grid-cols-2': width >= 768 && width < 1024,
+          'grid-cols-2': width >= 1300 && width < 1850,
+          'grid-cols-3': width >= 1850,
         }"
         v-if="fetchedAppointments.length !== 0"
       >
@@ -45,11 +46,16 @@ async function refreshData() {
           @appointmentChange="refreshData()"
         ></AppointmentCard>
       </div>
-      <div v-else class="flex items-center justify-center w-full h-full">
+      <div
+        v-else
+        class="flex items-center justify-center w-full h-full bg-beige-300 mt-4 rounded-lg"
+      >
         <div class="flex flex-col">
           <p class="text-xl">No appointments made</p>
           <NuxtLink to="/adoption/listings">
-            <Button class="m-8">Find Pet Listings</Button>
+            <Button class="m-8 bg-orange-500 hover:bg-orange-400"
+              >Find Pet Listings</Button
+            >
           </NuxtLink>
         </div>
       </div>

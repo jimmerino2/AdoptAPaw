@@ -16,7 +16,7 @@ const userId = await fetchData("users", "id", ["user_id", user.value.id]);
 const agentId = await fetchData("agents", "id", ["uid", userId[0].id]);
 const { data } = await client
   .from("pets")
-  .select("*")
+  .select("*, agents(*)")
   .eq("agentid", agentId[0].id)
   .eq("status", "active");
 
@@ -53,7 +53,7 @@ async function deleteListing(pet) {
 async function refreshData() {
   const { data } = await client
     .from("pets")
-    .select("*")
+    .select("*, agents(*)")
     .eq("agentid", agentId[0].id)
     .eq("status", "active");
   adoptedPets.value = data.filter((pet) => pet.isadopted === true);
@@ -119,7 +119,7 @@ async function refreshData() {
                 class="p-2 relative justify-self-center"
               >
                 <div
-                  class="absolute top-5 right-5 flex justify-between w-fit z-20 opacity-75"
+                  class="absolute top-5 right-5 flex justify-between z-20 opacity-75"
                 >
                   <NuxtLink
                     :to="{
@@ -133,7 +133,9 @@ async function refreshData() {
                     class="hover:cursor-pointer mr-2"
                     v-show="inputs.value === 'listed'"
                   >
-                    <div class="bg-orange-200 p-2 rounded-full">
+                    <div
+                      class="bg-orange-200 p-2 rounded-full hover:bg-white transition ease-in hover:scale-110"
+                    >
                       <img src="/edit_icon.png" class="size-6" />
                     </div>
                   </NuxtLink>
@@ -142,28 +144,50 @@ async function refreshData() {
                     :to="{
                       path: '/adoption/details',
                       query: {
-                        origin: 'posts',
                         petid: items.id,
                         agent: items.agentid,
                       },
                     }"
                   >
-                    <div class="bg-orange-200 p-2 rounded-full">
+                    <div
+                      class="bg-orange-200 p-2 rounded-full hover:bg-white transition ease-in hover:scale-110"
+                    >
                       <img src="/view_icon.png" class="size-6" />
                     </div>
                   </NuxtLink>
-                  <div
-                    class="p-2 rounded-full hover:cursor-pointer ml-2 bg-orange-200"
-                    v-show="inputs.value === 'listed'"
-                    @click="deleteListing(items)"
-                  >
-                    <img src="/trash_icon.png" class="size-6" />
-                  </div>
+
+                  <AlertDialog>
+                    <AlertDialogTrigger>
+                      <div
+                        class="p-2 rounded-full hover:cursor-pointer ml-2 bg-orange-200 hover:bg-white transition ease-in hover:scale-110"
+                        v-show="inputs.value === 'listed'"
+                      >
+                        <img src="/trash_icon.png" class="size-6" />
+                      </div>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent class="bg-beige-200">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Listing</AlertDialogTitle>
+                        <AlertDialogDescription class="text-black"
+                          >Are you sure you want to delete {{ items.name }}'s
+                          listing.</AlertDialogDescription
+                        >
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel
+                          class="bg-orange-500 hover:bg-orange-400 text-white"
+                          >Cancel</AlertDialogCancel
+                        >
+                        <AlertDialogAction
+                          @click="deleteListing(items)"
+                          class="bg-emerald-500 hover:bg-emerald-400"
+                          >Confirm</AlertDialogAction
+                        >
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
-                <PetPreview
-                  :pet="items"
-                  class="max-w-[275px] hover:cursor-default"
-                />
+                <PetPreview :pet="items" class="hover:cursor-default" />
               </div>
             </div>
             <div v-else>No pets in this category</div>

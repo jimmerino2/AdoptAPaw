@@ -17,10 +17,11 @@ const client = useSupabaseClient();
 
 // #region Data Fetching
 const petId = route.query.petId;
-const fetchedAppointmentData = await fetchData("appointments", "pets(id)", [
-  "petid",
-  petId,
-]);
+const fetchedAppointmentData = await client
+  .from("appointments")
+  .select("pets(id)")
+  .eq("petid", petId)
+  .eq("status", "active");
 
 const fetchedPetData = await fetchData(
   "pets",

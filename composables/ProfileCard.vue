@@ -60,9 +60,13 @@ const links = [
 </script>
 
 <template>
-  <div class="mt-10" :class="{ 'min-w-[350px]': width >= 1024 }">
+  <div
+    class="mt-10"
+    :class="{ 'flex justify-center': width >= 400 && width < 1024 }"
+  >
     <Card
-      class="m-6 bg-beige-300 hover:shadow-xl hover:scale-[101%] ease-in duration-100"
+      class="m-6 bg-beige-300 hover:shadow-xl hover:scale-[101%] ease-in duration-100 h-fit"
+      :class="{ 'w-[320px]': width >= 400 }"
     >
       <CardHeader class="relative">
         <CardTitle class="flex flex-col items-center">
@@ -91,15 +95,19 @@ const links = [
               <AlertDialogContent class="bg-orange-50">
                 <AlertDialogHeader>
                   <AlertDialogTitle>Log Out</AlertDialogTitle>
-                  <AlertDialogDescription
+                  <AlertDialogDescription class="text-black"
                     >Are you sure you want to log out of your
                     account.</AlertDialogDescription
                   >
                   <AlertDialogFooter>
-                    <AlertDialogCancel> Cancel </AlertDialogCancel>
+                    <AlertDialogCancel
+                      class="bg-orange-500 hover:bg-orange-400 text-white"
+                    >
+                      Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                       @click="logout"
-                      class="bg-orange-600 hover:bg-orange-500"
+                      class="bg-emerald-500 hover:bg-emerald-400"
                     >
                       Confirm
                     </AlertDialogAction>
@@ -113,9 +121,9 @@ const links = [
       </CardHeader>
       <CardContent>
         <h1 class="font-bold">Email</h1>
-        <p class="mb-2">{{ profile.email }}</p>
+        <p class="mb-2 text-sm">{{ profile.email }}</p>
         <h1 class="font-bold">Contact</h1>
-        <p class="mb-2">{{ profile.contact }}</p>
+        <p class="mb-2 text-sm">{{ profile.contact }}</p>
       </CardContent>
       <CardFooter class="p-0 flex flex-col rounded-b-md overflow-hidden">
         <NuxtLink

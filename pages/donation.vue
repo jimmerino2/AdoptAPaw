@@ -81,7 +81,8 @@ const { width } = useWindowSize();
         :class="{
           'max-w-72': width < 576,
           'max-w-64': width >= 576 && width < 768,
-          'max-w-96': width >= 768,
+          'max-w-72': width >= 768 && width < 1024,
+          'max-w-80': width >= 1024,
         }"
       />
       <div class="p-8">
@@ -95,7 +96,7 @@ const { width } = useWindowSize();
           Any donations will go directly to the development of the website and
           shelters we work together with.
         </p>
-        <img src="/public/donation_wallpaper02.jpg" />
+        <img src="/public/donation_wallpaper02.jpg" class="max-h-96" />
       </div>
     </div>
   </div>

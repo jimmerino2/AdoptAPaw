@@ -346,7 +346,7 @@ async function resetForm() {
         <div class="max-w-[250px] relative w-full z-20">
           <!-- Favorite Icon -->
           <div
-            class="absolute top-3 right-3 max-w-12 z-20"
+            class="absolute top-3 right-3 max-w-12 z-20 hover:scale-125 transition ease-in duration-100"
             @click="updateFavorite(pet.id)"
             v-show="pageUser"
           >

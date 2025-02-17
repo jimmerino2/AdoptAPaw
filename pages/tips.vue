@@ -126,15 +126,10 @@ const accordionItems = [
     >
       <AccordionItem
         v-for="(item, index) in accordionItems"
-        :key="index"
         :value="item.label"
       >
         <AccordionTrigger
-          class="px-3 hover:no-underline"
-          :class="{
-            'bg-amber-500 hover:bg-amber-400': index % 2 === 0,
-            'bg-orange-500 hover:bg-orange-400': index % 2 === 1,
-          }"
+          class="px-3 hover:no-underline bg-amber-500 hover:bg-amber-400"
         >
           {{ item.label }}
         </AccordionTrigger>
@@ -146,11 +141,7 @@ const accordionItems = [
               :value="child.label"
             >
               <AccordionTrigger
-                class="px-3 hover:no-underline"
-                :class="{
-                  'bg-beige-300 hover:bg-beige-200': childIndex % 2 === 0,
-                  'bg-orange-200 hover:bg-orange-100': childIndex % 2 === 1,
-                }"
+                class="px-3 hover:no-underline bg-beige-300 hover:bg-beige-200"
                 >{{ child.label }}</AccordionTrigger
               >
               <AccordionContent

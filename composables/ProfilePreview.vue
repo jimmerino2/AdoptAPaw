@@ -37,7 +37,7 @@ watch(
 </script>
 
 <template>
-  <div class="mt-10" :class="{ 'min-w-[350px]': width >= 1024 }">
+  <div class="mt-10" :class="{ 'min-w-[350px]': width >= 360 }">
     <Card
       class="m-6 bg-beige-300 hover:shadow-xl hover:scale-[101%] ease-in duration-100 max-w-[300px] h-[420px]"
     >

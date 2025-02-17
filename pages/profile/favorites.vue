@@ -37,8 +37,8 @@ await updateData();
 
 async function sendPetData(pet) {
   router.push({
-    path: "/adoption/listings",
-    query: { petid: pet.id, toggle: true },
+    path: "/adoption/details",
+    query: { petid: pet.id },
   });
 }
 
@@ -95,21 +95,38 @@ async function updateFavorite(petId) {
           class="justify-self-center p-2 relative"
         >
           <div
-            class="absolute top-6 right-6 max-w-12 z-30"
-            @click="updateFavorite(i.id)"
+            class="absolute top-6 right-6 max-w-12 z-30 hover:scale-125 transition ease-in duration-100"
           >
             <TooltipProvider>
               <Tooltip>
-                <TooltipTrigger>
-                  <img
-                    v-if="userData.favorites.includes(i.id)"
-                    src="/public/fav_filled.png"
-                  />
-                </TooltipTrigger>
-                <TooltipContent v-if="userData.favorites.includes(i.id)"
-                  >Remove From Favorites</TooltipContent
-                >
-                <TooltipContent v-else>Add to Favorites</TooltipContent>
+                <AlertDialog>
+                  <AlertDialogTrigger
+                    ><TooltipTrigger>
+                      <img src="/public/fav_filled.png" />
+                    </TooltipTrigger>
+                    <TooltipContent> Remove From Favorites </TooltipContent>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent class="bg-beige-200">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Remove Favorite</AlertDialogTitle>
+                      <AlertDialogDescription class="text-black"
+                        >Are you sure you want to remove i.name from your
+                        favorites?</AlertDialogDescription
+                      >
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel
+                        class="bg-orange-500 hover:bg-orange-400 text-white"
+                        >Cancel</AlertDialogCancel
+                      >
+                      <AlertDialogAction
+                        @click="updateFavorite(i.id)"
+                        class="bg-emerald-600 hover:bg-emerald-500"
+                        >Confirm</AlertDialogAction
+                      >
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </Tooltip>
             </TooltipProvider>
           </div>
@@ -119,7 +136,7 @@ async function updateFavorite(petId) {
       </div>
       <div
         v-else
-        class="justify-center h-full w-full flex flex-col items-center"
+        class="justify-center h-full w-full flex flex-col items-center bg-beige-300 mt-2 rounded-lg"
       >
         <p class="text-xl">No favorite pets</p>
         <NuxtLink to="/adoption/listings">

@@ -374,7 +374,7 @@ agentInputList.value = [
             <Button
               type="button"
               as-child
-              class="w-[40%] max-w-[150px] mx-4 bg-orange-600 hover:bg-orange-500"
+              class="w-[40%] max-w-[150px] mx-4 bg-orange-500 hover:bg-orange-400"
             >
               <NuxtLink to="/homepage">Cancel</NuxtLink>
             </Button>

@@ -65,7 +65,7 @@ async function logIn() {
     <CardFooter class="w-full inline-block">
       <div class="justify-center flex">
         <NuxtLink to="/homepage" class="w-[40%] max-w-[150px] mx-4">
-          <Button type="button" class="w-full bg-orange-600 hover:bg-orange-500"
+          <Button type="button" class="w-full bg-orange-500 hover:bg-orange-400"
             >Cancel</Button
           >
         </NuxtLink>

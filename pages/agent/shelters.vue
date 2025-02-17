@@ -29,11 +29,6 @@ async function filterName() {
         Search for specific shelter accounts and support them by adopting or
         donating!
       </p>
-      <Button
-        class="bg-orange-600 hover:bg-orange-500 my-6 text-lg p-6"
-        as-child
-        ><NuxtLink to="">Become an Agent</NuxtLink>
-      </Button>
     </div>
   </div>
 
@@ -46,20 +41,17 @@ async function filterName() {
       @input="filterName"
     />
     <div
-      class="grid w-full gap-8 m-2"
+      class="grid"
       :class="{
         'grid-cols-1': width < 768,
         'grid-cols-2': width >= 768 && width < 1160,
         'grid-cols-3': width >= 1160 && width < 1600,
-        'grid-cols-4': width >= 1600 && width < 1860,
-        'grid-cols-5': width >= 1860,
+        'grid-cols-4': width >= 1600,
       }"
     >
-      <ProfilePreview
-        v-for="i in agentAccounts"
-        :user="i"
-        :showDetails="true"
-      />
+      <div class="w-full flex justify-center" v-for="i in agentAccounts">
+        <ProfilePreview :user="i" :showDetails="true" />
+      </div>
     </div>
   </div>
 </template>
