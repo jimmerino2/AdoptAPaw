@@ -6,12 +6,15 @@ import { useFetchData } from "@/composables/useFetchData";
 const { width } = useWindowSize();
 const { fetchData, fetchImage } = useFetchData();
 const user = useSupabaseUser();
+const client = useSupabaseClient();
 const router = useRouter();
 
 const profileDetails = ref();
 const profile = ref({ role: "Guest", imagepath: "" });
 const imageUrl = ref("");
 const parentLinks = ref([]);
+const agentAppointments = ref([]);
+const userAppointments = ref([]);
 
 const chevronIsDown = ref(false);
 function toggleChevron() {
@@ -42,6 +45,29 @@ watchEffect(async () => {
       imageUrl.value = profileImage;
     }
   }
+
+  // #region Notifications
+  if (profile.value.role === "Agent") {
+    const { data } = await client
+      .from("appointments")
+      .select("approved")
+      .is("approved", null)
+      .eq("status", "active");
+
+    agentAppointments.value = data;
+  }
+
+  if (profile.value.role === "User") {
+    const { data } = await client
+      .from("appointments")
+      .select("isread")
+      .not("approved", "is", null)
+      .is("isread", false)
+      .eq("status", "active");
+
+    userAppointments.value = data;
+  }
+  // #endregion
 
   // Set Links
   parentLinks.value = [
@@ -105,8 +131,19 @@ async function toProfile() {
           </NuxtLink>
         </div>
 
-        <div class="flex justify-end custom-sm:justify-between">
+        <div class="flex justify-end custom-sm:justify-between relative">
           <!-- Profile -->
+          <div
+            class="absolute top-[-5px] right-0 bg-orange-400 size-6 rounded-full text-center"
+            v-show="agentAppointments.length > 0 || userAppointments.length > 0"
+          >
+            <span v-if="agentAppointments.length > 0">{{
+              agentAppointments.length
+            }}</span>
+            <span v-else-if="userAppointments.length > 0">{{
+              userAppointments.length
+            }}</span>
+          </div>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger as-child>

@@ -9,10 +9,6 @@ const props = defineProps({
 const { width } = useWindowSize();
 const client = useSupabaseClient();
 const emit = defineEmits(["appointmentChange"]);
-const appointmentChange = () => {
-  emit("appointmentChange");
-};
-
 const denialReason = ref();
 
 async function handleRequest(appointment, approval) {
@@ -29,8 +25,7 @@ async function handleRequest(appointment, approval) {
       .eq("id", appointment.id)
       .select();
   }
-
-  appointmentChange();
+  window.location.reload();
 }
 
 async function handleRemoval(appointment) {
@@ -39,8 +34,16 @@ async function handleRemoval(appointment) {
     .update({ status: "removed" })
     .eq("id", appointment.id)
     .select();
+  window.location.reload();
+}
 
-  appointmentChange();
+async function markAsRead(appointment) {
+  await client
+    .from("appointments")
+    .update({ isread: true })
+    .eq("id", appointment.id)
+    .select();
+  window.location.reload();
 }
 </script>
 
@@ -184,6 +187,12 @@ async function handleRemoval(appointment) {
         v-else-if="props?.type !== 'agent'"
         class="w-full flex justify-center"
       >
+        <Button
+          class="bg-orange-500 hover:bg-orange-400 mx-2"
+          @click="markAsRead(props?.appointment)"
+          v-show="props?.appointment.approved !== null"
+          >Mark as Read</Button
+        >
         <AlertDialog>
           <AlertDialogTrigger>
             <Button variant="destructive">Remove</Button>
