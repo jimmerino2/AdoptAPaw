@@ -76,6 +76,15 @@ async function refreshData() {
     },
   ];
 }
+
+async function setAdopted(pet) {
+  await client.from("pets").update({ isadopted: true }).eq("id", pet.id);
+  refreshData();
+}
+async function removeAdopted(pet) {
+  await client.from("pets").update({ isadopted: false }).eq("id", pet.id);
+  refreshData();
+}
 </script>
 
 <template>
@@ -122,9 +131,11 @@ async function refreshData() {
                 v-for="items in inputs.data"
                 class="p-2 relative justify-self-center"
               >
+                <!-- Buttons -->
                 <div
                   class="absolute top-5 right-5 flex justify-between z-20 opacity-75"
                 >
+                  <!-- Edit -->
                   <NuxtLink
                     :to="{
                       path: '/agent/addPost',
@@ -143,6 +154,8 @@ async function refreshData() {
                       <img src="/edit_icon.png" class="size-6" />
                     </div>
                   </NuxtLink>
+
+                  <!-- View -->
                   <NuxtLink
                     class="hover:cursor-pointer"
                     :to="{
@@ -160,11 +173,11 @@ async function refreshData() {
                     </div>
                   </NuxtLink>
 
+                  <!-- Delete -->
                   <AlertDialog>
                     <AlertDialogTrigger>
                       <div
-                        class="p-2 rounded-full hover:cursor-pointer ml-2 bg-orange-200 hover:bg-white transition ease-in hover:scale-110"
-                        v-show="inputs.value === 'listed'"
+                        class="p-2 rounded-full hover:cursor-pointer ml-2 mr-2 bg-orange-200 hover:bg-white transition ease-in hover:scale-110"
                       >
                         <img src="/trash_icon.png" class="size-6" />
                       </div>
@@ -190,6 +203,39 @@ async function refreshData() {
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
+
+                  <!-- Adopted -->
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger
+                        ><div
+                          class="bg-emerald-200 p-2 rounded-full hover:bg-emerald-100 transition ease-in hover:scale-110 hover:cursor-pointer"
+                          @click="setAdopted(items)"
+                          v-show="inputs.value === 'listed'"
+                        >
+                          <img src="/approved_t.png" class="size-6" /></div
+                      ></TooltipTrigger>
+                      <TooltipContent>
+                        <p>Set as Adopted</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger
+                        ><div
+                          class="bg-red-300 p-2 rounded-full hover:bg-red-200 transition ease-in hover:scale-110 hover:cursor-pointer"
+                          @click="removeAdopted(items)"
+                          v-show="inputs.value !== 'listed'"
+                        >
+                          <img src="/approved_f.png" class="size-6" /></div
+                      ></TooltipTrigger>
+                      <TooltipContent>
+                        <p>Mark pet for adoption</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
                 <PetPreview :pet="items" class="hover:cursor-default" />
               </div>
