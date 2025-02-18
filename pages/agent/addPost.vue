@@ -999,10 +999,16 @@ async function submitForm() {
         </p>
 
         <div class="flex justify-center">
-          <Button class="mx-2" type="button" as-child>
+          <Button
+            class="mx-2 bg-orange-500 hover:bg-orange-400"
+            type="button"
+            as-child
+          >
             <NuxtLink to="/agent/posts">Cancel</NuxtLink>
           </Button>
-          <Button class="mx-2">Submit</Button>
+          <Button class="mx-2 bg-emerald-500 hover:bg-emerald-400"
+            >Submit</Button
+          >
         </div>
       </div>
     </div>

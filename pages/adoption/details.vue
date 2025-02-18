@@ -40,7 +40,9 @@ if (selectedPet.age <= 2) {
 const images = ref([
   {
     image: selectedPet.value.addimages[0],
-    condition: selectedPet.value.addimages[0] !== "",
+    condition:
+      selectedPet.value.addimages[0] !== "" &&
+      selectedPet.value.addimages[0] !== undefined,
     id: "image2",
   },
   {
@@ -50,10 +52,13 @@ const images = ref([
   },
   {
     image:
-      selectedPet.value.addimages[1] !== ""
+      selectedPet.value.addimages[1] !== "" &&
+      selectedPet.value.addimages[0] !== undefined
         ? selectedPet.value.addimages[1]
         : selectedPet.value.addimages[0],
-    condition: selectedPet.value.addimages[0] !== "",
+    condition:
+      selectedPet.value.addimages[0] !== "" &&
+      selectedPet.value.addimages[0] !== undefined,
     id: "image3",
   },
 ]);
@@ -128,7 +133,10 @@ onMounted(() => {
             'min-w-[420px]': width >= 576,
           }"
           v-show="
-            selectedPet.addimages[0] !== '' || selectedPet.addimages[1] !== ''
+            images[0].image !== '' &&
+            images[0].image !== undefined &&
+            images[2].image !== '' &&
+            images[0].image !== undefined
           "
         >
           <img

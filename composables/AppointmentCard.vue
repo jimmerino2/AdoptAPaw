@@ -154,10 +154,10 @@ async function markAsRead(appointment) {
           <AlertDialogTrigger>
             <Button variant="destructive">Deny</Button>
           </AlertDialogTrigger>
-          <AlertDialogContent>
+          <AlertDialogContent class="bg-beige-200">
             <AlertDialogHeader>
               <AlertDialogTitle>Reject Appointment</AlertDialogTitle>
-              <AlertDialogDescription
+              <AlertDialogDescription class="text-black"
                 >Provide a reason for the denial of this appointment request.
 
                 <input
@@ -168,9 +168,13 @@ async function markAsRead(appointment) {
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogCancel
+                class="bg-orange-500 hover:bg-orange-400 text-white"
+                >Cancel</AlertDialogCancel
+              >
               <AlertDialogAction
                 :disabled="!denialReason"
+                class="bg-emerald-500 hover:bg-emerald-400"
                 @click="handleRequest(props?.appointment, false)"
                 >Confirm</AlertDialogAction
               >
@@ -190,7 +194,9 @@ async function markAsRead(appointment) {
         <Button
           class="bg-orange-500 hover:bg-orange-400 mx-2"
           @click="markAsRead(props?.appointment)"
-          v-show="props?.appointment.approved !== null"
+          v-show="
+            props?.appointment.approved !== null && !props?.appointment.isread
+          "
           >Mark as Read</Button
         >
         <AlertDialog>

@@ -17,11 +17,14 @@ const client = useSupabaseClient();
 
 // #region Data Fetching
 const petId = route.query.petId;
-const fetchedAppointmentData = await client
+const fetchedAppointmentData = ref([]);
+
+const { data } = await client
   .from("appointments")
-  .select("pets(id)")
+  .select("id")
   .eq("petid", petId)
   .eq("status", "active");
+fetchedAppointmentData.value = data;
 
 const fetchedPetData = await fetchData(
   "pets",
@@ -155,7 +158,7 @@ async function submitForm() {
     }
 
     // Check if appointment exists
-    if (fetchedAppointmentData[0] !== undefined) {
+    if (fetchedAppointmentData.value.length > 0) {
       errorMsg.value = "An appointment has already been scheduled.";
       validated.value = false;
     }

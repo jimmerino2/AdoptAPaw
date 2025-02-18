@@ -22,7 +22,7 @@ export function usePetFormValidation() {
   };
 
   const valWeight = (weight) => {
-    return weight > 0.5 && weight < 12;
+    return weight > 0.5 && weight < 50;
   };
 
   const valPrice = (price) => {
