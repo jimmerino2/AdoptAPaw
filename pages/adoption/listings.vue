@@ -16,12 +16,24 @@ const pageUser = ref(user.value);
 const client = useSupabaseClient();
 const route = useRoute();
 
+// Check if scheduled
+const { data: scheduleData } = await client
+  .from("appointments")
+  .select("petid")
+  .eq("status", "active");
+
+console.log(scheduleData);
+let scheduledPets =
+  "(" + scheduleData.map((element) => element.petid).join(", ") + ")";
+
 const petData = ref([]);
 const { data } = await client
   .from("pets")
   .select("*, medicalrecord(*), agents(*)")
   .eq("isadopted", false)
-  .eq("status", "active");
+  .eq("status", "active")
+  .not("id", "in", scheduledPets);
+
 petData.value = data;
 
 const selectedPet = ref({});
@@ -173,7 +185,8 @@ async function submitForm() {
     .from("pets")
     .select("*, agents(*), medicalrecord(*)")
     .eq("isadopted", false)
-    .eq("status", "active");
+    .eq("status", "active")
+    .not("id", "in", scheduledPets);
 
   formData.value.city = formData.value.city || "";
   formData.value.type = formData.value.type || "";
@@ -366,6 +379,7 @@ async function resetForm() {
               </Tooltip>
             </TooltipProvider>
           </div>
+
           <!-- Pet Preview -->
           <NuxtLink
             :to="{

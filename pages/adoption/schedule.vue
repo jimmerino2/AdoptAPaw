@@ -130,12 +130,27 @@ function hideDropdown() {
 // #endregion
 
 // #region Form Handling
+
 const errorMsg = ref(null);
 const formData = ref({
   date: "",
   time: "",
   comment: "",
 });
+
+const appointmentId = route.query.id;
+if (appointmentId) {
+  const { data } = await client
+    .from("appointments")
+    .select("*")
+    .eq("id", appointmentId);
+
+  const splitTimestamp = data[0].date.split("T");
+
+  formData.value.date = splitTimestamp[0];
+  formData.value.time = splitTimestamp[1].substr(0, 5);
+  formData.value.comment = data[0].comment;
+}
 
 async function submitForm() {
   try {
@@ -158,7 +173,7 @@ async function submitForm() {
     }
 
     // Check if appointment exists
-    if (fetchedAppointmentData.value.length > 0) {
+    if (fetchedAppointmentData.value.length > 0 && !appointmentId) {
       errorMsg.value = "An appointment has already been scheduled.";
       validated.value = false;
     }
@@ -204,6 +219,15 @@ async function submitForm() {
       const newDate = new Date(inputDate).toISOString().slice(0, 10);
       const newTime = inputTime + ":00";
       const datetime = newDate + " " + newTime;
+
+      if (appointmentId) {
+        const { error } = await client
+          .from("appointments")
+          .delete()
+          .eq("petid", petData.id);
+        if (error) console.log(error);
+      }
+
       const { error } = await client.from("appointments").insert([
         {
           petid: petData.id,

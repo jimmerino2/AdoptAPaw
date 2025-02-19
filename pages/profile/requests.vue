@@ -33,7 +33,8 @@ async function refreshData() {
         v-if="data.length > 0"
         class="grid"
         :class="{
-          'grid-cols-2 ': width < 1800,
+          'grid-cols-2 ': width >= 768 && width < 1024,
+          'grid-cols-2 ': width > 1300 && width < 1800,
           'grid-cols-3 ': width >= 1800,
         }"
       >

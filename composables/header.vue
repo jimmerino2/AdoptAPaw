@@ -1,6 +1,5 @@
 <script setup>
 import { useWindowSize } from "@vueuse/core";
-import { ChevronsUp, ChevronsDown } from "lucide-vue-next";
 import { useFetchData } from "@/composables/useFetchData";
 
 const { width } = useWindowSize();
@@ -118,6 +117,18 @@ async function toProfile() {
     router.push("/profile/appointments");
   }
 }
+
+async function logout() {
+  try {
+    const { error } = await client.auth.signOut();
+    if (error) throw error;
+    router.push("/homepage").then(() => {
+      window.location.reload();
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
 </script>
 
 <template>
@@ -132,6 +143,36 @@ async function toProfile() {
         </div>
 
         <div class="flex justify-end custom-sm:justify-between relative">
+          <!-- PC Logout -->
+          <AlertDialog>
+            <AlertDialogTrigger v-if="width >= 625 && user">
+              <Button class="m-2 bg-orange-700 hover:bg-orange-600"
+                >Log Out</Button
+              >
+            </AlertDialogTrigger>
+            <AlertDialogContent class="bg-orange-50">
+              <AlertDialogHeader>
+                <AlertDialogTitle>Log Out</AlertDialogTitle>
+                <AlertDialogDescription class="text-black"
+                  >Are you sure you want to log out of your
+                  account.</AlertDialogDescription
+                >
+                <AlertDialogFooter>
+                  <AlertDialogCancel
+                    class="bg-orange-500 hover:bg-orange-400 text-white"
+                  >
+                    Cancel
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    @click="logout"
+                    class="bg-emerald-500 hover:bg-emerald-400"
+                  >
+                    Confirm
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogHeader>
+            </AlertDialogContent>
+          </AlertDialog>
           <!-- Profile -->
           <div
             class="absolute top-[-5px] right-0 bg-orange-400 size-6 rounded-full text-center"
@@ -182,49 +223,51 @@ async function toProfile() {
                 <SheetDescription />
               </SheetHeader>
 
-              <Collapsible v-for="parent in parentLinks" class="w-full">
-                <NuxtLink :to="parent.link" v-show="parent.condition">
-                  <CollapsibleTrigger
-                    class="w-full text-left text-xl flex justify-between items-center h-12 py-8 pl-4 focus:bg-orange-300 text-white ease-in duration-100"
-                    @click="toggleChevron"
-                  >
-                    <div class="flex items-center">
-                      <p class="text-xl">{{ parent.title }}</p>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      class="w-9 p-0 bg-transparent"
-                      v-show="parent.childLinks.length > 0"
-                    >
-                      <ChevronsDown
-                        v-if="!chevronIsDown"
-                        class="h-4 w-4"
-                        @click="toggleChevron()"
-                      />
-                      <ChevronsUp
-                        v-else
-                        class="h-4 w-4"
-                        @click="toggleChevron()"
-                      />
-                      <span class="sr-only">Toggle</span>
-                    </Button>
-                  </CollapsibleTrigger>
-                </NuxtLink>
-
-                <CollapsibleContent
-                  v-for="child in parent.childLinks"
-                  class="w-full"
+              <NuxtLink
+                :to="parent.link"
+                v-show="parent.condition"
+                v-for="parent in parentLinks"
+              >
+                <div
+                  class="w-full text-left text-xl flex justify-between items-center h-12 py-8 pl-4 hover:bg-orange-300 text-white ease-in duration-200"
                 >
-                  <NuxtLink :to="child.link">
-                    <div
-                      class="w-full p-4 text-xl pl-6 hover:bg-orange-300 text-white ease-in duration-100"
+                  <div class="flex items-center">
+                    <p class="text-xl">{{ parent.title }}</p>
+                  </div>
+                </div>
+              </NuxtLink>
+
+              <AlertDialog>
+                <AlertDialogTrigger v-show="user">
+                  <div
+                    class="w-full text-left bottom-0 absolute text-xl flex justify-between items-center h-12 py-8 pl-4 hover:bg-orange-300 text-white ease-in duration-200"
+                  >
+                    Log Out
+                  </div>
+                </AlertDialogTrigger>
+                <AlertDialogContent class="bg-orange-50">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Log Out</AlertDialogTitle>
+                    <AlertDialogDescription class="text-black"
+                      >Are you sure you want to log out of your
+                      account.</AlertDialogDescription
                     >
-                      {{ child.title }}
-                    </div>
-                  </NuxtLink>
-                </CollapsibleContent>
-              </Collapsible>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel
+                        class="bg-orange-500 hover:bg-orange-400 text-white"
+                      >
+                        Cancel
+                      </AlertDialogCancel>
+                      <AlertDialogAction
+                        @click="logout"
+                        class="bg-emerald-500 hover:bg-emerald-400"
+                      >
+                        Confirm
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogHeader>
+                </AlertDialogContent>
+              </AlertDialog>
             </SheetContent>
           </Sheet>
         </div>
@@ -267,14 +310,6 @@ async function toProfile() {
           </MenubarMenu>
         </Menubar>
       </div>
-      <!-- Shelter Account Banner -->
-      <!--
-      <div
-        class="bg-teal-100 w-full custom-lg:px-[10vw] custom-md:px-[2vw] flex justify-center text-lg p-2 font-bold"
-      >
-        Shelter Account
-      </div>
-       -->
     </div>
   </div>
 </template>
