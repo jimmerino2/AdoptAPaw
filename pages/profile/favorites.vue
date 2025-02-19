@@ -27,7 +27,7 @@ async function updateData() {
   userData.value = fetchedUserData.value[0];
   fetchedPetData.value = await client
     .from("pets")
-    .select("*")
+    .select("*, agents(*)")
     .in("id", userData.value.favorites)
     .eq("status", "active");
   petData.value = fetchedPetData.value.data;
@@ -37,8 +37,8 @@ await updateData();
 
 async function sendPetData(pet) {
   router.push({
-    path: "/adoption/listings",
-    query: { petid: pet.id, toggle: true },
+    path: "/adoption/details",
+    query: { petid: pet.id },
   });
 }
 
@@ -75,66 +75,75 @@ async function updateFavorite(petId) {
 </script>
 
 <template>
-  <div
-    class="custom-lg:px-[10vw] custom-md:px-[4vw] custom-sm:px-[4vw] pt-2 pb-10"
-    :class="{ flex: width >= 1024 }"
-  >
+  <div class="scaling pb-10" :class="{ flex: width >= 1024 }">
     <ProfileCard />
-    <div
-      class="grow rounded-md bg-slate-300"
-      :class="{ 'mt-16': width >= 1024 }"
-    >
-      <div class="p-4 flex items-center flex-col w-full h-full bg-slate-100">
-        <h1 class="text-2xl px-4 font-bold">Favorite List</h1>
+    <div class="grow rounded-md" :class="{ 'mt-14': width >= 1024 }">
+      <div
+        v-if="petData.length > 0"
+        class="grid flex"
+        :class="{
+          'grid-cols-1': width <= 678 || (width > 1023 && width <= 1150),
+          'grid-cols-2':
+            (width > 678 && width <= 1023) || (width > 1150 && width <= 1500),
+          'grid-cols-3': width > 1500 && width <= 1800,
+          'grid-cols-4': width > 1800,
+        }"
+      >
         <div
-          v-if="petData.length > 0"
-          class="w-full h-full grid flex"
-          :class="{
-            'grid-cols-1': width <= 725 || (width > 1023 && width <= 1250),
-            'grid-cols-2':
-              (width > 725 && width <= 1023) || (width > 1250 && width <= 1600),
-            'grid-cols-3': width > 1600 && width <= 1900,
-            'grid-cols-4': width > 1900,
-          }"
+          v-for="i in petData"
+          :key="i.id"
+          class="justify-self-center p-2 relative"
         >
           <div
-            v-for="i in petData"
-            :key="i.id"
-            class="justify-self-center p-4 relative"
+            class="absolute top-6 right-6 max-w-12 z-30 hover:scale-125 transition ease-in duration-100"
           >
-            <div
-              class="absolute top-6 right-6 max-w-12"
-              @click="updateFavorite(i.id)"
-            >
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <img
-                      v-if="userData.favorites.includes(i.id)"
-                      src="/public/fav_filled.png"
-                    />
-                    <img v-else src="/public/fav_empty.png" />
-                  </TooltipTrigger>
-                  <TooltipContent v-if="userData.favorites.includes(i.id)"
-                    >Remove From Favorites</TooltipContent
-                  >
-                  <TooltipContent v-else>Add to Favorites</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-
-            <PetPreview :pet="i" @selectPet="sendPetData(i)" />
+            <TooltipProvider>
+              <Tooltip>
+                <AlertDialog>
+                  <AlertDialogTrigger
+                    ><TooltipTrigger>
+                      <img src="/public/fav_filled.png" />
+                    </TooltipTrigger>
+                    <TooltipContent> Remove From Favorites </TooltipContent>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent class="bg-beige-200">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Remove Favorite</AlertDialogTitle>
+                      <AlertDialogDescription class="text-black"
+                        >Are you sure you want to remove i.name from your
+                        favorites?</AlertDialogDescription
+                      >
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel
+                        class="bg-orange-500 hover:bg-orange-400 text-white"
+                        >Cancel</AlertDialogCancel
+                      >
+                      <AlertDialogAction
+                        @click="updateFavorite(i.id)"
+                        class="bg-emerald-600 hover:bg-emerald-500"
+                        >Confirm</AlertDialogAction
+                      >
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </Tooltip>
+            </TooltipProvider>
           </div>
+
+          <PetPreview :pet="i" @selectPet="sendPetData(i)" />
         </div>
-        <div
-          v-else
-          class="justify-center h-full w-full flex flex-col items-center"
-        >
-          <p class="text-xl">No favorite pets</p>
-          <NuxtLink to="/adoption/listings">
-            <Button class="m-8">Find Pet Listings</Button>
-          </NuxtLink>
-        </div>
+      </div>
+      <div
+        v-else
+        class="justify-center h-full w-full flex flex-col items-center bg-beige-300 mt-2 rounded-lg"
+      >
+        <p class="text-xl">No favorite pets</p>
+        <NuxtLink to="/adoption/listings">
+          <Button class="m-8 bg-orange-500 hover:bg-orange-400"
+            >Find Pet Listings</Button
+          >
+        </NuxtLink>
       </div>
     </div>
   </div>

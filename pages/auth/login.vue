@@ -25,7 +25,7 @@ async function logIn() {
 </script>
 
 <template>
-  <Card class="w-[90%] max-w-[576px] h-fit">
+  <Card class="w-[90%] max-w-[576px] h-fit border-none">
     <CardHeader>
       <CardTitle class="text-center">Sign In</CardTitle>
     </CardHeader>
@@ -65,12 +65,14 @@ async function logIn() {
     <CardFooter class="w-full inline-block">
       <div class="justify-center flex">
         <NuxtLink to="/homepage" class="w-[40%] max-w-[150px] mx-4">
-          <Button type="button" class="w-full"> Cancel </Button>
+          <Button type="button" class="w-full bg-orange-500 hover:bg-orange-400"
+            >Cancel</Button
+          >
         </NuxtLink>
         <Button
           @click="logIn"
           type="button"
-          class="w-[40%] max-w-[150px] mx-4 bg-blue-500 hover:bg-blue-600"
+          class="w-[40%] max-w-[150px] mx-4 bg-emerald-500 hover:bg-emerald-600"
         >
           Log In
         </Button>

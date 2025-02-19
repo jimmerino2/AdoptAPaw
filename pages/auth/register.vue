@@ -359,20 +359,29 @@ agentInputList.value = [
           </p>
 
           <div class="w-full flex justify-center">
-            <Button id="toggle" type="button" @click="toggleAgentForm()">
+            <Button
+              id="toggle"
+              type="button"
+              class="bg-amber-500 hover:bg-amber-400"
+              @click="toggleAgentForm()"
+            >
               Sign Up as Agent
             </Button>
           </div>
         </CardContent>
         <CardFooter class="m-0 px-2 py-0 mt-2 w-full" v-show="!isAgent">
           <div class="justify-center flex py-2 w-full">
-            <Button type="button" as-child class="w-[40%] max-w-[150px] mx-4">
+            <Button
+              type="button"
+              as-child
+              class="w-[40%] max-w-[150px] mx-4 bg-orange-500 hover:bg-orange-400"
+            >
               <NuxtLink to="/homepage">Cancel</NuxtLink>
             </Button>
 
             <Button
               type="submit"
-              class="w-[40%] max-w-[150px] mx-4 bg-blue-500 hover:bg-blue-600"
+              class="w-[40%] max-w-[150px] mx-4 bg-emerald-500 hover:bg-emerald-600"
             >
               Sign Up
             </Button>

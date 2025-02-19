@@ -2,7 +2,8 @@
 import { ref } from "vue";
 import { useWindowSize } from "@vueuse/core";
 import { useFetchData } from "@/composables/useFetchData";
-const { fetchData, fetchImage } = useFetchData();
+import TooltipTrigger from "~/components/ui/tooltip/TooltipTrigger.vue";
+const { fetchData } = useFetchData();
 
 const { width } = useWindowSize();
 
@@ -18,7 +19,7 @@ const route = useRoute();
 const petData = ref([]);
 const { data } = await client
   .from("pets")
-  .select("*, medicalrecord(*)")
+  .select("*, medicalrecord(*), agents(*)")
   .eq("isadopted", false)
   .eq("status", "active");
 petData.value = data;
@@ -87,23 +88,9 @@ async function updateUserData() {
   ]);
   userData.value = fetchedUserData.value[0];
 }
-// #endregion
 
 // #region Search and Filtering
 const formData = ref({});
-
-// Name
-async function searchName() {
-  if (formData.value.name) {
-    const { data } = await client
-      .from("pets")
-      .select("*")
-      .ilike("name", "%" + formData.value.name + "%");
-    petData.value = data;
-  } else {
-    petData.value = await fetchData("pets");
-  }
-}
 
 // Breeds and Age
 const breeds = ref([]);
@@ -115,7 +102,9 @@ async function setType() {
     const data = await fetchData("pets", "*", ["type", formData.value.type]);
 
     data.forEach((element) => {
-      breeds.value.push(element.breed);
+      if (!breeds.value.includes(element.breed)) {
+        breeds.value.push(element.breed);
+      }
     });
     if (formData.value.type == "Dog") {
       age.value = ["Puppy", "Adult"];
@@ -173,21 +162,32 @@ filterList.value = [
 ];
 
 async function submitForm() {
-  formData.value.name = formData.value.name || "";
+  const { data: agentData } = await client
+    .from("agents")
+    .select("id")
+    .ilike("city", formData.value.city + "%");
+
+  const agentIds = agentData.map((agent) => agent.id);
+
+  let query = client
+    .from("pets")
+    .select("*, agents(*), medicalrecord(*)")
+    .eq("isadopted", false)
+    .eq("status", "active");
+
+  formData.value.city = formData.value.city || "";
   formData.value.type = formData.value.type || "";
   formData.value.breed = formData.value.breed || "";
   formData.value.gender = formData.value.gender || "";
 
-  const query = client
-    .from("pets")
-    .select("*, medicalrecord(*)")
-    .ilike("name", "%" + formData.value.name + "%")
-    .like("type", "%" + formData.value.type + "%")
-    .like("breed", "%" + formData.value.breed + "%")
-    .like("gender", "%" + formData.value.gender + "%")
-    .eq("isadopted", false);
+  query = query
+    .ilike("type", `%${formData.value.type}%`)
+    .ilike("breed", `%${formData.value.breed}%`)
+    .like("gender", `%${formData.value.gender}%`);
 
-  // Age
+  query.in("agentid", agentIds);
+
+  // #region Age
   let isChild;
   if (formData.value.age == "Kitten" || formData.value.age == "Puppy") {
     isChild = true;
@@ -195,9 +195,11 @@ async function submitForm() {
     isChild = false;
   }
   if (isChild !== null && isChild !== undefined) {
-    query.filter("age", isChild ? "gt" : "lte", 2);
+    query.filter("age", isChild ? "lte" : "gt", 2);
   }
+  // #endregion
 
+  // #region Booleans
   const [isToiletTrained, isVaccinated, isNeutered] = [ref(), ref(), ref()];
   const booleans = [isToiletTrained, isVaccinated, isNeutered];
   const formDatas = [
@@ -220,33 +222,35 @@ async function submitForm() {
   if (booleans[0].value !== null && booleans[0].value !== undefined) {
     query.filter("istoilettrained", "eq", booleans[0].value);
   }
+  // #endregion
 
+  // #region Medical Records
   const { data } = await query;
-  const filteredPets = data.filter((pet) => {
-    // Vaccinated
+  const filteredData = data.filter((pet) => {
     const isVaccinatedMatch =
       booleans[1].value === null ||
       booleans[1].value === undefined ||
-      (booleans[1].value === true
+      (booleans[1].value
         ? pet.medicalrecord?.some((record) => record.isvaccinated === true)
-        : !pet.medicalrecord ||
-          pet.medicalrecord.every((record) => record.isvaccinated === false));
+        : pet.medicalrecord?.every((record) => record.isvaccinated === false));
 
-    // Neutered
     const isNeuteredMatch =
       booleans[2].value === null ||
       booleans[2].value === undefined ||
-      (booleans[2].value == true
+      (booleans[2].value
         ? pet.medicalrecord?.some((record) => record.isneutered === true)
-        : !pet.medicalrecord ||
-          pet.medicalrecord.every((record) => record.isneutered === false));
+        : pet.medicalrecord?.every((record) => record.isneutered === false));
+
     return isVaccinatedMatch && isNeuteredMatch;
   });
-  petData.value = filteredPets;
+  // #endregion
+
+  petData.value = filteredData;
+  console.log(filteredData);
 }
 
 async function resetForm() {
-  formData.value.name = "";
+  formData.value.city = "";
   formData.value.type = "";
   formData.value.breed = "";
   formData.value.gender = "";
@@ -260,34 +264,32 @@ async function resetForm() {
 
 <template>
   <!-- Pet Preview -->
-  <div
-    class="h-fit py-4 flex flex-col items-center bg-slate-200 custom-lg:px-[10vw] custom-md:px-[4vw] custom-sm:px-[4vw]"
-  >
+  <div class="flex flex-col items-center scaling">
     <!-- Title -->
-    <div class="mx-2 px-2 flex flex-col items-center">
-      <p class="text-[2.5rem]">Find a Pet</p>
-      <p class="text-lg text-center py-2">
+    <div class="flex flex-col items-center mt-12">
+      <p class="text-4xl font-bold text-orange-700">Find a Pet</p>
+      <p class="text-lg text-center text-orange-700">
         Browse through our listings to find a suitable pet for adoption!
       </p>
     </div>
 
     <!-- Search and Filter -->
-    <div class="w-full my-6 p-2 max-w-[1300px] flex">
+    <div class="w-full my-8 flex bg-red">
       <input
         type="text"
-        v-model="formData.name"
-        placeholder="Pet Name"
-        class="p-2 w-full grow"
-        @input="searchName"
+        v-model="formData.city"
+        placeholder="Search City"
+        class="p-2 w-full grow border rounded-lg border-orange-200"
+        @input="submitForm"
       />
       <Sheet>
         <SheetTrigger as-child>
-          <Button class="ml-4">Filter</Button>
+          <Button class="ml-4 bg-orange-700 hover:bg-orange-600">Filter</Button>
         </SheetTrigger>
-        <SheetContent class="bg-slate-100 overflow-scroll">
+        <SheetContent class="bg-beige-200 overflow-scroll">
           <SheetHeader>
             <SheetTitle>Filter Options</SheetTitle>
-            <SheetDescription
+            <SheetDescription class="text-orange-900 opacity-70"
               >Find the pet that suits you best</SheetDescription
             >
           </SheetHeader>
@@ -306,11 +308,15 @@ async function resetForm() {
               </select>
             </div>
             <SheetFooter>
-              <div class="flex justify-around">
-                <Button class="mx-8 px-8 bg-slate-200 grow" @click="resetForm()"
+              <div class="flex w-full justify-around">
+                <Button
+                  class="bg-amber-500 px-7 hover:bg-amber-400"
+                  @click="resetForm()"
                   >Clear</Button
                 >
-                <Button type="submit" class="mx-8 px-8 bg-slate-300 grow"
+                <Button
+                  type="submit"
+                  class="bg-emerald-600 px-7 hover:bg-emerald-500"
                   >Filter</Button
                 >
               </div>
@@ -322,11 +328,13 @@ async function resetForm() {
 
     <!-- Listings -->
     <div
-      class="w-full grid gap-6 px-2 max-w-[1200px]"
+      v-if="petData.length > 0"
+      class="w-full grid gap-6 px-2 mb-10"
       :class="{
-        'grid-cols-4': width >= 1500,
-        'grid-cols-3': width >= 1000,
-        'grid-cols-2': width < 1000 && width >= 576,
+        'grid-cols-5': width >= 1700,
+        'grid-cols-4': width >= 1400,
+        'grid-cols-3': width >= 1024,
+        'grid-cols-2': width >= 576,
         'grid-cols-1': width < 576,
       }"
     >
@@ -335,10 +343,10 @@ async function resetForm() {
         :key="pet._id"
         class="w-full flex justify-center"
       >
-        <div class="max-w-[300px] relative w-full">
+        <div class="max-w-[250px] relative w-full z-20">
           <!-- Favorite Icon -->
           <div
-            class="absolute top-2 right-2 max-w-12"
+            class="absolute top-3 right-3 max-w-12 z-20 hover:scale-125 transition ease-in duration-100"
             @click="updateFavorite(pet.id)"
             v-show="pageUser"
           >
@@ -372,18 +380,25 @@ async function resetForm() {
         </div>
       </div>
     </div>
+    <div v-else class="text-xl">No results found</div>
   </div>
 
   <!-- Appointments -->
-  <div
-    class="fixed bottom-[32px] right-[10px]"
-    v-show="!showDetails && pageUser"
-  >
+  <div class="fixed bottom-4 right-4 z-40" v-show="!showDetails && pageUser">
     <NuxtLink to="/profile/appointments">
-      <Avatar class="size-20 p-3 bg-slate-400">
-        <AvatarImage src="/appointments_icon.png" />
-        <AvatarFallback>Appointments</AvatarFallback>
-      </Avatar>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger
+            ><Avatar
+              class="size-20 p-3 bg-amber-500 transform hover:scale-105 transition ease-in duration-100 hover:bg-amber-400"
+            >
+              <AvatarImage src="/appointments_icon.png" />
+              <AvatarFallback>Appointments</AvatarFallback>
+            </Avatar></TooltipTrigger
+          >
+          <TooltipContent>To Appointments</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </NuxtLink>
   </div>
 </template>

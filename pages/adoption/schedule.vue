@@ -17,10 +17,14 @@ const client = useSupabaseClient();
 
 // #region Data Fetching
 const petId = route.query.petId;
-const fetchedAppointmentData = await fetchData("appointments", "pets(id)", [
-  "petid",
-  petId,
-]);
+const fetchedAppointmentData = ref([]);
+
+const { data } = await client
+  .from("appointments")
+  .select("id")
+  .eq("petid", petId)
+  .eq("status", "active");
+fetchedAppointmentData.value = data;
 
 const fetchedPetData = await fetchData(
   "pets",
@@ -154,7 +158,7 @@ async function submitForm() {
     }
 
     // Check if appointment exists
-    if (fetchedAppointmentData[0] !== undefined) {
+    if (fetchedAppointmentData.value.length > 0) {
       errorMsg.value = "An appointment has already been scheduled.";
       validated.value = false;
     }
@@ -209,7 +213,7 @@ async function submitForm() {
         },
       ]);
       if (error) throw error;
-      router.push("/homepage");
+      router.push("/profile/appointments");
     }
   } catch (error) {
     errorMsg.value = error.message;
@@ -324,12 +328,14 @@ async function submitForm() {
         </CardContent>
         <CardFooter>
           <div class="justify-center flex grow">
-            <Button as-child class="w-[60%] m-2 max-w-[225px] py-2"
+            <Button
+              as-child
+              class="w-[60%] m-2 max-w-[225px] py-2 bg-orange-600 hover:bg-orange-500"
               ><NuxtLink to="/adoption/listings">Back</NuxtLink></Button
             >
             <Button
               type="submit"
-              class="w-[60%] m-2 max-w-[225px] py-2 bg-blue-500 text-white hover:bg-blue-600 text-sm"
+              class="w-[60%] m-2 max-w-[225px] py-2 bg-green-600 hover:bg-green-500"
             >
               Submit
             </Button>

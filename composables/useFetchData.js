@@ -38,7 +38,8 @@ export function useFetchData() {
   }
 
   function fetchImage(imagePath) {
-    const SUPABASE_URL = "https://yuyhlewuyooaoxhwexwd.supabase.co"; // Make sure this is set in your environment
+    const config = useRuntimeConfig();
+    const SUPABASE_URL = config.public.supabaseUrl;
     return `${SUPABASE_URL}/storage/v1/object/public/images/${imagePath}`;
   }
 

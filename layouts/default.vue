@@ -6,9 +6,15 @@ import Footer from "./footer.vue";
 <template>
   <div class="flex flex-col min-h-screen">
     <Header class="z-30" />
-    <div class="grow">
+    <div class="grow bg-beige-100">
       <slot />
     </div>
     <Footer />
   </div>
 </template>
+
+<style>
+body {
+  font-family: "Nexa Regular", sans-serif;
+}
+</style>

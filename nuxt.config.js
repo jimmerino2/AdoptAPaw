@@ -3,6 +3,7 @@ export default defineNuxtConfig({
   compatibilityDate: "2024-04-03",
   devtools: { enabled: true },
   ssr: false,
+  css: ["~/assets/css/fonts.scss"],
   components: {
     dirs: [
       { path: "~/components", extensions: ["vue"], pathPrefix: false },

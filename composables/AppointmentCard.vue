@@ -1,16 +1,15 @@
 <script setup>
 import { useFetchData } from "@/composables/useFetchData";
+import { useWindowSize } from "@vueuse/core";
 const { fetchImage } = useFetchData();
 const props = defineProps({
   appointment: Object,
   type: String,
 });
+const { width } = useWindowSize();
 const client = useSupabaseClient();
-
 const emit = defineEmits(["appointmentChange"]);
-const appointmentChange = () => {
-  emit("appointmentChange");
-};
+const denialReason = ref();
 
 async function handleRequest(appointment, approval) {
   await client
@@ -19,7 +18,14 @@ async function handleRequest(appointment, approval) {
     .eq("id", appointment.id)
     .select();
 
-  appointmentChange();
+  if (!approval) {
+    await client
+      .from("appointments")
+      .update({ reason: denialReason.value })
+      .eq("id", appointment.id)
+      .select();
+  }
+  window.location.reload();
 }
 
 async function handleRemoval(appointment) {
@@ -28,17 +34,25 @@ async function handleRemoval(appointment) {
     .update({ status: "removed" })
     .eq("id", appointment.id)
     .select();
+  window.location.reload();
+}
 
-  appointmentChange();
+async function markAsRead(appointment) {
+  await client
+    .from("appointments")
+    .update({ isread: true })
+    .eq("id", appointment.id)
+    .select();
+  window.location.reload();
 }
 </script>
 
 <template>
   <div
-    class="relative rounded-md px-4 py-2 m-4 bg-slate-100 max-w-[350px] border-4 border-slate-400"
+    class="relative rounded-md px-4 py-2 m-4 bg-beige-300 max-w-[320px] hover:scale-[101%] hover:shadow-xl border-transparent border-2 ease-in duration-100"
   >
     <!-- Status -->
-    <div class="absolute top-3 right-3 size-14">
+    <div class="absolute top-3 right-6 size-14">
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
@@ -70,7 +84,10 @@ async function handleRemoval(appointment) {
 
     <!-- Image and Name-->
     <div class="flex flex-col items-center p-4">
-      <div class="w-[250px] h-[250px] overflow-hidden bg-slate-100 rounded">
+      <div
+        class="w-[250px] h-[250px] overflow-hidden bg-slate-100 rounded"
+        :class="{ 'max-w-48 max-h-48': width < 400 }"
+      >
         <img
           :src="fetchImage(props.appointment?.pets.imagepath)"
           class="h-full w-full object-cover"
@@ -86,10 +103,30 @@ async function handleRemoval(appointment) {
       <span>{{ props.appointment?.date.substring(0, 10) }} </span>
       <h4 class="mt-2 font-bold">Time</h4>
       <span>{{ props.appointment?.date.substring(11, 16) }}</span>
-      <h4 class="mt-2 font-bold">Location</h4>
-      <span>{{ props.appointment?.pets.agents.address }}</span>
-      <h4 class="mt-2 font-bold">Agent</h4>
-      <span>{{ props.appointment?.pets.agents.users.name }}</span>
+
+      <!-- User View -->
+      <div v-if="props?.type !== 'agent'">
+        <h4 class="mt-2 font-bold">Location</h4>
+        <span>{{ props.appointment?.pets.agents.address }}</span>
+        <h4 class="mt-2 font-bold">Agent</h4>
+        <span>{{ props.appointment?.pets.agents.users.name }}</span>
+      </div>
+
+      <!-- Agent View -->
+      <div v-else>
+        <h4 class="mt-2 font-bold">Client</h4>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger
+              ><span>{{ props.appointment.users.name }}</span>
+            </TooltipTrigger>
+            <TooltipContent class="">
+              <ProfilePreview :user="props.appointment.users"></ProfilePreview>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+
       <h4 class="mt-2 font-bold">Comment</h4>
       <div
         v-if="props.appointment?.comment"
@@ -98,23 +135,96 @@ async function handleRemoval(appointment) {
         {{ props.appointment?.comment }}
       </div>
       <span v-else>-</span>
+
+      <!-- Denial Reason -->
+      <div v-if="props.appointment.approved === false">
+        <h4 class="mt-2 font-bold">Denial Reason</h4>
+        <span>{{ props.appointment.reason }}</span>
+      </div>
     </div>
     <hr class="my-2 border-t-black border-dashed" />
 
     <!-- Buttons -->
     <div class="flex justify-between w-full">
-      <div v-if="props?.type === 'agent'" class="flex justify-around w-full">
+      <div
+        v-if="props?.type === 'agent' && props?.appointment.approved == null"
+        class="flex justify-around w-full"
+      >
+        <AlertDialog>
+          <AlertDialogTrigger>
+            <Button variant="destructive">Deny</Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent class="bg-beige-200">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Reject Appointment</AlertDialogTitle>
+              <AlertDialogDescription class="text-black"
+                >Provide a reason for the denial of this appointment request.
+
+                <input
+                  type="text"
+                  v-model="denialReason"
+                  class="border border-gray-200 w-full p-2 my-2"
+                />
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel
+                class="bg-orange-500 hover:bg-orange-400 text-white"
+                >Cancel</AlertDialogCancel
+              >
+              <AlertDialogAction
+                :disabled="!denialReason"
+                class="bg-emerald-500 hover:bg-emerald-400"
+                @click="handleRequest(props?.appointment, false)"
+                >Confirm</AlertDialogAction
+              >
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
         <Button
-          @click="handleRequest(props?.appointment, false)"
-          variant="destructive"
-          >Deny</Button
+          class="bg-emerald-600 hover:bg-emerald-500"
+          @click="handleRequest(props?.appointment, true)"
+          >Accept</Button
         >
-        <Button @click="handleRequest(props?.appointment, true)">Accept</Button>
       </div>
-      <div v-else>
-        <Button variant="destructive" @click="handleRemoval(props?.appointment)"
-          >Remove</Button
+      <div
+        v-else-if="props?.type !== 'agent'"
+        class="w-full flex justify-center"
+      >
+        <Button
+          class="bg-orange-500 hover:bg-orange-400 mx-2"
+          @click="markAsRead(props?.appointment)"
+          v-show="
+            props?.appointment.approved !== null && !props?.appointment.isread
+          "
+          >Mark as Read</Button
         >
+        <AlertDialog>
+          <AlertDialogTrigger>
+            <Button variant="destructive">Remove</Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent class="bg-orange-50">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Remove Appointment</AlertDialogTitle>
+              <AlertDialogDescription class="text-black"
+                >Are you sure you want to remove this appointment?
+              </AlertDialogDescription>
+              <AlertDialogFooter>
+                <AlertDialogCancel
+                  class="bg-orange-500 hover:bg-orange-400 text-white"
+                >
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  @click="handleRemoval(props?.appointment)"
+                  class="bg-emerald-500 hover:bg-emerald-400"
+                >
+                  Confirm
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogHeader>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   </div>

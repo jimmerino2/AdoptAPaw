@@ -16,7 +16,7 @@ const userId = await fetchData("users", "id", ["user_id", user.value.id]);
 const agentId = await fetchData("agents", "id", ["uid", userId[0].id]);
 const { data } = await client
   .from("pets")
-  .select("*")
+  .select("*, agents(*)")
   .eq("agentid", agentId[0].id)
   .eq("status", "active");
 
@@ -38,22 +38,26 @@ accordionData.value = [
 ];
 
 async function deleteListing(pet) {
-  const { data, error } = await client
+  await client
     .from("pets")
     .update({
       status: "removed",
     })
     .eq("id", pet.id);
-  if (error) {
-    console.log(error);
-  }
+
+  await client
+    .from("appointments")
+    .update({
+      status: "removed",
+    })
+    .eq("petid", pet.id);
   refreshData();
 }
 
 async function refreshData() {
   const { data } = await client
     .from("pets")
-    .select("*")
+    .select("*, agents(*)")
     .eq("agentid", agentId[0].id)
     .eq("status", "active");
   adoptedPets.value = data.filter((pet) => pet.isadopted === true);
@@ -75,15 +79,16 @@ async function refreshData() {
 </script>
 
 <template>
-  <div
-    class="custom-lg:px-[10vw] custom-md:px-[4vw] custom-sm:px-[4vw] pt-2 pb-10"
-  >
+  <div class="scaling pt-2 pb-10">
     <!-- Title -->
-    <div class="mx-2 px-2 flex flex-col items-center">
-      <p class="text-[2.5rem]">Posted Listings</p>
+    <div class="mx-2 p-8 flex flex-col items-center w-full">
+      <p class="text-3xl text-center">Posted Listings</p>
       <p class="text-lg text-center py-2">
         Navigate and manage your existing listings
       </p>
+      <Button as-child class="bg-orange-700 hover:bg-orange-600"
+        ><NuxtLink to="/agent/addPost">Add Listing</NuxtLink>
+      </Button>
     </div>
 
     <!-- Accordion -->
@@ -96,10 +101,12 @@ async function refreshData() {
       >
         <AccordionItem v-for="inputs in accordionData" :value="inputs.value">
           <AccordionTrigger
-            class="border bg-white p-2 border-gray-200 hover:no-underline"
+            class="bg-white p-2 hover:no-underline bg-orange-300 rounded-t-md focus:bg-orange-400"
             >{{ inputs.label }}
           </AccordionTrigger>
-          <AccordionContent class="border bg-white p-2 border-gray-200">
+          <AccordionContent
+            class="border-x bg-white p-2 rounded-b-md bg-beige-200"
+          >
             <div
               v-if="inputs.data.length > 0"
               class="grid"
@@ -115,7 +122,9 @@ async function refreshData() {
                 v-for="items in inputs.data"
                 class="p-2 relative justify-self-center"
               >
-                <div class="absolute top-5 right-5 flex justify-between w-fit">
+                <div
+                  class="absolute top-5 right-5 flex justify-between z-20 opacity-75"
+                >
                   <NuxtLink
                     :to="{
                       path: '/agent/addPost',
@@ -128,7 +137,9 @@ async function refreshData() {
                     class="hover:cursor-pointer mr-2"
                     v-show="inputs.value === 'listed'"
                   >
-                    <div class="bg-white p-2 rounded-full">
+                    <div
+                      class="bg-orange-200 p-2 rounded-full hover:bg-white transition ease-in hover:scale-110"
+                    >
                       <img src="/edit_icon.png" class="size-6" />
                     </div>
                   </NuxtLink>
@@ -137,41 +148,56 @@ async function refreshData() {
                     :to="{
                       path: '/adoption/details',
                       query: {
-                        origin: 'posts',
                         petid: items.id,
                         agent: items.agentid,
                       },
                     }"
                   >
-                    <div class="bg-white p-2 rounded-full">
-                      <img src="/view_icon.jpg" class="size-6" />
+                    <div
+                      class="bg-orange-200 p-2 rounded-full hover:bg-white transition ease-in hover:scale-110"
+                    >
+                      <img src="/view_icon.png" class="size-6" />
                     </div>
                   </NuxtLink>
-                  <div
-                    class="bg-white p-2 rounded-full hover:cursor-pointer ml-2"
-                    v-show="inputs.value === 'listed'"
-                    @click="deleteListing(items)"
-                  >
-                    <img src="/trash_icon.png" class="size-6" />
-                  </div>
+
+                  <AlertDialog>
+                    <AlertDialogTrigger>
+                      <div
+                        class="p-2 rounded-full hover:cursor-pointer ml-2 bg-orange-200 hover:bg-white transition ease-in hover:scale-110"
+                        v-show="inputs.value === 'listed'"
+                      >
+                        <img src="/trash_icon.png" class="size-6" />
+                      </div>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent class="bg-beige-200">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Listing</AlertDialogTitle>
+                        <AlertDialogDescription class="text-black"
+                          >Are you sure you want to delete {{ items.name }}'s
+                          listing.</AlertDialogDescription
+                        >
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel
+                          class="bg-orange-500 hover:bg-orange-400 text-white"
+                          >Cancel</AlertDialogCancel
+                        >
+                        <AlertDialogAction
+                          @click="deleteListing(items)"
+                          class="bg-emerald-500 hover:bg-emerald-400"
+                          >Confirm</AlertDialogAction
+                        >
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
-                <PetPreview
-                  :pet="items"
-                  class="max-w-[275px] hover:cursor-default"
-                />
+                <PetPreview :pet="items" class="hover:cursor-default" />
               </div>
             </div>
             <div v-else>No pets in this category</div>
           </AccordionContent>
         </AccordionItem>
       </Accordion>
-    </div>
-
-    <!-- Buttons -->
-    <div class="fixed bottom-5 right-5">
-      <Button as-child
-        ><NuxtLink to="/agent/addPost">Add Listing</NuxtLink>
-      </Button>
     </div>
   </div>
 </template>

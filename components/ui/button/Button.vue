@@ -19,6 +19,7 @@ const props = withDefaults(defineProps<Props>(), {
   <Primitive
     :as="as"
     :as-child="asChild"
+    class="transform hover:scale-105 ease-in duration-100"
     :class="cn(buttonVariants({ variant, size }), props.class)"
   >
     <slot />
