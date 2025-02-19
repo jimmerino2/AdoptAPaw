@@ -185,7 +185,7 @@ async function submitForm() {
     .ilike("breed", `%${formData.value.breed}%`)
     .like("gender", `%${formData.value.gender}%`);
 
-  query.in("agentid", agentIds);
+  formData.value.city && query.in("agentid", agentIds);
 
   // #region Age
   let isChild;

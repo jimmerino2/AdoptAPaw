@@ -13,7 +13,7 @@ const selectPet = () => {
 
 <template>
   <div
-    class="hover:cursor-pointer w-full rounded-xl max-w-[250px] justify-self-center shadow-lg drop-shadow-xl border-transparent hover:border-orange-100 border-2 hover:shadow-2xl"
+    class="hover:cursor-pointer w-full rounded-xl max-w-[250px] min-w-[250px] justify-self-center shadow-lg drop-shadow-xl border-transparent hover:border-orange-100 border-2 hover:shadow-2xl"
     v-on:click="selectPet()"
   >
     <div class="h-[250px] w-full overflow-hidden">

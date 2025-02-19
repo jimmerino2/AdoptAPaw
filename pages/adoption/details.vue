@@ -3,6 +3,7 @@ import { useWindowSize } from "@vueuse/core";
 const { fetchData, fetchImage } = useFetchData();
 const { width } = useWindowSize();
 
+const client = useSupabaseClient();
 const route = useRoute();
 const toggleContent = ref(false); // 0 - About,  1 - Agent
 
@@ -23,6 +24,15 @@ if (!selectedPet.value.addimages) {
 } else if (!selectedPet.value.addimages[1]) {
   selectedPet.value.addimages[1] = "";
 }
+
+// Toggle Adopt Button
+const fetchedAppointmentData = ref([]);
+const { data } = await client
+  .from("appointments")
+  .select("id")
+  .eq("petid", petId)
+  .eq("status", "active");
+fetchedAppointmentData.value = data;
 
 const petAgeType = ref(null);
 if (selectedPet.age <= 2) {
@@ -159,7 +169,7 @@ onMounted(() => {
         class="flex-col bg-beige-300 w-full flex items-center justify-center py-4"
       >
         <div class="text-[2rem] font-bold">{{ selectedPet.name }}</div>
-        <hr class="w-[90%] my-2 border border-gray-400" />
+        <hr class="w-[90%] my-2 border border-black" />
         <div class="py-1 flex text-lg">
           <img
             v-if="selectedPet.gender == 'Female'"
@@ -176,6 +186,9 @@ onMounted(() => {
         <div class="py-1 w-full justify-center flex">
           {{ petAgeType }} <span>&nbsp;({{ selectedPet.age }}yo)</span>
         </div>
+        <div class="py-1 w-full justify-center flex">
+          RM {{ selectedPet.listedprice }}
+        </div>
 
         <NuxtLink
           :to="{
@@ -184,7 +197,9 @@ onMounted(() => {
           }"
           v-show="!agent"
         >
-          <Button class="bg-green-700 hover:bg-green-600 mt-4"
+          <Button
+            class="bg-green-700 hover:bg-green-600 mt-4"
+            v-show="fetchedAppointmentData.length == 0"
             >Adopt {{ selectedPet.name }}</Button
           >
         </NuxtLink>

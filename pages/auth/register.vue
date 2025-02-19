@@ -204,11 +204,17 @@ async function storeUnverifiedUserData() {
       const user_id = users[0].id;
 
       // Prepare base data
+      const cityStr = agentData.value.city.split(" ");
+      const capitalizedCityStr = cityStr.map(
+        (i) => i.charAt(0).toUpperCase() + i.slice(1)
+      );
+      const formattedCity = capitalizedCityStr.join(" ");
+
       let agentDataToInsert = {
         uid: user_id,
         description: agentData.value.description,
         address: agentData.value.address,
-        city: agentData.value.city,
+        city: formattedCity,
         type: agentData.value.type,
       };
 
@@ -282,7 +288,7 @@ inputList.value = [
     label: computed(() => (isAgent.value ? "Agent Contact Number" : "Contact")),
     type: "tel",
     id: "contact",
-    placeholder: "Enter your contact number",
+    placeholder: "Eg: 0123456789",
     model: "contact",
   },
 ];
