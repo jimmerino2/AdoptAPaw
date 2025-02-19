@@ -165,7 +165,8 @@ async function signUp() {
         email: formData.value.email,
         password: formData.value.password,
         options: {
-          emailRedirectTo: "http://localhost:3000/auth/email_verification",
+          emailRedirectTo:
+            "https://adopt-a-paw-tau.vercel.app/auth/email_verification",
         },
       });
       if (error) throw error;
