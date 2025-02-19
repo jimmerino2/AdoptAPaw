@@ -26,7 +26,7 @@ export function usePetFormValidation() {
   };
 
   const valPrice = (price) => {
-    return price > 0;
+    return price > 0 && price < 10000;
   };
 
   const valBooleanSelect = (select) => {
