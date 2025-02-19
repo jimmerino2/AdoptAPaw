@@ -8,8 +8,16 @@ const props = defineProps({
 });
 const { width } = useWindowSize();
 const client = useSupabaseClient();
+const router = useRouter();
 const emit = defineEmits(["appointmentChange"]);
 const denialReason = ref();
+
+function reschedule(appointment) {
+  router.push({
+    path: "/adoption/schedule",
+    query: { id: appointment.id, petId: appointment.petid },
+  });
+}
 
 async function handleRequest(appointment, approval) {
   await client
@@ -198,6 +206,12 @@ async function markAsRead(appointment) {
             props?.appointment.approved !== null && !props?.appointment.isread
           "
           >Mark as Read</Button
+        >
+        <Button
+          class="bg-amber-600 hover:bg-amber-500 mx-2"
+          @click="reschedule(props?.appointment)"
+          v-show="props?.appointment.approved === null"
+          >Edit</Button
         >
         <AlertDialog>
           <AlertDialogTrigger>
