@@ -3,7 +3,8 @@ const router = useRouter();
 const user = useSupabaseUser();
 const client = useSupabaseClient();
 
-console.log(user.value.email);
+console.log("User:", user.value);
+console.log("Email:", user.value.email);
 
 onMounted(async () => {
   try {

@@ -146,7 +146,7 @@ async function logout() {
           <!-- PC Logout -->
           <AlertDialog>
             <AlertDialogTrigger v-if="width >= 625 && user">
-              <Button class="m-2 bg-orange-700 hover:bg-orange-600"
+              <Button class="bg-orange-700 hover:bg-orange-600 mx-4"
                 >Log Out</Button
               >
             </AlertDialogTrigger>
@@ -227,47 +227,52 @@ async function logout() {
                 :to="parent.link"
                 v-show="parent.condition"
                 v-for="parent in parentLinks"
+                class="w-full"
               >
-                <div
-                  class="w-full text-left text-xl flex justify-between items-center h-12 py-8 pl-4 hover:bg-orange-300 text-white ease-in duration-200"
-                >
-                  <div class="flex items-center">
-                    <p class="text-xl">{{ parent.title }}</p>
+                <SheetClose class="w-full">
+                  <div
+                    class="w-full text-left text-xl flex justify-between items-center h-12 py-8 pl-4 text-white ease-in duration-200"
+                  >
+                    <div class="flex items-center">
+                      <p class="text-xl">{{ parent.title }}</p>
+                    </div>
                   </div>
-                </div>
+                </SheetClose>
               </NuxtLink>
 
-              <AlertDialog>
-                <AlertDialogTrigger v-show="user">
-                  <div
-                    class="w-full text-left bottom-0 absolute text-xl flex justify-between items-center h-12 py-8 pl-4 hover:bg-orange-300 text-white ease-in duration-200"
-                  >
-                    Log Out
-                  </div>
-                </AlertDialogTrigger>
-                <AlertDialogContent class="bg-orange-50">
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Log Out</AlertDialogTitle>
-                    <AlertDialogDescription class="text-black"
-                      >Are you sure you want to log out of your
-                      account.</AlertDialogDescription
+              <SheetClose>
+                <AlertDialog>
+                  <AlertDialogTrigger v-show="user">
+                    <div
+                      class="w-full text-left bottom-0 absolute text-xl flex justify-between items-center h-12 py-8 pl-4 hover:bg-orange-300 text-white ease-in duration-200"
                     >
-                    <AlertDialogFooter>
-                      <AlertDialogCancel
-                        class="bg-orange-500 hover:bg-orange-400 text-white"
+                      Log Out
+                    </div>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent class="bg-orange-50">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Log Out</AlertDialogTitle>
+                      <AlertDialogDescription class="text-black"
+                        >Are you sure you want to log out of your
+                        account.</AlertDialogDescription
                       >
-                        Cancel
-                      </AlertDialogCancel>
-                      <AlertDialogAction
-                        @click="logout"
-                        class="bg-emerald-500 hover:bg-emerald-400"
-                      >
-                        Confirm
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogHeader>
-                </AlertDialogContent>
-              </AlertDialog>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel
+                          class="bg-orange-500 hover:bg-orange-400 text-white"
+                        >
+                          Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                          @click="logout"
+                          class="bg-emerald-500 hover:bg-emerald-400"
+                        >
+                          Confirm
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogHeader>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </SheetClose>
             </SheetContent>
           </Sheet>
         </div>
