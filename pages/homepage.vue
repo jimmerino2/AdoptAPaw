@@ -148,8 +148,8 @@ function toPetDetails(pet) {
         'grid-cols-1': width < 576,
         'grid-cols-2': width >= 576 && width < 1024,
         'grid-cols-3': width >= 1024 && width < 1250,
-        'grid-cols-4': width >= 1250 && width < 1500,
-        'grid-cols-5': width >= 1500,
+        'grid-cols-4': width >= 1250 && width < 1600,
+        'grid-cols-5': width >= 1600,
       }"
     >
       <PetPreview

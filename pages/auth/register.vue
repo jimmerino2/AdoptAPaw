@@ -102,7 +102,7 @@ async function signUp() {
       isValid = false;
     } else if (!valName(formData.value.name)) {
       // Check for input formats
-      errorMsg.value = "Name must be 6 to 15 characters long.";
+      errorMsg.value = "Name must be 6 to 15 alphabetical characters long.";
       isValid = false;
     } else if (!valEmail(formData.value.email)) {
       errorMsg.value = "Invalid email format.";
