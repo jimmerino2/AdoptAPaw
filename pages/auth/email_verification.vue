@@ -6,15 +6,15 @@ const client = useSupabaseClient();
 console.log("User:", user.value);
 console.log("Email:", user.value.email);
 
-onMounted(async () => {
-  try {
-    // Ensure `user` is available and has an email
-    if (!user.value || !user.value.email) {
-      console.warn("User is not authenticated or email is missing.");
-      return;
-    }
+watchEffect(async () => {
+  if (!user.value || !user.value.email) {
+    console.warn("User is not authenticated or email is missing.");
+    return;
+  }
 
-    // Update the 'verified' column to true and user_id
+  try {
+    console.log("User detected:", user.value.email);
+
     const { error: updateError } = await client
       .from("users")
       .update({ verified: true, user_id: user.value.id })
