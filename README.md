@@ -5,6 +5,8 @@ The website allows users to both adopt pets in need online, as well as allow fos
 
 Update: The project is currently disabled as my Supabase trial expired 😅
 
+![Website Screenshot](https://github.com/jimmerino2/AdoptAPaw/blob/main/adoptapaw_screenshot.png?raw=true)
+
 ## ⚠️ Problem Statement 
 1. Stray animals are seen much more frequent over the years in Malaysia, causing social distress and health concerns
 2. The lack of information and education regarding pet ownership and caregiving results in many owners giving up their pets and leaving them outside to fend for themselves
