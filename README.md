@@ -3,9 +3,9 @@ AdoptAPaw is Final Year Project I developed before graduating my Diploma in Info
 
 The website allows users to both adopt pets in need online, as well as allow foster parents or shelters to put up adoption listings on a centralized platform.
 
-Update: The project is currently disabled as my Supabase trial expired 😅
+Demo Video URL: https://youtu.be/2xM-En7WWr0
 
-![Website Screenshot](https://github.com/jimmerino2/AdoptAPaw/blob/main/adoptapaw_screenshot.png?raw=true)
+Update: The project is currently disabled as my Supabase trial expired 😅
 
 ## ⚠️ Problem Statement 
 1. Stray animals are seen much more frequent over the years in Malaysia, causing social distress and health concerns
